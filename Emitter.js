@@ -28,36 +28,63 @@
      Version 1.0.0:
  		First commit
  */
-var Emitter = function () {
-	this._listeners = {};
-};
-
-Emitter.prototype.on = function(event, listener) {
-	this._listeners[event] = this._listeners[event] || [];
-	this._listeners[event].push(listener);
-};
-
-Emitter.prototype.off = function(event, listener) {
-	if (event in this._listeners) {
-		var arr = this._listeners[event],
-			index = arr.indexOf(listener);
-
-		if (index > -1) {
-			arr.splice(index, 1);
+var Emitter = (function () {
+	var Emitter = function (obj) {
+		if (obj) {
+			// Convert the object prototype to have eventing capability
+			obj.prototype.on = this.prototype.on;
+			obj.prototype.off = this.prototype.off;
+			obj.prototype.emit = this.prototype.emit;
 		}
-	}
-};
+	};
 
-Emitter.prototype.emit = function(event, data) {
-	this._listeners = this._listeners || {};
+	Emitter.prototype.on = function(event, listener) {
+		this._listeners = this._listeners || {};
+		this._listeners[event] = this._listeners[event] || [];
+		this._listeners[event].push(listener);
+	};
 
-	if (event in this._listeners) {
-		var arr = this._listeners[event],
-			arrCount = arr.length,
-			arrIndex;
+	Emitter.prototype.off = function(event, listener) {
+		if (this._listeners) {
+			if (event in this._listeners) {
+				var arr = this._listeners[event],
+					index = arr.indexOf(listener);
 
-		for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-			arr[arrIndex].apply(this, Array.prototype.slice.call(arguments, 1));
+				if (index > -1) {
+					arr.splice(index, 1);
+				}
+			}
 		}
-	}
-};
+	};
+
+	Emitter.prototype.emit = function(event, data) {
+		this._listeners = this._listeners || {};
+
+		if (event in this._listeners) {
+			var arr = this._listeners[event],
+				arrCount = arr.length,
+				arrIndex;
+
+			for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+				arr[arrIndex].apply(this, Array.prototype.slice.call(arguments, 1));
+			}
+		}
+	};
+})();
+
+/**
+ * Node.js module support.
+ */
+if (typeof(module) !== 'undefined' && typeof(module.exports) !== 'undefined') {
+	Emitter.prototype._isServer = true;
+	module.exports = Emitter;
+}
+
+/**
+ * AMD module support.
+ */
+if (typeof(define) === 'function' && define.amd) {
+	define([], function() {
+		return Emitter;
+	});
+}
