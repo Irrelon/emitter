@@ -25,8 +25,12 @@
  Source: https://github.com/coolbloke1324/emitter
 
  Changelog:
-     Version 1.0.0:
- 		First commit
+ 	Version 1.0.1:
+ 		Added ability to extend any object with eventing capability
+ 		Added AMD / Require.js support
+		 Added Node.js support
+	Version 1.0.0:
+		First commit
  */
 var Emitter = (function () {
 	var Emitter = function (obj) {
