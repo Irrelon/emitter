@@ -1,0 +1,40 @@
+{
+	"author": "Rob Evans - Irrelon Software Limited",
+	"name": "irrelon-emitter",
+	"description": "Simple JavaScript event emitter.",
+	"version": "1.0.2",
+	"keywords": [
+		"javascript",
+		"browser",
+		"node",
+		"client-side",
+		"server-side",
+		"emitter",
+		"events",
+		"on",
+		"off",
+		"once",
+		"listener"
+	],
+	"dependencies": {
+
+	},
+	"engines": {
+		"node": "*"
+	},
+	"scripts": {
+
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/irrelon/emitter.git"
+	},
+	"devDependencies": {
+
+	},
+	"main": "./Emitter.js",
+	"browserify": "./Emitter.js",
+	"bugs": {
+		"url": "http://github.com/irrelon/emitter/issues"
+	}
+}
