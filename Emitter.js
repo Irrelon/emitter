@@ -149,7 +149,7 @@ Emitter.prototype.emit = new Overload({
 					removeArr = [];
 
 			for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-				arr[arrIndex].listener.apply(this, Array.prototype.slice.call(arguments, 1));
+				arr[arrIndex].listener.apply(this, Array.prototype.slice.call(arguments, 2));
 				if (arr[arrIndex].once) {
 					removeArr.push(arrIndex);
 				}
