@@ -25,6 +25,9 @@
  Source: https://github.com/irrelon/emitter
 
  Changelog:
+ 	Version 1.1.0:
+ 		Added support for overloaded methods
+ 		Added support for events with ids
  	Version 1.0.2:
  		Removed AMD support, added browserify support
  		Added package.json
@@ -38,28 +41,76 @@
 	Version 1.0.0:
 		First commit
  */
-var Emitter = (function () {
-	var Emitter = function (obj) {
-		if (obj) {
-			// Convert the object prototype to have eventing capability
-			obj.prototype.on = Emitter.prototype.on;
-			obj.prototype.off = Emitter.prototype.off;
-			obj.prototype.once = Emitter.prototype.once;
-			obj.prototype.emit = Emitter.prototype.emit;
-			obj.prototype.hasListener = Emitter.prototype.hasListener;
-		}
-	};
+"use strict";
 
-	Emitter.prototype.on = function(event, listener) {
+var Overload = require('irrelon-overload');
+
+var Emitter = function (obj) {
+	if (obj) {
+		// Convert the object prototype to have eventing capability
+		obj.prototype.on = Emitter.prototype.on;
+		obj.prototype.off = Emitter.prototype.off;
+		obj.prototype.once = Emitter.prototype.once;
+		obj.prototype.emit = Emitter.prototype.emit;
+		obj.prototype.hasListener = Emitter.prototype.hasListener;
+	}
+};
+
+Emitter.prototype.on = new Overload({
+	'string, function': function(event, listener) {
+		return this.$main.call(this, event, '*', listener, false);
+	},
+
+	'string, function, boolean': function(event, listener, once) {
+		return this.$main.call(this, event, '*', listener, once);
+	},
+
+	'string, string, function': function(event, id, listener) {
+		return this.$main.call(this, event, id, listener, false);
+	},
+
+	'string, string, function, boolean': function(event, id, listener, once) {
+		return this.$main.call(this, event, id, listener, once);
+	},
+
+	'$main': function (event, id, listener, once) {
 		this._listeners = this._listeners || {};
-		this._listeners[event] = this._listeners[event] || [];
-		this._listeners[event].push({once: false, listener: listener});
-	};
+		this._listeners[event] = this._listeners[event] || {};
+		this._listeners[event][id] = this._listeners[event][id] || [];
+		this._listeners[event][id].push({once: once, listener: listener});
+	}
+});
 
-	Emitter.prototype.off = function(event, listener) {
+Emitter.prototype.once = function(event, listener) {
+	var i,
+		argList = [];
+
+	for (i = 0; i < arguments.length; i++) {
+		argList.push(arguments[i]);
+	}
+
+	argList.push(true);
+
+	return this.on.apply(this, argList);
+};
+
+Emitter.prototype.off = new Overload({
+	'string': function (event) {
+		return this.$main.call(this, event, '*', '*');
+	},
+
+	'string, function': function(event, listener) {
+		return this.$main.call(this, event, '*', listener);
+	},
+
+	'string, string, function': function(event, id, listener) {
+		return this.$main.call(this, event, id, listener);
+	},
+
+	'$main': function (event, id, listener) {
 		if (this._listeners) {
 			if (event in this._listeners) {
-				var arr = this._listeners[event],
+				var arr = this._listeners[event][id],
 					arrCount = arr.length,
 					arrIndex;
 
@@ -72,22 +123,30 @@ var Emitter = (function () {
 				}
 			}
 		}
-	};
+	}
+});
 
-	Emitter.prototype.once = function(event, listener) {
-		this._listeners = this._listeners || {};
-		this._listeners[event] = this._listeners[event] || [];
-		this._listeners[event].push({once: true, listener: listener});
-	};
+Emitter.prototype.emit = new Overload({
+	'string': function (event) {
+		this.$main.call(this, event, '*');
+	},
 
-	Emitter.prototype.emit = function(event, data) {
+	'string, *': function (event, data) {
+		this.$main.call(this, event, '*', data);
+	},
+
+	'string, string, *': function (event, id, data) {
+		this.$main.call(this, event, id, data);
+	},
+
+	'$main': function (event, id, data) {
 		this._listeners = this._listeners || {};
 
 		if (event in this._listeners) {
-			var arr = this._listeners[event],
-				arrCount = arr.length,
-				arrIndex,
-				removeArr = [];
+			var arr = this._listeners[event][id],
+					arrCount = arr.length,
+					arrIndex,
+					removeArr = [];
 
 			for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
 				arr[arrIndex].listener.apply(this, Array.prototype.slice.call(arguments, 1));
@@ -102,13 +161,21 @@ var Emitter = (function () {
 				arr.splice(removeArr[arrIndex], 1);
 			}
 		}
-	};
+	}
+});
 
-	Emitter.prototype.hasListener = function (event) {
-		return this._listeners && event in this._listeners && this._listeners[event].length;
-	};
+Emitter.prototype.hasListener = new Overload({
+	'string': function (event) {
+		return this.$main.call(this, event, '*');
+	},
 
-	return Emitter;
-})();
+	'string, string': function (event, id) {
+		return this.$main.call(this, event, id);
+	},
+
+	'$main': function (event, id) {
+		return this._listeners && event in this._listeners && this._listeners[event][id] && this._listeners[event][id].length;
+	}
+});
 
 module.exports = Emitter;
