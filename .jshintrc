@@ -4,6 +4,7 @@
 	"white": true,
 	"onevar": true,
 	"nonew": true,
+	"jquery": true,
 	"curly": true,
 	"latedef": true,
 	"unused": "vars",
