@@ -1,6 +1,6 @@
 # Irrelon Emitter
 
-## Version 1.1.5
+## Version 1.1.6
 
 ## Usage
 
