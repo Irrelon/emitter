@@ -8,7 +8,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks("grunt-browserify");
-	//grunt.loadNpmTasks('grunt-qunit-blanket-lcov');
 	grunt.loadNpmTasks('grunt-umd');
 	grunt.loadNpmTasks('grunt-jsdoc');
 	grunt.loadNpmTasks('grunt-qunit-istanbul');
@@ -16,7 +15,7 @@ module.exports = function(grunt) {
 
 	grunt.initConfig({
 		"jshint": {
-			"irrelon-sse": {
+			"all": {
 				"files": {
 					"src": [
 						"lib/**/*.js",
@@ -39,9 +38,9 @@ module.exports = function(grunt) {
 		},
 
 		"browserify": {
-			"client": {
-				src: ["./builds/client.js"],
-				dest: "./dist/client.js",
+			"all": {
+				src: ["./builds/browser.js"],
+				dest: "./dist/index.js",
 				options: {
 					verbose: true,
 					debug: true,
@@ -54,9 +53,9 @@ module.exports = function(grunt) {
 		},
 
 		"uglify": {
-			"client": {
+			"all": {
 				"files": {
-					"./dist/client.min.js": ["./dist/client.js"]
+					"./dist/index.min.js": ["./dist/index.js"]
 				}
 			}
 		},
@@ -64,7 +63,7 @@ module.exports = function(grunt) {
 		umd: {
 			client: {
 				options: {
-					src: './dist/fdb-all.js',
+					src: './dist/index.js',
 					globalAlias: 'IrrelonSSE'
 				}
 			}
@@ -98,11 +97,6 @@ module.exports = function(grunt) {
 		// Save JSON
 		fileData = fileData.replace(oldVersion, versionString);
 		fs.writeFileSync('./package.json', fileData);
-
-		// Search project files for old version and replace
-		fileData = fs.readFileSync('./lib/Shared.js', {encoding: 'utf8'});
-		fileData = fileData.replace(oldVersion, versionString);
-		fs.writeFileSync('./lib/Shared.js', fileData);
 
 		fileData = fs.readFileSync('./readme.md', {encoding: 'utf8'});
 		fileData = fileData.replace(oldVersion, versionString);

@@ -2,7 +2,7 @@
   "author": "Rob Evans - Irrelon Software Limited",
   "name": "irrelon-emitter",
   "description": "Simple JavaScript event emitter.",
-  "version": "1.1.0",
+  "version": "1.0.2",
   "keywords": [
     "javascript",
     "browser",
@@ -17,7 +17,22 @@
     "listener"
   ],
   "dependencies": {
-    "irrelon-overload": "^1.0.2"
+    "irrelon-overload": "^1.0.2",
+    "aliasify": "*",
+    "browserify-derequire": "*",
+    "derequire": "*",
+    "fs-extra": "*",
+    "grunt": "*",
+    "grunt-browserify": "*",
+    "grunt-cli": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-jsdoc": "*",
+    "grunt-node-qunit": "*",
+    "grunt-qunit-istanbul": "*",
+    "grunt-umd": "*",
+    "qunit": "*",
+    "stringify": "*"
   },
   "engines": {
     "node": "*"
@@ -28,8 +43,8 @@
     "url": "git://github.com/irrelon/emitter.git"
   },
   "devDependencies": {},
-  "main": "./Emitter.js",
-  "browserify": "./Emitter.js",
+  "main": "./lib/Emitter.js",
+  "browserify": "./lib/Emitter.js",
   "bugs": {
     "url": "http://github.com/irrelon/emitter/issues"
   }
