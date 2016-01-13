@@ -117,18 +117,43 @@ Emitter.prototype.off = new Overload({
 	},
 
 	'$main': function (event, id, listener) {
+		var tmpId,
+			eventObj,
+			arr,
+			arrCount,
+			arrIndex;
+
 		if (this._listeners) {
 			if (event in this._listeners) {
-				var arr = this._listeners[event][id],
-					arrCount = arr.length,
-					arrIndex;
+				eventObj = this._listeners[event];
 
-				for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-					if (arr[arrIndex].listener === listener) {
-						arr.splice(arrIndex, 1);
-						break;
+				if (id === '*') {
+					// Loop all ids in the listener for this event
+					for (tmpId in eventObj) {
+						if (eventObj.hasOwnProperty(tmpId)) {
+							arr = eventObj[tmpId];
+							arrCount = arr.length;
+
+							for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+								if (listener === '*' || arr[arrIndex].listener === listener) {
+									arr.splice(arrIndex, 1);
+									break;
+								}
+
+							}
+						}
 					}
+				} else {
+					arr = eventObj[id];
+					arrCount = arr.length;
 
+					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+						if (listener === '*' || arr[arrIndex].listener === listener) {
+							arr.splice(arrIndex, 1);
+							break;
+						}
+
+					}
 				}
 			}
 		}
