@@ -2,7 +2,7 @@
   "author": "Rob Evans - Irrelon Software Limited",
   "name": "irrelon-emitter",
   "description": "Simple JavaScript event emitter.",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "keywords": [
     "javascript",
     "browser",
@@ -17,7 +17,9 @@
     "listener"
   ],
   "dependencies": {
-    "irrelon-overload": "^1.0.2",
+    "irrelon-overload": "^1.0.2"
+  },
+  "devDependencies": {
     "aliasify": "*",
     "browserify-derequire": "*",
     "derequire": "*",
@@ -42,7 +44,6 @@
     "type": "git",
     "url": "git://github.com/irrelon/emitter.git"
   },
-  "devDependencies": {},
   "main": "./lib/Emitter.js",
   "browserify": "./lib/Emitter.js",
   "bugs": {
