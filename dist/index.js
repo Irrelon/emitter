@@ -34,6 +34,8 @@ module.exports = Emitter;
  Source: https://github.com/irrelon/emitter
 
  Changelog:
+ 	Version 1.1.8:
+ 		Removed tons of dependencies wrongly included in main dependencies, have moved to devDependencies section of package.json
  	Version 1.1.0:
  		Added support for overloaded methods
  		Added support for events with ids
