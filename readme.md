@@ -1,6 +1,6 @@
 # Irrelon Emitter
 
-## Version 1.1.7
+## Version 2.0.0
 
 ## Usage
 
@@ -45,4 +45,8 @@ Your class now inherits the emitter methods:
 * off
 * once
 * emit
-* hasListener
+* emitId
+* emitStatic
+* emitStaticId
+* deferEmit
+* willEmit
