@@ -34,6 +34,8 @@ module.exports = Emitter;
  Source: https://github.com/irrelon/emitter
 
  Changelog:
+ 	Version 2.0.1:
+ 		Bug fix in this._emitters usage
  	Version 2.0.0:
  		Big update to bring in line with latest developments in other projects. Event emitter can
  		now use deferEmit(), emitId(), emitStatic(), emitStaticId(), willEmit(), willEmitId().
@@ -608,7 +610,7 @@ var EventMethods = {
 			}
 		}
 		
-		return false
+		return false;
 	},
 	
 	/**
@@ -656,7 +658,7 @@ var EventMethods = {
 			}
 		}
 		
-		return false
+		return false;
 	},
 	
 	/**
