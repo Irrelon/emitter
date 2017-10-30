@@ -1,0 +1,29 @@
+{
+  "name": "irrelon-emitter",
+  "description": "Simple JavaScript event emitter.",
+  "main": "./dist/index.min.js",
+  "authors": [
+    "Rob Evans - Irrelon Software Limited"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "javascript",
+    "browser",
+    "node",
+    "client-side",
+    "server-side",
+    "emitter",
+    "events",
+    "on",
+    "off",
+    "once",
+    "listener"
+  ],
+  "homepage": "https://github.com/Irrelon/emitter",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "unitTests"
+  ]
+}

@@ -1,4 +1,32 @@
-/*
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Emitter.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Emitter.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
  The MIT License (MIT)
 
  Copyright (c) 2014 Irrelon Software Limited
@@ -105,9 +133,9 @@ var EventMethods = {
 			this._listeners[event][id].push(listener);
 			
 			// Check for any static emitters, and fire the event if any exist
-			if (this._emitters && this._emitters[event] && this._emitters[event].length) {
+			if (this._emitters &amp;&amp; this._emitters[event] &amp;&amp; this._emitters[event].length) {
 				// Emit events for each emitter
-				for (i = 0; i < this._emitters[event].length; i++) {
+				for (i = 0; i &lt; this._emitters[event].length; i++) {
 					emitter = this._emitters[event];
 					
 					if (id === '*' || emitter.id === id) {
@@ -186,7 +214,7 @@ var EventMethods = {
 					self.off(event);
 				});
 			} else {
-				if (this._listeners && this._listeners[event]) {
+				if (this._listeners &amp;&amp; this._listeners[event]) {
 					delete this._listeners[event];
 				}
 			}
@@ -215,11 +243,11 @@ var EventMethods = {
 				});
 			} else {
 				if (typeof(listener) === 'string') {
-					if (this._listeners && this._listeners[event] && this._listeners[event][listener]) {
+					if (this._listeners &amp;&amp; this._listeners[event] &amp;&amp; this._listeners[event][listener]) {
 						delete this._listeners[event][listener];
 					}
 				} else {
-					if (this._listeners && this._listeners[event]) {
+					if (this._listeners &amp;&amp; this._listeners[event]) {
 						arr = this._listeners[event]['*'];
 						index = arr.indexOf(listener);
 						
@@ -251,7 +279,7 @@ var EventMethods = {
 					self.off(event, id, listener);
 				});
 			} else {
-				if (this._listeners && this._listeners[event] && this._listeners[event][id]) {
+				if (this._listeners &amp;&amp; this._listeners[event] &amp;&amp; this._listeners[event][id]) {
 					var arr = this._listeners[event][id],
 						index = arr.indexOf(listener);
 					
@@ -278,7 +306,7 @@ var EventMethods = {
 					self.off(event, id);
 				});
 			} else {
-				if (this._listeners && this._listeners[event] && this._listeners[event][id]) {
+				if (this._listeners &amp;&amp; this._listeners[event] &amp;&amp; this._listeners[event][id]) {
 					// Kill all listeners for this event id
 					delete this._listeners[event][id];
 				}
@@ -337,7 +365,7 @@ var EventMethods = {
 					arr = this._listeners[event][id];
 					arrCount = arr.length;
 					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+					for (arrIndex = 0; arrIndex &lt; arrCount; arrIndex++) {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
@@ -386,7 +414,7 @@ var EventMethods = {
 					arr = this._listeners[event]['*'];
 					arrCount = arr.length;
 					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+					for (arrIndex = 0; arrIndex &lt; arrCount; arrIndex++) {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
@@ -401,7 +429,7 @@ var EventMethods = {
 					arr = this._listeners[event][id];
 					arrCount = arr.length;
 					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+					for (arrIndex = 0; arrIndex &lt; arrCount; arrIndex++) {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
@@ -472,7 +500,7 @@ var EventMethods = {
 					arr = this._listeners[event][id];
 					arrCount = arr.length;
 					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+					for (arrIndex = 0; arrIndex &lt; arrCount; arrIndex++) {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
@@ -562,7 +590,7 @@ var EventMethods = {
 					arr = this._listeners[event]['*'];
 					arrCount = arr.length;
 					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+					for (arrIndex = 0; arrIndex &lt; arrCount; arrIndex++) {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
@@ -577,7 +605,7 @@ var EventMethods = {
 					arr = this._listeners[event][id];
 					arrCount = arr.length;
 					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+					for (arrIndex = 0; arrIndex &lt; arrCount; arrIndex++) {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
@@ -614,7 +642,7 @@ var EventMethods = {
 	willEmit: function (event) {
 		var id = '*';
 		
-		if (this._listeners && this._listeners[event]) {
+		if (this._listeners &amp;&amp; this._listeners[event]) {
 			var arrIndex,
 				arrCount,
 				tmpFunc,
@@ -625,7 +653,7 @@ var EventMethods = {
 				arr = this._listeners[event][id];
 				arrCount = arr.length;
 				
-				for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+				for (arrIndex = 0; arrIndex &lt; arrCount; arrIndex++) {
 					// Check we have a function to execute
 					tmpFunc = arr[arrIndex];
 					
@@ -649,7 +677,7 @@ var EventMethods = {
 	 * the event. False if none are found.
 	 */
 	willEmitId: function (event, id) {
-		if (this._listeners && this._listeners[event]) {
+		if (this._listeners &amp;&amp; this._listeners[event]) {
 			var arrIndex,
 				arrCount,
 				tmpFunc,
@@ -660,7 +688,7 @@ var EventMethods = {
 				arr = this._listeners[event]['*'];
 				arrCount = arr.length;
 				
-				for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+				for (arrIndex = 0; arrIndex &lt; arrCount; arrIndex++) {
 					// Check we have a function to execute
 					tmpFunc = arr[arrIndex];
 					
@@ -675,7 +703,7 @@ var EventMethods = {
 				arr = this._listeners[event][id];
 				arrCount = arr.length;
 				
-				for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+				for (arrIndex = 0; arrIndex &lt; arrCount; arrIndex++) {
 					// Check we have a function to execute
 					tmpFunc = arr[arrIndex];
 					
@@ -701,9 +729,9 @@ var EventMethods = {
 	_processRemovalQueue: function () {
 		var i;
 		
-		if (this._eventRemovalQueue && this._eventRemovalQueue.length) {
+		if (this._eventRemovalQueue &amp;&amp; this._eventRemovalQueue.length) {
 			// Execute each removal call
-			for (i = 0; i < this._eventRemovalQueue.length; i++) {
+			for (i = 0; i &lt; this._eventRemovalQueue.length; i++) {
 				this._eventRemovalQueue[i]();
 			}
 			
@@ -727,7 +755,7 @@ var EventMethods = {
 		var self = this,
 			args;
 		
-		if (!this._noEmitDefer && (!this._db || (this._db && !this._db._noEmitDefer))) {
+		if (!this._noEmitDefer &amp;&amp; (!this._db || (this._db &amp;&amp; !this._db._noEmitDefer))) {
 			args = arguments;
 			
 			// Check for an existing timeout
@@ -770,4 +798,26 @@ var Emitter = function (obj) {
 	}
 };
 
-module.exports = Emitter;
+module.exports = Emitter;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Emitter.html">Emitter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$main">$main</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Oct 30 2017 17:11:55 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
