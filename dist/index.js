@@ -34,6 +34,12 @@ module.exports = Emitter;
  Source: https://github.com/irrelon/emitter
 
  Changelog:
+ 	Version 2.0.4:
+ 		Allow instantiation as independent instance, updated unit tests
+ 	Version 2.0.3:
+ 		Documentation updates, published to bower
+ 	Version 2.0.2:
+ 		Documentation updates
  	Version 2.0.1:
  		Bug fix in this._emitters usage
  	Version 2.0.0:
@@ -67,6 +73,8 @@ var EventMethods = {
 	on: new Overload({
 		/**
 		 * Attach an event listener to the passed event.
+		 * @memberof Emitter
+		 * @method on
 		 * @param {String} event The name of the event to listen for.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
@@ -77,6 +85,8 @@ var EventMethods = {
 		/**
 		 * Attach an event listener to the passed event only if the passed
 		 * id matches the document id for the event being fired.
+		 * @memberof Emitter
+		 * @method on
 		 * @param {String} event The name of the event to listen for.
 		 * @param {*} id The document id to match against.
 		 * @param {Function} listener The method to call when the event is fired.
@@ -85,6 +95,13 @@ var EventMethods = {
 			return this.$main(event, id, listener);
 		},
 		
+		/**
+		 * @param event
+		 * @param id
+		 * @param listener
+		 * @return {$main}
+		 * @private
+		 */
 		'$main': function (event, id, listener) {
 			var self = this,
 				generateTimeout,
@@ -124,6 +141,8 @@ var EventMethods = {
 	once: new Overload({
 		/**
 		 * Attach an event listener to the passed event which will only fire once.
+		 * @memberof Emitter
+		 * @method once
 		 * @param {String} event The name of the event to listen for.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
@@ -144,6 +163,8 @@ var EventMethods = {
 		/**
 		 * Attach an event listener to the passed event only if the passed
 		 * id matches the document id for the event being fired.
+		 * @memberof Emitter
+		 * @method once
 		 * @param {String} event The name of the event to listen for.
 		 * @param {*} id The document id to match against.
 		 * @param {Function} listener The method to call when the event is fired.
@@ -166,6 +187,8 @@ var EventMethods = {
 	off: new Overload({
 		/**
 		 * Cancels all event listeners for the passed event.
+		 * @memberof Emitter
+		 * @method off
 		 * @param {String} event The name of the event.
 		 * @returns {*}
 		 */
@@ -188,6 +211,8 @@ var EventMethods = {
 		
 		/**
 		 * Cancels the event listener for the passed event and listener function.
+		 * @memberof Emitter
+		 * @method off
 		 * @param {String} event The event to cancel listener for.
 		 * @param {Function} listener The event listener function used in the on()
 		 * or once() call to cancel.
@@ -225,6 +250,8 @@ var EventMethods = {
 		
 		/**
 		 * Cancels an event listener based on an event name, id and listener function.
+		 * @memberof Emitter
+		 * @method off
 		 * @param {String} event The event to cancel listener for.
 		 * @param {String} id The ID of the event to cancel listening for.
 		 * @param {Function} listener The event listener function used in the on()
@@ -252,6 +279,8 @@ var EventMethods = {
 		
 		/**
 		 * Cancels all listeners for an event based on the passed event name and id.
+		 * @memberof Emitter
+		 * @method off
 		 * @param {String} event The event name to cancel listeners for.
 		 * @param {*} id The ID to cancel all listeners for.
 		 */
@@ -275,6 +304,8 @@ var EventMethods = {
 	emit: new Overload({
 		/**
 		 * Emit an event.
+		 * @memberof Emitter
+		 * @method emit
 		 * @param {String} event The event to emit.
 		 * @returns {*}
 		 */
@@ -285,6 +316,8 @@ var EventMethods = {
 		
 		/**
 		 * Emit an event with data.
+		 * @memberof Emitter
+		 * @method emit
 		 * @param {String} event The event to emit.
 		 * @param {*} data Data to emit with the event.
 		 * @returns {*}
@@ -405,7 +438,8 @@ var EventMethods = {
 		/**
 		 * Emit an event that will fire on listeners even when the listener
 		 * is registered AFTER the event has been emitted.
-		 *
+		 * @memberof Emitter
+		 * @method emitStatic
 		 * @param {String} event The event to emit.
 		 * @returns {*}
 		 */
@@ -417,7 +451,8 @@ var EventMethods = {
 		/**
 		 * Emit an event with data that will fire on listeners even when the listener
 		 * is registered AFTER the event has been emitted.
-		 *
+		 * @memberof Emitter
+		 * @method emitStatic
 		 * @param {String} event The event to emit.
 		 * @param {*} data Data to emit with the event.
 		 * @returns {*}
@@ -481,6 +516,8 @@ var EventMethods = {
 	emitStaticId: new Overload({
 		/**
 		 * Require an id to emit.
+		 * @memberof Emitter
+		 * @method emitStaticId
 		 * @param event
 		 */
 		'string': function (event) {
@@ -490,7 +527,8 @@ var EventMethods = {
 		/**
 		 * Emit an event that will fire on listeners even when the listener
 		 * is registered AFTER the event has been emitted.
-		 *
+		 * @memberof Emitter
+		 * @method emitStaticId
 		 * @param {String} event The event to emit.
 		 * @param {String} id The id of the event to emit.
 		 * @returns {*}
@@ -502,7 +540,8 @@ var EventMethods = {
 		/**
 		 * Emit an event that will fire on listeners even when the listener
 		 * is registered AFTER the event has been emitted.
-		 *
+		 * @memberof Emitter
+		 * @method emitStaticId
 		 * @param {String} event The event to emit.
 		 * @param {String} id The id of the event to emit.
 		 * @param {*=} data The data to emit with the event.
@@ -581,6 +620,8 @@ var EventMethods = {
 	
 	/**
 	 * Checks if an event has any event listeners or not.
+	 * @memberof Emitter
+	 * @method willEmit
 	 * @param {String} event The name of the event to check for.
 	 * @returns {boolean} True if one or more event listeners are registered for
 	 * the event. False if none are found.
@@ -615,6 +656,8 @@ var EventMethods = {
 	
 	/**
 	 * Checks if an event has any event listeners or not based on the passed id.
+	 * @memberof Emitter
+	 * @method willEmitId
 	 * @param {String} event The name of the event to check for.
 	 * @param {String} id The event ID to check for.
 	 * @returns {boolean} True if one or more event listeners are registered for
@@ -690,6 +733,8 @@ var EventMethods = {
 	 * one will all be wrapped into a single emit rather than emitting tons of
 	 * events for lots of chained inserts etc. Only the data from the last
 	 * de-bounced event will be emitted.
+	 * @memberof Emitter
+	 * @method deferEmit
 	 * @param {String} eventName The name of the event to emit.
 	 * @param {*=} data Optional data to emit with the event.
 	 */
@@ -718,22 +763,63 @@ var EventMethods = {
 	}
 };
 
-var Emitter = function (obj) {
-	if (obj) {
-		// Convert the object prototype to have eventing capability
-		obj.prototype.on = EventMethods.on;
-		obj.prototype.off = EventMethods.off;
-		obj.prototype.once = EventMethods.once;
-		obj.prototype.emit = EventMethods.emit;
-		obj.prototype.emitId = EventMethods.emitId;
-		obj.prototype.emitStatic = EventMethods.emitStatic;
-		obj.prototype.emitStaticId = EventMethods.emitStaticId;
-		obj.prototype.deferEmit = EventMethods.deferEmit;
-		obj.prototype.willEmit = EventMethods.willEmit;
-		obj.prototype.willEmitId = EventMethods.willEmitId;
-		obj.prototype._processRemovalQueue = EventMethods._processRemovalQueue;
+/**
+ * @class Emitter
+ * @param obj
+ * @param {Boolean} prototypeMode Defaults to true. Set to true to add emitter
+ * methods to the the passed object's prototype property e.g. obj.prototype.on
+ * = emitter.on. Set to false to add emitter methods the object directly e.g.
+ * obj.on = emitter.on.
+ * @constructor
+ */
+var Emitter = function (obj, prototypeMode) {
+	var operateOnObject;
+	
+	if (obj === undefined && prototypeMode === undefined) {
+		obj = {};
+		prototypeMode = false;
 	}
+	
+	if (typeof obj === 'boolean' && prototypeMode === undefined) {
+		prototypeMode = obj;
+		obj = {};
+	}
+	
+	if (prototypeMode === undefined) {
+		prototypeMode = true;
+	}
+	
+	if (typeof obj !== 'object' && typeof obj !== 'function') {
+		throw new Error('Cannot operate on a non-object / non-function passed as first argument!');
+	}
+	
+	if (prototypeMode) {
+		if (obj.prototype === undefined) {
+			throw new Error('Cannot modify prototype of passed object, it has no prototype property! Was it instantiated with the new operator correctly?');
+		}
+		
+		operateOnObject = obj.prototype;
+	} else {
+		operateOnObject = obj;
+	}
+	
+	// Convert the object prototype to have eventing capability
+	operateOnObject.on = EventMethods.on;
+	operateOnObject.off = EventMethods.off;
+	operateOnObject.once = EventMethods.once;
+	operateOnObject.emit = EventMethods.emit;
+	operateOnObject.emitId = EventMethods.emitId;
+	operateOnObject.emitStatic = EventMethods.emitStatic;
+	operateOnObject.emitStaticId = EventMethods.emitStaticId;
+	operateOnObject.deferEmit = EventMethods.deferEmit;
+	operateOnObject.willEmit = EventMethods.willEmit;
+	operateOnObject.willEmitId = EventMethods.willEmitId;
+	operateOnObject._processRemovalQueue = EventMethods._processRemovalQueue;
+	
+	return obj;
 };
+
+Emitter.prototype = EventMethods;
 
 module.exports = Emitter;
 },{"irrelon-overload":3}],3:[function(_dereq_,module,exports){
