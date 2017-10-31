@@ -1,3 +1,19 @@
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module unless amdModuleId is set
+    define([], function () {
+      return (factory());
+    });
+  } else if (typeof exports === 'object') {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory();
+  } else {
+    root['Emitter'] = factory();
+  }
+}(this, function () {
+
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 var Emitter = _dereq_('../lib/Emitter');
 
@@ -34,6 +50,10 @@ module.exports = Emitter;
  Source: https://github.com/irrelon/emitter
 
  Changelog:
+ 	Version 2.0.6:
+ 		Added UMD module support
+ 	Version 2.0.5:
+ 		Added bower version number
  	Version 2.0.4:
  		Allow instantiation as independent instance, updated unit tests
  	Version 2.0.3:
@@ -978,3 +998,6 @@ Overload.prototype.callExtend = function (context, prop, propContext, func, args
 
 module.exports = Overload;
 },{}]},{},[1]);
+
+
+}));
