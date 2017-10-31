@@ -1,12 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
-var Emitter = _dereq_('../lib/Emitter');
-
-if (typeof window !== 'undefined') {
-	window.Emitter = Emitter;
-}
-
-module.exports = Emitter;
-},{"../lib/Emitter":2}],2:[function(_dereq_,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Emitter = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /*
  The MIT License (MIT)
 
@@ -34,6 +26,14 @@ module.exports = Emitter;
  Source: https://github.com/irrelon/emitter
 
  Changelog:
+ 	Version 2.0.7:
+ 		Fixed UMD module support
+ 	Version 2.0.6:
+ 		Added UMD module support
+ 	Version 2.0.5:
+ 		Added bower version number
+ 	Version 2.0.4:
+ 		Allow instantiation as independent instance, updated unit tests
  	Version 2.0.3:
  		Documentation updates, published to bower
  	Version 2.0.2:
@@ -820,7 +820,7 @@ var Emitter = function (obj, prototypeMode) {
 Emitter.prototype = EventMethods;
 
 module.exports = Emitter;
-},{"irrelon-overload":3}],3:[function(_dereq_,module,exports){
+},{"irrelon-overload":2}],2:[function(_dereq_,module,exports){
 "use strict";
 
 /**
@@ -975,4 +975,5 @@ Overload.prototype.callExtend = function (context, prop, propContext, func, args
 };
 
 module.exports = Overload;
-},{}]},{},[1]);
+},{}]},{},[1])(1)
+});

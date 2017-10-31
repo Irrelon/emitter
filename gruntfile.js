@@ -39,7 +39,7 @@ module.exports = function(grunt) {
 
 		"browserify": {
 			"all": {
-				src: ["./builds/browser.js"],
+				src: ["./lib/Emitter.js"],
 				dest: "./dist/index.js",
 				options: {
 					verbose: true,
@@ -47,7 +47,10 @@ module.exports = function(grunt) {
 					transform: [aliasify, stringify(['.html'])],
 					plugin: [
 						[ "browserify-derequire" ]
-					]
+					],
+					browserifyOptions: {
+						standalone: 'Emitter'
+					}
 				}
 			}
 		},
@@ -214,9 +217,9 @@ module.exports = function(grunt) {
 		execSync('doctoc readme.md');*/
 	});
 
-	grunt.registerTask("1: Build Source File", ["browserify", "umd", "uglify"]);
-	grunt.registerTask("2: Build Source File, Docs & Minify", ["generateTOC", "browserify", "umd", "uglify"]);
-	grunt.registerTask("3: Build and Test", ["version", "generateTOC", "browserify", "umd", "uglify"]);
-	grunt.registerTask("4: Build, Test, Tag and Push Dev Branch", ["checkoutDev", "version", "generateTOC", "jshint", "browserify", "umd", "uglify", "jsdoc", "gitCommit", "gitPushAndTagDev", "npmPublishDev"]);
-	grunt.registerTask("5: Release and Publish Master Build From Dev", ["checkoutDev", "version", "generateTOC", "jshint", "browserify", "umd", "uglify", "jsdoc", "gitCommit", "gitPushAndTagDev", "gitMergeDevIntoMaster", "gitPushAndTagMaster", "npmPublish", "checkoutDev"]);
+	grunt.registerTask("1: Build Source File", ["browserify", "uglify"]);
+	grunt.registerTask("2: Build Source File, Docs & Minify", ["generateTOC", "browserify", "uglify"]);
+	grunt.registerTask("3: Build and Test", ["version", "generateTOC", "browserify", "uglify"]);
+	grunt.registerTask("4: Build, Test, Tag and Push Dev Branch", ["checkoutDev", "version", "generateTOC", "jshint", "browserify", "uglify", "jsdoc", "gitCommit", "gitPushAndTagDev", "npmPublishDev"]);
+	grunt.registerTask("5: Release and Publish Master Build From Dev", ["checkoutDev", "version", "generateTOC", "jshint", "browserify", "uglify", "jsdoc", "gitCommit", "gitPushAndTagDev", "gitMergeDevIntoMaster", "gitPushAndTagMaster", "npmPublish", "checkoutDev"]);
 };
