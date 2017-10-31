@@ -64,7 +64,7 @@ module.exports = function(grunt) {
 			client: {
 				options: {
 					src: './dist/index.js',
-					globalAlias: 'IrrelonSSE'
+					globalAlias: 'Emitter'
 				}
 			}
 		}
@@ -101,6 +101,10 @@ module.exports = function(grunt) {
 		fileData = fs.readFileSync('./readme.md', {encoding: 'utf8'});
 		fileData = fileData.replace(oldVersion, versionString);
 		fs.writeFileSync('./readme.md', fileData);
+		
+		fileData = fs.readFileSync('./bower.json', {encoding: 'utf8'});
+		fileData = fileData.replace(oldVersion, versionString);
+		fs.writeFileSync('./bower.json', fileData);
 	});
 
 	grunt.registerTask('gitCommit', 'Git Commit Updates', function () {
@@ -210,8 +214,8 @@ module.exports = function(grunt) {
 		execSync('doctoc readme.md');*/
 	});
 
-	grunt.registerTask("1: Build Source File", ["browserify"]);
-	grunt.registerTask("2: Build and Test", ["version", "generateTOC", "browserify", "uglify"]);
-	grunt.registerTask("3: Build, Test, Tag and Push Dev Branch", ["checkoutDev", "version", "generateTOC", "jshint", "browserify", "uglify", "jsdoc", "gitCommit", "gitPushAndTagDev", "npmPublishDev"]);
-	grunt.registerTask("4: Release and Publish Master Build From Dev", ["checkoutDev", "version", "generateTOC", "jshint", "browserify", "uglify", "jsdoc", "gitCommit", "gitPushAndTagDev", "gitMergeDevIntoMaster", "gitPushAndTagMaster", "npmPublish", "checkoutDev"]);
+	grunt.registerTask("1: Build Source File", ["browserify", "umd"]);
+	grunt.registerTask("2: Build and Test", ["version", "generateTOC", "browserify", "umd", "uglify"]);
+	grunt.registerTask("3: Build, Test, Tag and Push Dev Branch", ["checkoutDev", "version", "generateTOC", "jshint", "browserify", "umd", "uglify", "jsdoc", "gitCommit", "gitPushAndTagDev", "npmPublishDev"]);
+	grunt.registerTask("4: Release and Publish Master Build From Dev", ["checkoutDev", "version", "generateTOC", "jshint", "browserify", "umd", "uglify", "jsdoc", "gitCommit", "gitPushAndTagDev", "gitMergeDevIntoMaster", "gitPushAndTagMaster", "npmPublish", "checkoutDev"]);
 };
