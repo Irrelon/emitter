@@ -29,3 +29,42 @@ QUnit.test("Emitter.off() - Remove all listeners from an event", function () {
 
 	strictEqual(!myClass._listeners.moo || myClass._listeners.moo['*'].length, true, true, 'Listeners all removed from event');
 });
+
+QUnit.asyncTest("Emitter.emitStatic() - Check static emitter works", function () {
+	var MyClass = function () {},
+		myClass;
+	
+	expect(1);
+	
+	Emitter(MyClass);
+	
+	myClass = new MyClass();
+	myClass.emitStatic('moo');
+	myClass.on('moo', function () {
+		ok(true, "Callback was fired");
+		start();
+	});
+});
+
+QUnit.asyncTest("Emitter.offStatic() - Check static emitter can be removed works", function () {
+	var MyClass = function () {},
+		myClass;
+	
+	expect(1);
+	
+	Emitter(MyClass);
+	
+	myClass = new MyClass();
+	myClass.emitStatic('moo');
+	myClass.on('moo', function () {
+		ok(true, "Callback was fired");
+	});
+	myClass.offStatic('moo');
+	myClass.on('moo', function () {
+		ok(true, "Callback was fired");
+	});
+	
+	setTimeout(() => {
+		start();
+	}, 1000);
+});
