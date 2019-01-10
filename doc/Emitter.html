@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2>Emitter</h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Emitter<span class="signature">(obj, prototypeMode)</span><span class="type-signature"></span></h2>
         
             <div class="class-description">Emitter</div>
         
@@ -44,7 +44,9 @@
     <h2>Constructor</h2>
     
 
+    
     <h4 class="name" id="Emitter"><span class="type-signature"></span>new Emitter<span class="signature">(obj, prototypeMode)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -161,7 +163,7 @@ obj.on = emitter.on.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line799">line 799</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line801">line 801</a>
     </li></ul></dd>
     
 
@@ -187,6 +189,8 @@ obj.on = emitter.on.</td>
 
 
 
+
+
     
     </div>
 
@@ -196,7 +200,9 @@ obj.on = emitter.on.</td>
 
     
 
-     
+    
+
+    
 
     
 
@@ -210,7 +216,9 @@ obj.on = emitter.on.</td>
 
     
 
+    
     <h4 class="name" id=".deferEmit"><span class="type-signature">(static) </span>deferEmit<span class="signature">(eventName, data<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -357,7 +365,7 @@ de-bounced event will be emitted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line754">line 754</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line756">line 756</a>
     </li></ul></dd>
     
 
@@ -383,12 +391,169 @@ de-bounced event will be emitted.
 
 
 
+
+
         
             
 
     
 
+    
+    <h4 class="name" id=".emit"><span class="type-signature">(static) </span>emit<span class="signature">(event)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Emit an event.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The event to emit.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line304">line 304</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id=".emit"><span class="type-signature">(static) </span>emit<span class="signature">(event, data)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    
 
     
 
@@ -511,7 +676,7 @@ de-bounced event will be emitted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line314">line 314</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line316">line 316</a>
     </li></ul></dd>
     
 
@@ -555,153 +720,6 @@ de-bounced event will be emitted.
 
 
 
-        
-            
-
-    
-
-    <h4 class="name" id=".emit"><span class="type-signature">(static) </span>emit<span class="signature">(event)</span><span class="type-signature"> &rarr; {*}</span></h4>
-
-    
-
-
-
-<div class="description">
-    Emit an event.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event to emit.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line302">line 302</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">*</span>
-
-
-    </dd>
-</dl>
-
-    
-
 
 
         
@@ -709,7 +727,9 @@ de-bounced event will be emitted.
 
     
 
+    
     <h4 class="name" id=".emitStatic"><span class="type-signature">(static) </span>emitStatic<span class="signature">(event)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    
 
     
 
@@ -810,7 +830,7 @@ is registered AFTER the event has been emitted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line435">line 435</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line437">line 437</a>
     </li></ul></dd>
     
 
@@ -854,153 +874,6 @@ is registered AFTER the event has been emitted.
 
 
 
-        
-            
-
-    
-
-    <h4 class="name" id=".emitStatic"><span class="type-signature">(static) </span>emitStatic<span class="signature">(event)</span><span class="type-signature"> &rarr; {*}</span></h4>
-
-    
-
-
-
-<div class="description">
-    Remove a static event emitter.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event to remove static emitter for.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line619">line 619</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">*</span>
-
-
-    </dd>
-</dl>
-
-    
-
 
 
         
@@ -1008,7 +881,9 @@ is registered AFTER the event has been emitted.
 
     
 
+    
     <h4 class="name" id=".emitStatic"><span class="type-signature">(static) </span>emitStatic<span class="signature">(event, data)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    
 
     
 
@@ -1132,7 +1007,7 @@ is registered AFTER the event has been emitted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line448">line 448</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line450">line 450</a>
     </li></ul></dd>
     
 
@@ -1176,12 +1051,169 @@ is registered AFTER the event has been emitted.
 
 
 
+
+
         
             
 
     
 
+    
+    <h4 class="name" id=".emitStatic"><span class="type-signature">(static) </span>emitStatic<span class="signature">(event)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Remove a static event emitter.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The event to remove static emitter for.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line621">line 621</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id=".emitStaticId"><span class="type-signature">(static) </span>emitStaticId<span class="signature">(event)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -1276,7 +1308,7 @@ is registered AFTER the event has been emitted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line514">line 514</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line516">line 516</a>
     </li></ul></dd>
     
 
@@ -1302,12 +1334,16 @@ is registered AFTER the event has been emitted.
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".emitStaticId"><span class="type-signature">(static) </span>emitStaticId<span class="signature">(event, id)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    
 
     
 
@@ -1431,7 +1467,7 @@ is registered AFTER the event has been emitted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line524">line 524</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line526">line 526</a>
     </li></ul></dd>
     
 
@@ -1475,12 +1511,16 @@ is registered AFTER the event has been emitted.
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".emitStaticId"><span class="type-signature">(static) </span>emitStaticId<span class="signature">(event, id, data<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    
 
     
 
@@ -1655,7 +1695,7 @@ is registered AFTER the event has been emitted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line537">line 537</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line539">line 539</a>
     </li></ul></dd>
     
 
@@ -1699,12 +1739,16 @@ is registered AFTER the event has been emitted.
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".off"><span class="type-signature">(static) </span>off<span class="signature">(event, id)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -1827,7 +1871,7 @@ is registered AFTER the event has been emitted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line277">line 277</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line279">line 279</a>
     </li></ul></dd>
     
 
@@ -1853,12 +1897,16 @@ is registered AFTER the event has been emitted.
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".off"><span class="type-signature">(static) </span>off<span class="signature">(event, id, listener)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -2005,7 +2053,7 @@ or once() call to cancel.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line248">line 248</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line250">line 250</a>
     </li></ul></dd>
     
 
@@ -2031,12 +2079,16 @@ or once() call to cancel.</td>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".off"><span class="type-signature">(static) </span>off<span class="signature">(event, listener)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    
 
     
 
@@ -2160,7 +2212,7 @@ or once() call to cancel.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line209">line 209</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line211">line 211</a>
     </li></ul></dd>
     
 
@@ -2204,12 +2256,16 @@ or once() call to cancel.</td>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".off"><span class="type-signature">(static) </span>off<span class="signature">(event)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    
 
     
 
@@ -2309,7 +2365,7 @@ or once() call to cancel.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line185">line 185</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line187">line 187</a>
     </li></ul></dd>
     
 
@@ -2353,12 +2409,16 @@ or once() call to cancel.</td>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".on"><span class="type-signature">(static) </span>on<span class="signature">(event, id, listener)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -2505,7 +2565,7 @@ id matches the document id for the event being fired.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line82">line 82</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line84">line 84</a>
     </li></ul></dd>
     
 
@@ -2531,12 +2591,16 @@ id matches the document id for the event being fired.
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".on"><span class="type-signature">(static) </span>on<span class="signature">(event, listener)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -2659,7 +2723,7 @@ id matches the document id for the event being fired.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line71">line 71</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line73">line 73</a>
     </li></ul></dd>
     
 
@@ -2685,12 +2749,16 @@ id matches the document id for the event being fired.
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".once"><span class="type-signature">(static) </span>once<span class="signature">(event, id, listener)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -2837,7 +2905,7 @@ id matches the document id for the event being fired.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line160">line 160</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line162">line 162</a>
     </li></ul></dd>
     
 
@@ -2863,12 +2931,16 @@ id matches the document id for the event being fired.
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".once"><span class="type-signature">(static) </span>once<span class="signature">(event, listener)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -2991,7 +3063,7 @@ id matches the document id for the event being fired.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line139">line 139</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line141">line 141</a>
     </li></ul></dd>
     
 
@@ -3017,12 +3089,16 @@ id matches the document id for the event being fired.
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".willEmit"><span class="type-signature">(static) </span>willEmit<span class="signature">(event)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
 
     
 
@@ -3122,7 +3198,7 @@ id matches the document id for the event being fired.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line645">line 645</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line647">line 647</a>
     </li></ul></dd>
     
 
@@ -3171,12 +3247,16 @@ the event. False if none are found.
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id=".willEmitId"><span class="type-signature">(static) </span>willEmitId<span class="signature">(event, id)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
 
     
 
@@ -3299,7 +3379,7 @@ the event. False if none are found.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line681">line 681</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line683">line 683</a>
     </li></ul></dd>
     
 
@@ -3348,6 +3428,8 @@ the event. False if none are found.
 
 
 
+
+
         
     
 
@@ -3364,13 +3446,13 @@ the event. False if none are found.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Emitter.html">Emitter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$main">$main</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Emitter.html">Emitter</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jun 05 2018 21:31:03 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jan 10 2019 17:41:49 GMT+0000 (GMT)
 </footer>
 
 <script> prettyPrint(); </script>

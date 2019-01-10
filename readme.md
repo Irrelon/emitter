@@ -48,6 +48,6 @@ Your class now inherits the emitter methods:
 * emitId
 * emitStatic
 * emitStaticId
-* offStatic
+* cancelStatic
 * deferEmit
 * willEmit

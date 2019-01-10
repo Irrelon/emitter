@@ -46,7 +46,7 @@ QUnit.asyncTest("Emitter.emitStatic() - Check static emitter works", function ()
 	});
 });
 
-QUnit.asyncTest("Emitter.offStatic() - Check static emitter can be removed works", function () {
+QUnit.asyncTest("Emitter.cancelStatic() - Check static emitter can be removed works", function () {
 	var MyClass = function () {},
 		myClass;
 	
@@ -59,7 +59,7 @@ QUnit.asyncTest("Emitter.offStatic() - Check static emitter can be removed works
 	myClass.on('moo', function () {
 		ok(true, "Callback was fired");
 	});
-	myClass.offStatic('moo');
+	myClass.cancelStatic('moo');
 	myClass.on('moo', function () {
 		ok(true, "Callback was fired");
 	});
