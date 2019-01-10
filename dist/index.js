@@ -27,7 +27,7 @@
 
  Changelog:
  	Version 2.0.11:
- 		Added cancelStatic method to cancel
+ 		Added cancelStatic method to allow cancelling a static event
  	Version 2.0.7:
  		Fixed UMD module support
  	Version 2.0.6:

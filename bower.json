@@ -2,7 +2,7 @@
   "name": "irrelon-emitter",
   "description": "Simple JavaScript event emitter.",
   "main": "./dist/index.min.js",
-  "version": "2.0.11",
+  "version": "2.0.12",
   "authors": [
     "Rob Evans - Irrelon Software Limited"
   ],
