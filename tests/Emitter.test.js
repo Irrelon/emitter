@@ -30,10 +30,9 @@ afterEach(check);
 
 describe('Emitter', () => {
 	it('Creates emitter instance by instantiation', () => {
-		var myClass;
+		const myClass = new Emitter();
 		
-		myClass = new Emitter();
-		myClass.on('moo', function () {
+		myClass.on('moo', () => {
 		});
 		
 		assert.strictEqual(myClass._listeners.moo['*'].length, 1, 'Listener registered on event');
@@ -44,15 +43,14 @@ describe('Emitter', () => {
 	});
 	
 	it('Emitter.off() removes all listeners from an event', () => {
-		var MyClass = function () {
-			},
-			myClass;
+		const MyClass = function () {
+		};
 		
 		Emitter(MyClass);
 		
-		myClass = new MyClass();
+		const myClass = new MyClass();
 		
-		myClass.on('moo', function () {
+		myClass.on('moo', () => {
 		});
 		
 		assert.strictEqual(myClass._listeners.moo['*'].length, 1, 'Listener registered on event');
@@ -63,17 +61,16 @@ describe('Emitter', () => {
 	});
 	
 	it('Emitter.emitStatic() static emitter works', (resolve) => {
-		var MyClass = function () {
-			},
-			myClass;
+		const MyClass = function () {
+		};
 		
 		expect(1);
 		
 		Emitter(MyClass);
 		
-		myClass = new MyClass();
+		const myClass = new MyClass();
 		myClass.emitStatic('moo');
-		myClass.on('moo', function () {
+		myClass.on('moo', () => {
 			countAssertion();
 			assert.ok(true, "Callback was fired");
 			resolve();
@@ -81,20 +78,22 @@ describe('Emitter', () => {
 	});
 	
 	it('Emitter.cancelStatic() removes static emitter', (resolve) => {
-		const MyClass = function () {};
+		const MyClass = function () {
+		};
+		
 		expect(1);
 		
 		Emitter(MyClass);
 		
 		const myClass = new MyClass();
 		myClass.emitStatic('moo');
-		myClass.on('moo', function () {
+		myClass.on('moo', () => {
 			countAssertion();
 			assert.ok(true, "Callback was fired");
 		});
 		
 		myClass.cancelStatic('moo');
-		myClass.on('moo', function () {
+		myClass.on('moo', () => {
 			countAssertion();
 			assert.ok(false, "Callback was fired");
 		});
@@ -105,21 +104,22 @@ describe('Emitter', () => {
 	});
 	
 	it('Emitter.one() only fires the last listener added, cancelling all other listeners before it', (resolve) => {
-		const MyClass = function () {};
+		const MyClass = function () {
+		};
 		expect(1);
 		
 		Emitter(MyClass);
 		
 		const myClass = new MyClass();
-		myClass.on('moo', function () {
+		myClass.on('moo', () => {
 			countAssertion();
 			assert.ok(false, "Correct callback was fired");
 		});
-		myClass.on('moo', function () {
+		myClass.on('moo', () => {
 			countAssertion();
 			assert.ok(false, "Correct callback was fired");
 		});
-		myClass.one('moo', function () {
+		myClass.one('moo', () => {
 			countAssertion();
 			assert.ok(true, "Correct callback was fired");
 		});
@@ -129,8 +129,4 @@ describe('Emitter', () => {
 			resolve();
 		}, 10);
 	});
-	
-	/*it('', () => {
-	
-	});*/
 });
