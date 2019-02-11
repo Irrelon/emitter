@@ -183,6 +183,35 @@ var EventMethods = {
 		}
 	}),
 	
+	one: new Overload({
+		/**
+		 * Attach an event listener to the passed event which will cancel all
+		 * previous listeners and only fire this newest one.
+		 * @memberof Emitter
+		 * @method one
+		 * @param {String} event The name of the event to listen for.
+		 * @param {Function} listener The method to call when the event is fired.
+		 */
+		'string, function': function (event, listener) {
+			this.off(event);
+			return this.on(event, listener);
+		},
+		
+		/**
+		 * Attach an event listener to the passed event only if the passed
+		 * id matches the document id for the event being fired.
+		 * @memberof Emitter
+		 * @method once
+		 * @param {String} event The name of the event to listen for.
+		 * @param {*} id The document id to match against.
+		 * @param {Function} listener The method to call when the event is fired.
+		 */
+		'string, *, function': function (event, id, listener) {
+			this.off(event, id);
+			return this.on(event, id, listener);
+		}
+	}),
+	
 	off: new Overload({
 		/**
 		 * Cancels all event listeners for the passed event.
@@ -835,6 +864,7 @@ var Emitter = function (obj, prototypeMode) {
 	// Convert the object prototype to have eventing capability
 	operateOnObject.on = EventMethods.on;
 	operateOnObject.off = EventMethods.off;
+	operateOnObject.one = EventMethods.one;
 	operateOnObject.once = EventMethods.once;
 	operateOnObject.emit = EventMethods.emit;
 	operateOnObject.emitId = EventMethods.emitId;

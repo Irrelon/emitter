@@ -2,7 +2,7 @@
   "author": "Rob Evans - Irrelon Software Limited",
   "name": "irrelon-emitter",
   "description": "Simple JavaScript event emitter.",
-  "version": "2.0.16",
+  "version": "2.1.0",
   "keywords": [
     "javascript",
     "browser",
@@ -20,32 +20,32 @@
     "irrelon-overload": "^1.0.3"
   },
   "devDependencies": {
-    "aliasify": "*",
-    "browserify-derequire": "*",
-    "derequire": "*",
-    "fs-extra": "*",
-    "grunt": "*",
-    "grunt-browserify": "*",
-    "grunt-cli": "*",
-    "grunt-contrib-jshint": "*",
-    "grunt-contrib-uglify": "*",
-    "grunt-jsdoc": "*",
-    "grunt-node-qunit": "*",
-    "grunt-qunit-istanbul": "*",
-    "grunt-umd": "*",
-    "qunit": "*",
-    "stringify": "*"
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.3.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/polyfill": "^7.2.5",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "@babel/runtime": "^7.3.1",
+    "mocha": "^5.2.0",
+    "rimraf": "^2.6.2"
   },
   "engines": {
     "node": "*"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "mocha ./tests/*.test.js",
+    "build": "rimraf dist && babel ./src/*.js --out-dir dist && rm ./dist/*.test.js"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/irrelon/emitter.git"
   },
-  "main": "./lib/Emitter.js",
-  "browserify": "./lib/Emitter.js",
+  "main": "./dist/Emitter.js",
+  "browserify": "./dist/Emitter.js",
   "bugs": {
     "url": "http://github.com/irrelon/emitter/issues"
   }

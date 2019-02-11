@@ -1,0 +1,58 @@
+{
+	"globals": {
+		"document": false,
+		"window": false,
+		"process": true,
+		"describe": true,
+		"it": true,
+		"beforeEach": true,
+		"afterEach": true
+	},
+	"extends": "eslint:recommended",
+	"rules": {
+		"comma-dangle": [2,"never"],
+		"no-dupe-args": 2,
+		"no-dupe-keys": 2,
+		"no-duplicate-case": 2,
+		"no-ex-assign": 2,
+		"no-extra-boolean-cast": 2,
+		"no-unreachable": 1,
+		"no-unused-vars": 1,
+		"no-console": 0,
+		"no-mixed-spaces-and-tabs": 1,
+		"no-useless-escape": 1,
+		"valid-jsdoc": 1,
+		"valid-typeof": 2,
+		"eqeqeq": [2,"smart"],
+		"arrow-parens": [2,"always"],
+		"arrow-spacing": [1,{"before":true,"after":true}],
+		"constructor-super": 2,
+		"prefer-const": 1,
+		"prefer-arrow-callback": 1,
+		"semi": [2, "always"],
+		"space-before-function-paren": [1, {
+			"anonymous": "always",
+			"named": "always",
+			"asyncArrow": "always"
+		}],
+		"complexity": ["error", 5]
+	},
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": 6,
+		"ecmaFeatures": {
+			"jsx": false,
+			"modules": true,
+			"experimentalObjectRestSpread": true
+		}
+	},
+	"parser": "babel-eslint",
+	"plugins": [
+
+	],
+	"env" : {
+		"browser" : false,
+		"node" : true,
+		"es6" : true
+	}
+}
