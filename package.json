@@ -2,7 +2,7 @@
   "author": "Rob Evans - Irrelon Software Limited",
   "name": "irrelon-emitter",
   "description": "Simple JavaScript event emitter.",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "keywords": [
     "javascript",
     "browser",
@@ -38,7 +38,7 @@
   },
   "scripts": {
     "test": "mocha ./tests/*.test.js",
-    "build": "rimraf dist && babel ./src/*.js --out-dir dist && rm ./dist/*.test.js"
+    "build": "rimraf dist && babel ./src/*.js --out-dir dist"
   },
   "repository": {
     "type": "git",
