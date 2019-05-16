@@ -66,7 +66,7 @@
  */
 "use strict";
 
-var Overload = require('irrelon-overload');
+var Overload = require("irrelon-overload");
 
 var EventMethods = {
 	on: new Overload({
@@ -77,8 +77,8 @@ var EventMethods = {
 		 * @param {String} event The name of the event to listen for.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		'string, function': function (event, listener) {
-			return this.$main(event, '*', listener);
+		"string, function": function (event, listener) {
+			return this.$main(event, "*", listener);
 		},
 		
 		/**
@@ -90,7 +90,7 @@ var EventMethods = {
 		 * @param {*} id The document id to match against.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		'string, *, function': function (event, id, listener) {
+		"string, *, function": function (event, id, listener) {
 			return this.$main(event, id, listener);
 		},
 		
@@ -101,7 +101,7 @@ var EventMethods = {
 		 * @return {$main}
 		 * @private
 		 */
-		'$main': function (event, id, listener) {
+		"$main": function (event, id, listener) {
 			var self = this,
 				generateTimeout,
 				emitter,
@@ -124,7 +124,7 @@ var EventMethods = {
 				for (i = 0; i < this._emitters[event].length; i++) {
 					emitter = this._emitters[event];
 					
-					if (id === '*' || emitter.id === id) {
+					if (id === "*" || emitter.id === id) {
 						// Call the listener out of process so that any code that expects a listener
 						// to be called at some point in the future rather than immediately on registration
 						// will not fail
@@ -145,7 +145,7 @@ var EventMethods = {
 		 * @param {String} event The name of the event to listen for.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		'string, function': function (event, listener) {
+		"string, function": function (event, listener) {
 			var self = this,
 				fired = false,
 				internalCallback = function () {
@@ -168,7 +168,7 @@ var EventMethods = {
 		 * @param {*} id The document id to match against.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		'string, *, function': function (event, id, listener) {
+		"string, *, function": function (event, id, listener) {
 			var self = this,
 				fired = false,
 				internalCallback = function () {
@@ -192,7 +192,7 @@ var EventMethods = {
 		 * @param {String} event The name of the event to listen for.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		'string, function': function (event, listener) {
+		"string, function": function (event, listener) {
 			this.off(event);
 			return this.on(event, listener);
 		},
@@ -206,7 +206,7 @@ var EventMethods = {
 		 * @param {*} id The document id to match against.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		'string, *, function': function (event, id, listener) {
+		"string, *, function": function (event, id, listener) {
 			this.off(event, id);
 			return this.on(event, id, listener);
 		}
@@ -220,7 +220,7 @@ var EventMethods = {
 		 * @param {String} event The name of the event.
 		 * @returns {*}
 		 */
-		'string': function (event) {
+		"string": function (event) {
 			var self = this;
 			
 			if (this._emitting) {
@@ -246,7 +246,7 @@ var EventMethods = {
 		 * or once() call to cancel.
 		 * @returns {*}
 		 */
-		'string, function': function (event, listener) {
+		"string, function": function (event, listener) {
 			var self = this,
 				arr,
 				index;
@@ -257,13 +257,13 @@ var EventMethods = {
 					self.off(event, listener);
 				});
 			} else {
-				if (typeof(listener) === 'string') {
+				if (typeof(listener) === "string") {
 					if (this._listeners && this._listeners[event] && this._listeners[event][listener]) {
 						delete this._listeners[event][listener];
 					}
 				} else {
 					if (this._listeners && this._listeners[event]) {
-						arr = this._listeners[event]['*'];
+						arr = this._listeners[event]["*"] || [];
 						index = arr.indexOf(listener);
 						
 						if (index > -1) {
@@ -285,7 +285,7 @@ var EventMethods = {
 		 * @param {Function} listener The event listener function used in the on()
 		 * or once() call to cancel.
 		 */
-		'string, *, function': function (event, id, listener) {
+		"string, *, function": function (event, id, listener) {
 			var self = this;
 			
 			if (this._emitting) {
@@ -295,7 +295,7 @@ var EventMethods = {
 				});
 			} else {
 				if (this._listeners && this._listeners[event] && this._listeners[event][id]) {
-					var arr = this._listeners[event][id],
+					var arr = this._listeners[event][id] || [],
 						index = arr.indexOf(listener);
 					
 					if (index > -1) {
@@ -312,7 +312,7 @@ var EventMethods = {
 		 * @param {String} event The event name to cancel listeners for.
 		 * @param {*} id The ID to cancel all listeners for.
 		 */
-		'string, *': function (event, id) {
+		"string, *": function (event, id) {
 			var self = this;
 			
 			if (this._emitting) {
@@ -337,7 +337,7 @@ var EventMethods = {
 		 * @param {String} event The event to emit.
 		 * @returns {*}
 		 */
-		'string': function (event) {
+		"string": function (event) {
 			// Fire global listeners
 			return this.$main(event);
 		},
@@ -350,7 +350,7 @@ var EventMethods = {
 		 * @param {*} data Data to emit with the event.
 		 * @returns {*}
 		 */
-		'string, ...': function (event, data) {
+		"string, ...": function (event, data) {
 			// Fire global listeners first
 			this.$main.apply(this, arguments);
 			
@@ -364,8 +364,8 @@ var EventMethods = {
 		 * @returns {*}
 		 * @private
 		 */
-		'$main': function (event, data) {
-			var id = '*';
+		"$main": function (event, data) {
+			var id = "*";
 			this._listeners = this._listeners || {};
 			this._emitting = true;
 			
@@ -384,7 +384,7 @@ var EventMethods = {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
-						if (typeof tmpFunc === 'function') {
+						if (typeof tmpFunc === "function") {
 							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 1));
 						}
 					}
@@ -399,22 +399,22 @@ var EventMethods = {
 	}),
 	
 	emitId: new Overload({
-		'string': function (event) {
-			throw('Missing id from emitId call!');
+		"string": function (event) {
+			throw("Missing id from emitId call!");
 		},
 		
-		'string, *': function (event, id) {
+		"string, *": function (event, id) {
 			return this.$main(event, id);
 		},
 		
-		'string, *, ...': function (event, id) {
+		"string, *, ...": function (event, id) {
 			// Fire global listeners first
 			this.$main.apply(this, arguments);
 			
 			return this;
 		},
 		
-		'$main': function (event, id, data) {
+		"$main": function (event, id, data) {
 			this._listeners = this._listeners || {};
 			this._emitting = true;
 			
@@ -425,15 +425,15 @@ var EventMethods = {
 					arr;
 				
 				// Handle global emit
-				if (this._listeners[event]['*']) {
-					arr = this._listeners[event]['*'];
+				if (this._listeners[event]["*"]) {
+					arr = this._listeners[event]["*"];
 					arrCount = arr.length;
 					
 					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
-						if (typeof tmpFunc === 'function') {
+						if (typeof tmpFunc === "function") {
 							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 2));
 						}
 					}
@@ -448,7 +448,7 @@ var EventMethods = {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
-						if (typeof tmpFunc === 'function') {
+						if (typeof tmpFunc === "function") {
 							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 2));
 						}
 					}
@@ -471,7 +471,7 @@ var EventMethods = {
 		 * @param {String} event The event to emit.
 		 * @returns {*}
 		 */
-		'string': function (event) {
+		"string": function (event) {
 			// Fire global listeners
 			return this.$main(event);
 		},
@@ -485,7 +485,7 @@ var EventMethods = {
 		 * @param {*} data Data to emit with the event.
 		 * @returns {*}
 		 */
-		'string, ...': function (event, data) {
+		"string, ...": function (event, data) {
 			// Fire global listeners first
 			this.$main.apply(this, arguments);
 			
@@ -499,8 +499,8 @@ var EventMethods = {
 		 * @returns {*}
 		 * @private
 		 */
-		'$main': function (event, data) {
-			var id = '*';
+		"$main": function (event, data) {
+			var id = "*";
 			this._listeners = this._listeners || {};
 			this._emitting = true;
 			
@@ -519,7 +519,7 @@ var EventMethods = {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
-						if (typeof tmpFunc === 'function') {
+						if (typeof tmpFunc === "function") {
 							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 1));
 						}
 					}
@@ -531,7 +531,7 @@ var EventMethods = {
 			this._emitters = this._emitters || {};
 			this._emitters[event] = this._emitters[event] || [];
 			this._emitters[event].push({
-				id: '*',
+				id: "*",
 				args: Array.prototype.slice.call(arguments, 1)
 			});
 			
@@ -548,8 +548,8 @@ var EventMethods = {
 		 * @method emitStaticId
 		 * @param event
 		 */
-		'string': function (event) {
-			throw('Missing id from emitId call!');
+		"string": function (event) {
+			throw("Missing id from emitId call!");
 		},
 		
 		/**
@@ -561,7 +561,7 @@ var EventMethods = {
 		 * @param {String} id The id of the event to emit.
 		 * @returns {*}
 		 */
-		'string, *': function (event, id) {
+		"string, *": function (event, id) {
 			return this.$main(event, id);
 		},
 		
@@ -575,7 +575,7 @@ var EventMethods = {
 		 * @param {*=} data The data to emit with the event.
 		 * @returns {*}
 		 */
-		'string, *, ...': function (event, id, data) {
+		"string, *, ...": function (event, id, data) {
 			// Fire global listeners first
 			this.$main.apply(this, arguments);
 			
@@ -590,7 +590,7 @@ var EventMethods = {
 		 * @returns {*}
 		 * @private
 		 */
-		'$main': function (event, id, data) {
+		"$main": function (event, id, data) {
 			this._listeners = this._listeners || {};
 			this._emitting = true;
 			
@@ -601,15 +601,15 @@ var EventMethods = {
 					arr;
 				
 				// Handle global emit
-				if (this._listeners[event]['*']) {
-					arr = this._listeners[event]['*'];
+				if (this._listeners[event]["*"]) {
+					arr = this._listeners[event]["*"];
 					arrCount = arr.length;
 					
 					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
-						if (typeof tmpFunc === 'function') {
+						if (typeof tmpFunc === "function") {
 							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 2));
 						}
 					}
@@ -624,7 +624,7 @@ var EventMethods = {
 						// Check we have a function to execute
 						tmpFunc = arr[arrIndex];
 						
-						if (typeof tmpFunc === 'function') {
+						if (typeof tmpFunc === "function") {
 							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 2));
 						}
 					}
@@ -654,7 +654,7 @@ var EventMethods = {
 		 * @param {String} event The event to remove static emitter for.
 		 * @returns {*}
 		 */
-		'string': function (event) {
+		"string": function (event) {
 			// Fire global listeners
 			return this.$main(event);
 		},
@@ -665,7 +665,7 @@ var EventMethods = {
 		 * @returns {*}
 		 * @private
 		 */
-		'$main': function (event) {
+		"$main": function (event) {
 			this._emitters = this._emitters || {};
 			this._emitters[event] = [];
 			
@@ -682,7 +682,7 @@ var EventMethods = {
 	 * the event. False if none are found.
 	 */
 	willEmit: function (event) {
-		var id = '*';
+		var id = "*";
 		
 		if (this._listeners && this._listeners[event]) {
 			var arrIndex,
@@ -699,7 +699,7 @@ var EventMethods = {
 					// Check we have a function to execute
 					tmpFunc = arr[arrIndex];
 					
-					if (typeof tmpFunc === 'function') {
+					if (typeof tmpFunc === "function") {
 						return true;
 					}
 				}
@@ -726,15 +726,15 @@ var EventMethods = {
 				arr;
 			
 			// Handle global emit
-			if (this._listeners[event]['*']) {
-				arr = this._listeners[event]['*'];
+			if (this._listeners[event]["*"]) {
+				arr = this._listeners[event]["*"];
 				arrCount = arr.length;
 				
 				for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
 					// Check we have a function to execute
 					tmpFunc = arr[arrIndex];
 					
-					if (typeof tmpFunc === 'function') {
+					if (typeof tmpFunc === "function") {
 						return true;
 					}
 				}
@@ -749,7 +749,7 @@ var EventMethods = {
 					// Check we have a function to execute
 					tmpFunc = arr[arrIndex];
 					
-					if (typeof tmpFunc === 'function') {
+					if (typeof tmpFunc === "function") {
 						return true;
 					}
 				}
@@ -825,7 +825,7 @@ var EventMethods = {
  * new Emitter() to generate an event emitter that is not tied to any other
  * object or class.
  * @param {Boolean=} prototypeMode Defaults to true. Set to true to add emitter
- * methods to the the passed object's prototype property e.g. obj.prototype.on
+ * methods to the the passed object"s prototype property e.g. obj.prototype.on
  * = emitter.on. Set to false to add emitter methods the object directly e.g.
  * obj.on = emitter.on.
  * @constructor
@@ -838,7 +838,7 @@ var Emitter = function (obj, prototypeMode) {
 		prototypeMode = false;
 	}
 	
-	if (typeof obj === 'boolean' && prototypeMode === undefined) {
+	if (typeof obj === "boolean" && prototypeMode === undefined) {
 		prototypeMode = obj;
 		obj = {};
 	}
@@ -847,13 +847,13 @@ var Emitter = function (obj, prototypeMode) {
 		prototypeMode = true;
 	}
 	
-	if (typeof obj !== 'object' && typeof obj !== 'function') {
-		throw new Error('Cannot operate on a non-object / non-function passed as first argument!');
+	if (typeof obj !== "object" && typeof obj !== "function") {
+		throw new Error("Cannot operate on a non-object / non-function passed as first argument!");
 	}
 	
 	if (prototypeMode) {
 		if (obj.prototype === undefined) {
-			throw new Error('Cannot modify prototype of passed object, it has no prototype property! Was it instantiated with the new operator correctly?');
+			throw new Error("Cannot modify prototype of passed object, it has no prototype property! Was it instantiated with the new operator correctly?");
 		}
 		
 		operateOnObject = obj.prototype;
