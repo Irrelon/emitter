@@ -1,7 +1,5 @@
 # Irrelon Emitter
 
-## Version 2.1.4
-
 ## Usage
 
 ### Browser
@@ -15,13 +13,13 @@ Include the ./dist/index.min.js file in your HTML
 Install via NPM:
 
 ```bash
-npm install irrelon-emitter
+npm install @irrelon/emitter
 ```
 
 Include in your application:
 
 ```js
-var Emitter = require('irrelon-emitter');
+var Emitter = require('@irrelon/emitter');
 ```
 
 ## Add Emitter Functionality to Existing Class
