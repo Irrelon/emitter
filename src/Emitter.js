@@ -25,6 +25,10 @@
  Source: https://github.com/irrelon/emitter
 
  Changelog:
+ 	Version 3.1.0:
+ 		Changed order of execution so that listeners that are listening
+ 		against a specific ID get called before the general catch-all
+ 		listeners.
  	Version 2.0.11:
  		Added cancelStatic method to allow cancelling a static event
  	Version 2.0.7:
@@ -66,10 +70,10 @@
  */
 "use strict";
 
-var Overload = require("irrelon-overload");
+const Overload = require("irrelon-overload");
 
-var EventMethods = {
-	on: new Overload({
+const EventMethods = {
+	"on": new Overload({
 		/**
 		 * Attach an event listener to the passed event.
 		 * @memberof Emitter
@@ -77,10 +81,10 @@ var EventMethods = {
 		 * @param {String} event The name of the event to listen for.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		"string, function": function (event, listener) {
+		"string, function" (event, listener) {
 			return this.$main(event, "*", listener);
 		},
-		
+
 		/**
 		 * Attach an event listener to the passed event only if the passed
 		 * id matches the document id for the event being fired.
@@ -90,10 +94,10 @@ var EventMethods = {
 		 * @param {*} id The document id to match against.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		"string, *, function": function (event, id, listener) {
+		"string, *, function" (event, id, listener) {
 			return this.$main(event, id, listener);
 		},
-		
+
 		/**
 		 * @param event
 		 * @param id
@@ -101,29 +105,26 @@ var EventMethods = {
 		 * @return {$main}
 		 * @private
 		 */
-		"$main": function (event, id, listener) {
-			var self = this,
-				generateTimeout,
-				emitter,
-				i;
-			
-			generateTimeout = function (emitter) {
-				setTimeout(function () {
+		"$main" (event, id, listener) {
+			const self = this;
+
+			const generateTimeout = function (emitter) {
+				setTimeout(() => {
 					listener.apply(self, emitter.args);
 				}, 1);
 			};
-			
+
 			this._listeners = this._listeners || {};
 			this._listeners[event] = this._listeners[event] || {};
 			this._listeners[event][id] = this._listeners[event][id] || [];
 			this._listeners[event][id].push(listener);
-			
+
 			// Check for any static emitters, and fire the event if any exist
 			if (this._emitters && this._emitters[event] && this._emitters[event].length) {
 				// Emit events for each emitter
-				for (i = 0; i < this._emitters[event].length; i++) {
-					emitter = this._emitters[event];
-					
+				for (let i = 0; i < this._emitters[event].length; i++) {
+					const emitter = this._emitters[event];
+
 					if (id === "*" || emitter.id === id) {
 						// Call the listener out of process so that any code that expects a listener
 						// to be called at some point in the future rather than immediately on registration
@@ -132,12 +133,12 @@ var EventMethods = {
 					}
 				}
 			}
-			
+
 			return this;
 		}
 	}),
-	
-	once: new Overload({
+
+	"once": new Overload({
 		/**
 		 * Attach an event listener to the passed event which will only fire once.
 		 * @memberof Emitter
@@ -145,20 +146,21 @@ var EventMethods = {
 		 * @param {String} event The name of the event to listen for.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		"string, function": function (event, listener) {
-			var self = this,
-				fired = false,
-				internalCallback = function () {
-					if (!fired) {
-						fired = true;
-						self.off(event, internalCallback);
-						listener.apply(self, arguments);
-					}
-				};
-			
+		"string, function" (event, listener) {
+			const self = this;
+			let fired = false;
+
+			const internalCallback = function () {
+				if (!fired) {
+					fired = true;
+					self.off(event, internalCallback);
+					listener.apply(self, arguments);
+				}
+			};
+
 			return this.on(event, internalCallback);
 		},
-		
+
 		/**
 		 * Attach an event listener to the passed event only if the passed
 		 * id matches the document id for the event being fired.
@@ -168,22 +170,23 @@ var EventMethods = {
 		 * @param {*} id The document id to match against.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		"string, *, function": function (event, id, listener) {
-			var self = this,
-				fired = false,
-				internalCallback = function () {
-					if (!fired) {
-						fired = true;
-						self.off(event, id, internalCallback);
-						listener.apply(self, arguments);
-					}
-				};
-			
+		"string, *, function" (event, id, listener) {
+			const self = this;
+			let fired = false;
+
+			const internalCallback = function () {
+				if (!fired) {
+					fired = true;
+					self.off(event, id, internalCallback);
+					listener.apply(self, arguments);
+				}
+			};
+
 			return this.on(event, id, internalCallback);
 		}
 	}),
-	
-	one: new Overload({
+
+	"one": new Overload({
 		/**
 		 * Attach an event listener to the passed event which will cancel all
 		 * previous listeners and only fire this newest one.
@@ -192,11 +195,11 @@ var EventMethods = {
 		 * @param {String} event The name of the event to listen for.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		"string, function": function (event, listener) {
+		"string, function" (event, listener) {
 			this.off(event);
 			return this.on(event, listener);
 		},
-		
+
 		/**
 		 * Attach an event listener to the passed event only if the passed
 		 * id matches the document id for the event being fired.
@@ -206,13 +209,13 @@ var EventMethods = {
 		 * @param {*} id The document id to match against.
 		 * @param {Function} listener The method to call when the event is fired.
 		 */
-		"string, *, function": function (event, id, listener) {
+		"string, *, function" (event, id, listener) {
 			this.off(event, id);
 			return this.on(event, id, listener);
 		}
 	}),
-	
-	off: new Overload({
+
+	"off": new Overload({
 		/**
 		 * Cancels all event listeners for the passed event.
 		 * @memberof Emitter
@@ -220,12 +223,12 @@ var EventMethods = {
 		 * @param {String} event The name of the event.
 		 * @returns {*}
 		 */
-		"string": function (event) {
-			var self = this;
-			
+		"string" (event) {
+			const self = this;
+
 			if (this._emitting) {
 				this._eventRemovalQueue = this._eventRemovalQueue || [];
-				this._eventRemovalQueue.push(function () {
+				this._eventRemovalQueue.push(() => {
 					self.off(event);
 				});
 			} else {
@@ -233,10 +236,10 @@ var EventMethods = {
 					delete this._listeners[event];
 				}
 			}
-			
+
 			return this;
 		},
-		
+
 		/**
 		 * Cancels the event listener for the passed event and listener function.
 		 * @memberof Emitter
@@ -246,36 +249,32 @@ var EventMethods = {
 		 * or once() call to cancel.
 		 * @returns {*}
 		 */
-		"string, function": function (event, listener) {
-			var self = this,
-				arr,
-				index;
-			
+		"string, function" (event, listener) {
+			const self = this;
+
 			if (this._emitting) {
 				this._eventRemovalQueue = this._eventRemovalQueue || [];
-				this._eventRemovalQueue.push(function () {
+				this._eventRemovalQueue.push(() => {
 					self.off(event, listener);
 				});
+			} else if (typeof (listener) === "string") {
+				if (this._listeners && this._listeners[event] && this._listeners[event][listener]) {
+					delete this._listeners[event][listener];
+				}
 			} else {
-				if (typeof(listener) === "string") {
-					if (this._listeners && this._listeners[event] && this._listeners[event][listener]) {
-						delete this._listeners[event][listener];
-					}
-				} else {
-					if (this._listeners && this._listeners[event]) {
-						arr = this._listeners[event]["*"] || [];
-						index = arr.indexOf(listener);
-						
-						if (index > -1) {
-							arr.splice(index, 1);
-						}
+				if (this._listeners && this._listeners[event]) {
+					const arr = this._listeners[event]["*"] || [];
+					const index = arr.indexOf(listener);
+
+					if (index > -1) {
+						arr.splice(index, 1);
 					}
 				}
 			}
-			
+
 			return this;
 		},
-		
+
 		/**
 		 * Cancels an event listener based on an event name, id and listener function.
 		 * @memberof Emitter
@@ -285,26 +284,26 @@ var EventMethods = {
 		 * @param {Function} listener The event listener function used in the on()
 		 * or once() call to cancel.
 		 */
-		"string, *, function": function (event, id, listener) {
-			var self = this;
-			
+		"string, *, function" (event, id, listener) {
+			const self = this;
+
 			if (this._emitting) {
 				this._eventRemovalQueue = this._eventRemovalQueue || [];
-				this._eventRemovalQueue.push(function () {
+				this._eventRemovalQueue.push(() => {
 					self.off(event, id, listener);
 				});
 			} else {
 				if (this._listeners && this._listeners[event] && this._listeners[event][id]) {
-					var arr = this._listeners[event][id] || [],
+					const arr = this._listeners[event][id] || [],
 						index = arr.indexOf(listener);
-					
+
 					if (index > -1) {
 						arr.splice(index, 1);
 					}
 				}
 			}
 		},
-		
+
 		/**
 		 * Cancels all listeners for an event based on the passed event name and id.
 		 * @memberof Emitter
@@ -312,24 +311,22 @@ var EventMethods = {
 		 * @param {String} event The event name to cancel listeners for.
 		 * @param {*} id The ID to cancel all listeners for.
 		 */
-		"string, *": function (event, id) {
-			var self = this;
-			
+		"string, *" (event, id) {
+			const self = this;
+
 			if (this._emitting) {
 				this._eventRemovalQueue = this._eventRemovalQueue || [];
-				this._eventRemovalQueue.push(function () {
+				this._eventRemovalQueue.push(() => {
 					self.off(event, id);
 				});
-			} else {
-				if (this._listeners && this._listeners[event] && this._listeners[event][id]) {
-					// Kill all listeners for this event id
-					delete this._listeners[event][id];
-				}
+			} else if (this._listeners && this._listeners[event] && this._listeners[event][id]) {
+				// Kill all listeners for this event id
+				delete this._listeners[event][id];
 			}
 		}
 	}),
-	
-	emit: new Overload({
+
+	"emit": new Overload({
 		/**
 		 * Emit an event.
 		 * @memberof Emitter
@@ -337,11 +334,11 @@ var EventMethods = {
 		 * @param {String} event The event to emit.
 		 * @returns {*}
 		 */
-		"string": function (event) {
+		"string" (event) {
 			// Fire global listeners
 			return this.$main(event);
 		},
-		
+
 		/**
 		 * Emit an event with data.
 		 * @memberof Emitter
@@ -350,13 +347,13 @@ var EventMethods = {
 		 * @param {*} data Data to emit with the event.
 		 * @returns {*}
 		 */
-		"string, ...": function (event, data) {
+		"string, ..." (event, data) {
 			// Fire global listeners first
 			this.$main.apply(this, arguments);
-			
+
 			return this;
 		},
-		
+
 		/**
 		 * Handles emitting events, is an internal method not called directly.
 		 * @param {String} event The name of the event to emit.
@@ -364,105 +361,98 @@ var EventMethods = {
 		 * @returns {*}
 		 * @private
 		 */
-		"$main": function (event, data) {
-			var id = "*";
+		"$main" (event, data) {
+			const id = "*";
 			this._listeners = this._listeners || {};
 			this._emitting = true;
-			
-			if (this._listeners[event]) {
-				var arrIndex,
-					arrCount,
-					tmpFunc,
-					arr;
-				
+
+			if (this._listeners[event] && this._listeners[event][id]) {
 				// Handle global emit
-				if (this._listeners[event][id]) {
-					arr = this._listeners[event][id];
-					arrCount = arr.length;
-					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-						// Check we have a function to execute
-						tmpFunc = arr[arrIndex];
-						
-						if (typeof tmpFunc === "function") {
-							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 1));
-						}
+				const arr = this._listeners[event][id];
+				const arrCount = arr.length;
+
+				for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+					// Check we have a function to execute
+					const tmpFunc = arr[arrIndex];
+
+					if (typeof tmpFunc === "function") {
+						tmpFunc.apply(this, Array.prototype.slice.call(arguments, 1));
 					}
 				}
 			}
-			
+
 			this._emitting = false;
 			this._processRemovalQueue();
-			
+
 			return this;
 		}
 	}),
-	
-	emitId: new Overload({
-		"string": function (event) {
+
+	"emitId": new Overload({
+		"string" (event) {
 			throw("Missing id from emitId call!");
 		},
-		
-		"string, *": function (event, id) {
+
+		"string, *" (event, id) {
 			return this.$main(event, id);
 		},
-		
-		"string, *, ...": function (event, id) {
+
+		"string, *, ..." (event, id) {
 			// Fire global listeners first
 			this.$main.apply(this, arguments);
-			
+
 			return this;
 		},
-		
-		"$main": function (event, id, data) {
+
+		"$main" (event, id, data) {
 			this._listeners = this._listeners || {};
 			this._emitting = true;
-			
-			if (this._listeners[event]) {
-				var arrIndex,
-					arrCount,
-					tmpFunc,
-					arr;
-				
-				// Handle global emit
-				if (this._listeners[event]["*"]) {
-					arr = this._listeners[event]["*"];
-					arrCount = arr.length;
-					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-						// Check we have a function to execute
-						tmpFunc = arr[arrIndex];
-						
-						if (typeof tmpFunc === "function") {
-							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 2));
-						}
-					}
-				}
-				
-				// Handle id emit
-				if (this._listeners[event][id]) {
-					arr = this._listeners[event][id];
-					arrCount = arr.length;
-					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-						// Check we have a function to execute
-						tmpFunc = arr[arrIndex];
-						
-						if (typeof tmpFunc === "function") {
-							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 2));
-						}
+
+			if (!this._listeners[event]) {
+				this._emitting = false;
+				this._processRemovalQueue();
+
+				return this;
+			}
+
+			// Handle id emit
+			if (this._listeners[event][id]) {
+				const arr = this._listeners[event][id];
+				const arrCount = arr.length;
+
+				for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+					// Check we have a function to execute
+					const tmpFunc = arr[arrIndex];
+
+					if (typeof tmpFunc === "function") {
+						tmpFunc.apply(this, Array.prototype.slice.call(arguments, 2));
 					}
 				}
 			}
-			
+
+			// Handle global emit
+			if (this._listeners[event]["*"]) {
+				const arr = this._listeners[event]["*"];
+				const arrCount = arr.length;
+
+				for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+					// Check we have a function to execute
+					const tmpFunc = arr[arrIndex];
+
+					if (typeof tmpFunc === "function") {
+						tmpFunc.apply(this, Array.prototype.slice.call(arguments, 2));
+					}
+				}
+			}
+
 			this._emitting = false;
 			this._processRemovalQueue();
-			
+
 			return this;
 		}
 	}),
-	
-	emitStatic: new Overload({
+
+	"emitStatic": new Overload({
 		/**
 		 * Emit an event that will fire on listeners even when the listener
 		 * is registered AFTER the event has been emitted.
@@ -471,11 +461,11 @@ var EventMethods = {
 		 * @param {String} event The event to emit.
 		 * @returns {*}
 		 */
-		"string": function (event) {
+		"string" (event) {
 			// Fire global listeners
 			return this.$main(event);
 		},
-		
+
 		/**
 		 * Emit an event with data that will fire on listeners even when the listener
 		 * is registered AFTER the event has been emitted.
@@ -485,13 +475,13 @@ var EventMethods = {
 		 * @param {*} data Data to emit with the event.
 		 * @returns {*}
 		 */
-		"string, ...": function (event, data) {
+		"string, ..." (event, data) {
 			// Fire global listeners first
 			this.$main.apply(this, arguments);
-			
+
 			return this;
 		},
-		
+
 		/**
 		 * Handles emitting events, is an internal method not called directly.
 		 * @param {String} event The name of the event to emit.
@@ -499,59 +489,52 @@ var EventMethods = {
 		 * @returns {*}
 		 * @private
 		 */
-		"$main": function (event, data) {
-			var id = "*";
+		"$main" (event, data) {
+			const id = "*";
 			this._listeners = this._listeners || {};
 			this._emitting = true;
-			
-			if (this._listeners[event]) {
-				var arrIndex,
-					arrCount,
-					tmpFunc,
-					arr;
-				
+
+			if (this._listeners[event] && this._listeners[event][id]) {
 				// Handle global emit
-				if (this._listeners[event][id]) {
-					arr = this._listeners[event][id];
-					arrCount = arr.length;
-					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-						// Check we have a function to execute
-						tmpFunc = arr[arrIndex];
-						
-						if (typeof tmpFunc === "function") {
-							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 1));
-						}
+				const arr = this._listeners[event][id];
+				const arrCount = arr.length;
+
+				for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+					// Check we have a function to execute
+					const tmpFunc = arr[arrIndex];
+
+					if (typeof tmpFunc === "function") {
+						tmpFunc.apply(this, Array.prototype.slice.call(arguments, 1));
 					}
 				}
 			}
-			
+
 			this._emitting = false;
-			
+
 			this._emitters = this._emitters || {};
 			this._emitters[event] = this._emitters[event] || [];
 			this._emitters[event].push({
-				id: "*",
-				args: Array.prototype.slice.call(arguments, 1)
+				"id": "*",
+				"args": Array.prototype.slice.call(arguments, 1)
 			});
-			
+
 			this._processRemovalQueue();
-			
+
 			return this;
 		}
 	}),
-	
-	emitStaticId: new Overload({
+
+	"emitStaticId": new Overload({
 		/**
 		 * Require an id to emit.
 		 * @memberof Emitter
 		 * @method emitStaticId
 		 * @param event
 		 */
-		"string": function (event) {
+		"string" (event) {
 			throw("Missing id from emitId call!");
 		},
-		
+
 		/**
 		 * Emit an event that will fire on listeners even when the listener
 		 * is registered AFTER the event has been emitted.
@@ -561,10 +544,10 @@ var EventMethods = {
 		 * @param {String} id The id of the event to emit.
 		 * @returns {*}
 		 */
-		"string, *": function (event, id) {
+		"string, *" (event, id) {
 			return this.$main(event, id);
 		},
-		
+
 		/**
 		 * Emit an event that will fire on listeners even when the listener
 		 * is registered AFTER the event has been emitted.
@@ -575,13 +558,13 @@ var EventMethods = {
 		 * @param {*=} data The data to emit with the event.
 		 * @returns {*}
 		 */
-		"string, *, ...": function (event, id, data) {
+		"string, *, ..." (event, id, data) {
 			// Fire global listeners first
 			this.$main.apply(this, arguments);
-			
+
 			return this;
 		},
-		
+
 		/**
 		 * Handles emitting events, is an internal method not called directly.
 		 * @param {String} event The name of the event to emit.
@@ -590,63 +573,58 @@ var EventMethods = {
 		 * @returns {*}
 		 * @private
 		 */
-		"$main": function (event, id, data) {
+		"$main" (event, id, data) {
 			this._listeners = this._listeners || {};
 			this._emitting = true;
-			
+
 			if (this._listeners[event]) {
-				var arrIndex,
-					arrCount,
-					tmpFunc,
-					arr;
-				
-				// Handle global emit
-				if (this._listeners[event]["*"]) {
-					arr = this._listeners[event]["*"];
-					arrCount = arr.length;
-					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+				// Handle id emit
+				if (this._listeners[event][id]) {
+					const arr = this._listeners[event][id];
+					const arrCount = arr.length;
+
+					for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
 						// Check we have a function to execute
-						tmpFunc = arr[arrIndex];
-						
+						const tmpFunc = arr[arrIndex];
+
 						if (typeof tmpFunc === "function") {
 							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 2));
 						}
 					}
 				}
-				
-				// Handle id emit
-				if (this._listeners[event][id]) {
-					arr = this._listeners[event][id];
-					arrCount = arr.length;
-					
-					for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+
+				// Handle global emit
+				if (this._listeners[event]["*"]) {
+					const arr = this._listeners[event]["*"];
+					const arrCount = arr.length;
+
+					for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
 						// Check we have a function to execute
-						tmpFunc = arr[arrIndex];
-						
+						const tmpFunc = arr[arrIndex];
+
 						if (typeof tmpFunc === "function") {
 							tmpFunc.apply(this, Array.prototype.slice.call(arguments, 2));
 						}
 					}
 				}
 			}
-			
+
 			this._emitting = false;
-			
+
 			this._emitters = this._emitters || {};
 			this._emitters[event] = this._emitters[event] || [];
 			this._emitters[event].push({
-				id: id,
-				args: Array.prototype.slice.call(arguments, 2)
+				id,
+				"args": Array.prototype.slice.call(arguments, 2)
 			});
-			
+
 			this._processRemovalQueue();
-			
+
 			return this;
 		}
 	}),
-	
-	cancelStatic: new Overload({
+
+	"cancelStatic": new Overload({
 		/**
 		 * Remove a static event emitter.
 		 * @memberof Emitter
@@ -654,25 +632,25 @@ var EventMethods = {
 		 * @param {String} event The event to remove static emitter for.
 		 * @returns {*}
 		 */
-		"string": function (event) {
+		"string" (event) {
 			// Fire global listeners
 			return this.$main(event);
 		},
-		
+
 		/**
 		 * Handles removing emitters, is an internal method not called directly.
 		 * @param {String} event The event to remove static emitter for.
 		 * @returns {*}
 		 * @private
 		 */
-		"$main": function (event) {
+		"$main" (event) {
 			this._emitters = this._emitters || {};
 			this._emitters[event] = [];
-			
+
 			return this;
 		}
 	}),
-	
+
 	/**
 	 * Checks if an event has any event listeners or not.
 	 * @memberof Emitter
@@ -681,34 +659,28 @@ var EventMethods = {
 	 * @returns {boolean} True if one or more event listeners are registered for
 	 * the event. False if none are found.
 	 */
-	willEmit: function (event) {
-		var id = "*";
-		
-		if (this._listeners && this._listeners[event]) {
-			var arrIndex,
-				arrCount,
-				tmpFunc,
-				arr;
-			
-			// Handle global emit
-			if (this._listeners[event][id]) {
-				arr = this._listeners[event][id];
-				arrCount = arr.length;
-				
-				for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-					// Check we have a function to execute
-					tmpFunc = arr[arrIndex];
-					
-					if (typeof tmpFunc === "function") {
-						return true;
-					}
-				}
+	"willEmit" (event) {
+		const id = "*";
+
+		if (!this._listeners || !this._listeners[event]) {
+			return false;
+		}
+
+		const arr = this._listeners[event][id];
+		const arrCount = arr.length;
+
+		for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+			// Check we have a function to execute
+			const tmpFunc = arr[arrIndex];
+
+			if (typeof tmpFunc === "function") {
+				return true;
 			}
 		}
-		
+
 		return false;
 	},
-	
+
 	/**
 	 * Checks if an event has any event listeners or not based on the passed id.
 	 * @memberof Emitter
@@ -718,47 +690,44 @@ var EventMethods = {
 	 * @returns {boolean} True if one or more event listeners are registered for
 	 * the event. False if none are found.
 	 */
-	willEmitId: function (event, id) {
-		if (this._listeners && this._listeners[event]) {
-			var arrIndex,
-				arrCount,
-				tmpFunc,
-				arr;
-			
-			// Handle global emit
-			if (this._listeners[event]["*"]) {
-				arr = this._listeners[event]["*"];
-				arrCount = arr.length;
-				
-				for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-					// Check we have a function to execute
-					tmpFunc = arr[arrIndex];
-					
-					if (typeof tmpFunc === "function") {
-						return true;
-					}
-				}
-			}
-			
-			// Handle id emit
-			if (this._listeners[event][id]) {
-				arr = this._listeners[event][id];
-				arrCount = arr.length;
-				
-				for (arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-					// Check we have a function to execute
-					tmpFunc = arr[arrIndex];
-					
-					if (typeof tmpFunc === "function") {
-						return true;
-					}
+	"willEmitId" (event, id) {
+		if (!this._listeners || !this._listeners[event]) {
+			return false;
+		}
+
+		// Handle id emit
+		if (this._listeners[event][id]) {
+			const arr = this._listeners[event][id];
+			const arrCount = arr.length;
+
+			for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+				// Check we have a function to execute
+				const tmpFunc = arr[arrIndex];
+
+				if (typeof tmpFunc === "function") {
+					return true;
 				}
 			}
 		}
-		
+
+		// Handle global emit
+		if (this._listeners[event]["*"]) {
+			const arr = this._listeners[event]["*"];
+			const arrCount = arr.length;
+
+			for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+				// Check we have a function to execute
+				const tmpFunc = arr[arrIndex];
+
+				if (typeof tmpFunc === "function") {
+					return true;
+				}
+			}
+		}
+
 		return false;
 	},
-	
+
 	/**
 	 * If events are cleared with the off() method while the event emitter is
 	 * actively processing any events then the off() calls get added to a
@@ -768,20 +737,20 @@ var EventMethods = {
 	 * event emitter is finished processing.
 	 * @private
 	 */
-	_processRemovalQueue: function () {
-		var i;
-		
-		if (this._eventRemovalQueue && this._eventRemovalQueue.length) {
-			// Execute each removal call
-			for (i = 0; i < this._eventRemovalQueue.length; i++) {
-				this._eventRemovalQueue[i]();
-			}
-			
-			// Clear the removal queue
-			this._eventRemovalQueue = [];
+	"_processRemovalQueue" () {
+		if (!this._eventRemovalQueue || !this._eventRemovalQueue.length) {
+			return;
 		}
+
+		// Execute each removal call
+		for (let i = 0; i < this._eventRemovalQueue.length; i++) {
+			this._eventRemovalQueue[i]();
+		}
+
+		// Clear the removal queue
+		this._eventRemovalQueue = [];
 	},
-	
+
 	/**
 	 * Queues an event to be fired. This has automatic de-bouncing so that any
 	 * events of the same type that occur within 100 milliseconds of a previous
@@ -793,27 +762,26 @@ var EventMethods = {
 	 * @param {String} eventName The name of the event to emit.
 	 * @param {*=} data Optional data to emit with the event.
 	 */
-	deferEmit: function (eventName, data) {
-		var self = this,
-			args;
-		
+	"deferEmit" (eventName, data) {
+		const self = this;
+
 		if (!this._noEmitDefer && (!this._db || (this._db && !this._db._noEmitDefer))) {
-			args = arguments;
-			
+			const args = arguments;
+
 			// Check for an existing timeout
 			this._deferTimeout = this._deferTimeout || {};
 			if (this._deferTimeout[eventName]) {
 				clearTimeout(this._deferTimeout[eventName]);
 			}
-			
+
 			// Set a timeout
-			this._deferTimeout[eventName] = setTimeout(function () {
+			this._deferTimeout[eventName] = setTimeout(() => {
 				self.emit.apply(self, args);
 			}, 1);
 		} else {
 			this.emit.apply(this, arguments);
 		}
-		
+
 		return this;
 	}
 };
@@ -830,37 +798,37 @@ var EventMethods = {
  * obj.on = emitter.on.
  * @constructor
  */
-var Emitter = function (obj, prototypeMode) {
-	var operateOnObject;
-	
+const Emitter = function (obj, prototypeMode) {
+	let operateOnObject;
+
 	if (obj === undefined && prototypeMode === undefined) {
 		obj = {};
 		prototypeMode = false;
 	}
-	
+
 	if (typeof obj === "boolean" && prototypeMode === undefined) {
 		prototypeMode = obj;
 		obj = {};
 	}
-	
+
 	if (prototypeMode === undefined) {
 		prototypeMode = true;
 	}
-	
+
 	if (typeof obj !== "object" && typeof obj !== "function") {
 		throw new Error("Cannot operate on a non-object / non-function passed as first argument!");
 	}
-	
+
 	if (prototypeMode) {
 		if (obj.prototype === undefined) {
 			throw new Error("Cannot modify prototype of passed object, it has no prototype property! Was it instantiated with the new operator correctly?");
 		}
-		
+
 		operateOnObject = obj.prototype;
 	} else {
 		operateOnObject = obj;
 	}
-	
+
 	// Convert the object prototype to have eventing capability
 	operateOnObject.on = EventMethods.on;
 	operateOnObject.off = EventMethods.off;
@@ -875,7 +843,7 @@ var Emitter = function (obj, prototypeMode) {
 	operateOnObject.willEmit = EventMethods.willEmit;
 	operateOnObject.willEmitId = EventMethods.willEmitId;
 	operateOnObject._processRemovalQueue = EventMethods._processRemovalQueue;
-	
+
 	return obj;
 };
 

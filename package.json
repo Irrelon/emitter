@@ -2,7 +2,7 @@
   "author": "Rob Evans - Irrelon Software Limited",
   "name": "@irrelon/emitter",
   "description": "Simple JavaScript event emitter.",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "keywords": [
     "javascript",
     "browser",
@@ -30,6 +30,9 @@
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.0.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.21.0",
+    "eslint-config-irrelon": "^1.0.11",
     "mocha": "^5.2.0",
     "rimraf": "^2.6.2"
   },
