@@ -2,7 +2,7 @@
   "author": "Rob Evans - Irrelon Software Limited",
   "name": "@irrelon/emitter",
   "description": "Simple JavaScript event emitter.",
-  "version": "3.1.0",
+  "version": "4.0.1",
   "keywords": [
     "javascript",
     "browser",
@@ -18,8 +18,7 @@
   ],
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
-    "@babel/runtime": "^7.3.1",
-    "irrelon-overload": "^1.0.3"
+    "@babel/runtime": "^7.3.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -40,7 +39,7 @@
     "node": "*"
   },
   "scripts": {
-    "test": "mocha ./tests/*.test.js",
+    "test": "npm run build && mocha ./tests/*.test.js",
     "build": "rimraf dist && babel ./src/*.js --out-dir dist"
   },
   "repository": {
