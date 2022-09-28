@@ -25,6 +25,8 @@
  Source: https://github.com/irrelon/emitter
 
  Changelog:
+ 	Version 5.0.0:
+ 		Added typescript and prettier, removed babel etc
  	Version 4.0.1:
  		Updated library to use new ES6 functionality making Overload()
  		less useful so it can be removed as a dependency.
@@ -77,7 +79,6 @@
 	Version 1.0.0:
 		First commit
  */
-"use strict";
 
 const EventMainMethods = {
 	/**
@@ -85,14 +86,12 @@ const EventMainMethods = {
 	 * id matches the document id for the event being fired.
 	 * @memberOf Emitter
 	 * @method on
-	 * @param {String} event The name of the event to listen for.
-	 * @param {*} id The document id to match against.
+	 * @param {string} event The name of the event to listen for.
+	 * @param {string} id The document id to match against.
 	 * @param {Function} listener The method to call when the event is fired.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	"_on" (event, id, listener) {
-		const self = this;
-
+	"_on"(event: string, id: string | number, listener: (...args: any[]) => any): Emitter {
 		const generateTimeout = (emitter) => {
 			setTimeout(() => {
 				listener.apply(this, emitter.args);
@@ -132,7 +131,7 @@ const EventMainMethods = {
 	 * @param {Function} listener The method to call when the event is fired.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	"_once" (event, id, listener) {
+	"_once"(event, id, listener) {
 		let fired = false;
 
 		const internalCallback = () => {
@@ -156,7 +155,7 @@ const EventMainMethods = {
 	 * or once() call to cancel.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	"_off" (event, id, listener) {
+	"_off"(event, id, listener) {
 		if (this._emitting) {
 			this._eventRemovalQueue = this._eventRemovalQueue || [];
 			this._eventRemovalQueue.push(() => {
@@ -192,7 +191,7 @@ const EventMainMethods = {
  * @class Emitter
  * @constructor
  */
-class Emitter {
+export class Emitter {
 	/**
 	 * Attach an event listener to the passed event only if the passed
 	 * id matches the document id for the event being fired.
@@ -203,7 +202,7 @@ class Emitter {
 	 * @param {Function} listener The method to call when the event is fired.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	on (event, ...rest) {
+	on(event, ...rest) {
 		const restTypes = rest.map((arg) => typeof arg);
 
 		if (restTypes[0] === "function") {
@@ -223,7 +222,7 @@ class Emitter {
 	 * @param {Function} listener The method to call when the event is fired.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	once (event, ...rest) {
+	once(event, ...rest) {
 		const restTypes = rest.map((arg) => typeof arg);
 
 		if (restTypes[0] === "function") {
@@ -243,7 +242,7 @@ class Emitter {
 	 * @param {Function} listener The method to call when the event is fired.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	one (event, ...rest) {
+	one(event, ...rest) {
 		const restTypes = rest.map((arg) => typeof arg);
 
 		if (restTypes[0] === "function") {
@@ -265,7 +264,7 @@ class Emitter {
 	 * or once() call to cancel.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	off (event, ...rest) {
+	off(event, ...rest) {
 		if (rest.length === 0) {
 			// Only event was provided
 			return EventMainMethods._off.call(this, event, "*");
@@ -287,7 +286,7 @@ class Emitter {
 	 * @returns {Emitter} The emitter instance.
 	 * @private
 	 */
-	emit (event, ...data) {
+	emit(event, ...data) {
 		const id = "*";
 		this._listeners = this._listeners || {};
 		this._emitting = true;
@@ -313,7 +312,7 @@ class Emitter {
 		return this;
 	}
 
-	emitId (event, id, ...data) {
+	emitId(event, id, ...data) {
 		this._listeners = this._listeners || {};
 		this._emitting = true;
 
@@ -367,7 +366,7 @@ class Emitter {
 	 * @returns {Emitter} The emitter instance.
 	 * @private
 	 */
-	emitStatic (event, ...data) {
+	emitStatic(event, ...data) {
 		const id = "*";
 		this._listeners = this._listeners || {};
 		this._emitting = true;
@@ -409,7 +408,7 @@ class Emitter {
 	 * @returns {Emitter} The emitter instance.
 	 * @private
 	 */
-	emitStaticId (event, id, ...data) {
+	emitStaticId(event, id, ...data) {
 		if (!id) throw new Error("Missing id from emitId call!");
 
 		this._listeners = this._listeners || {};
@@ -467,7 +466,7 @@ class Emitter {
 	 * @returns {Emitter} The emitter instance.
 	 * @private
 	 */
-	cancelStatic (event) {
+	cancelStatic(event) {
 		this._emitters = this._emitters || {};
 		this._emitters[event] = [];
 
@@ -482,7 +481,7 @@ class Emitter {
 	 * @returns {boolean} True if one or more event listeners are registered for
 	 * the event. False if none are found.
 	 */
-	willEmit (event) {
+	willEmit(event) {
 		const id = "*";
 
 		if (!this._listeners || !this._listeners[event]) {
@@ -513,7 +512,7 @@ class Emitter {
 	 * @returns {boolean} True if one or more event listeners are registered for
 	 * the event. False if none are found.
 	 */
-	willEmitId (event, id) {
+	willEmitId(event, id) {
 		if (!this._listeners || !this._listeners[event]) {
 			return false;
 		}
@@ -563,7 +562,7 @@ class Emitter {
 	 * @param {*=} data Optional data to emit with the event.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	deferEmit (eventName, ...data) {
+	deferEmit(eventName, ...data) {
 		if (!this._noEmitDefer && (!this._db || (this._db && !this._db._noEmitDefer))) {
 			// Check for an existing timeout
 			this._deferTimeout = this._deferTimeout || {};
@@ -592,7 +591,7 @@ class Emitter {
 	 * event emitter is finished processing.
 	 * @private
 	 */
-	_processRemovalQueue () {
+	_processRemovalQueue() {
 		if (!this._eventRemovalQueue || !this._eventRemovalQueue.length) {
 			return;
 		}
@@ -607,20 +606,11 @@ class Emitter {
 	}
 }
 
-/**
- * Makes the passed class or object into an emitter by modifying either the
- * prototype or the actual object to include event emitter methods.
- * @param {Object} [obj={}] The object / function / class to add event methods to.
- * If none is provided a new object will be created. This allows you to use
- * new Emitter() to generate an event emitter that is not tied to any other
- * object or class.
- * @param {Boolean} [prototypeMode=true] Defaults to true. Set to true to add emitter
- * methods to the the passed object"s prototype property e.g. obj.prototype.on
- * = emitter.on. Set to false to add emitter methods the object directly e.g.
- * obj.on = emitter.on.
- * @returns {Object} The newly augmented object.
- */
-const makeEmitter = function (obj, prototypeMode) {
+
+export function makeEmitter(obj: boolean): Emitter;
+export function makeEmitter(obj: new (...args: any[]) => any, prototypeMode: boolean): Emitter;
+export function makeEmitter(obj: Record<string, unknown>, prototypeMode: boolean): Emitter;
+export function makeEmitter(obj: any, prototypeMode?: any) {
 	let operateOnObject;
 
 	if (obj === undefined && prototypeMode === undefined) {
@@ -667,9 +657,4 @@ const makeEmitter = function (obj, prototypeMode) {
 	operateOnObject._processRemovalQueue = Emitter.prototype._processRemovalQueue;
 
 	return obj;
-};
-
-module.exports = {
-	Emitter,
-	makeEmitter
-};
+}
