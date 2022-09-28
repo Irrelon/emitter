@@ -10,10 +10,14 @@ Include the ./dist/index.min.js file in your HTML
 ```
 
 ### Node.js
-Install via NPM:
+Install via NPM / Yarn:
 
 ```bash
 npm install @irrelon/emitter
+```
+
+```bash
+yarn add @irrelon/emitter
 ```
 
 Include in your application:
