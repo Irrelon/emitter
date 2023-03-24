@@ -123,7 +123,7 @@ const EventMethods = {
 			if (this._emitters && this._emitters[event] && this._emitters[event].length) {
 				// Emit events for each emitter
 				for (let i = 0; i < this._emitters[event].length; i++) {
-					const emitter = this._emitters[event];
+					const emitter = this._emitters[event][i];
 
 					if (id === "*" || emitter.id === id) {
 						// Call the listener out of process so that any code that expects a listener
