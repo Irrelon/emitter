@@ -1,18 +1,17 @@
 {
-	"extends": [
-		"eslint-config-irrelon"
-	],
-	"globals": {
-		"document": true,
-		"window": true,
-		"process": true
-	},
-	"env": {
-		"browser": true,
-		"node": true,
-		"es6": true
-	},
+	"extends": ["prettier", "plugin:@typescript-eslint/recommended"],
+	"plugins": ["prettier", "@typescript-eslint", "unused-imports"],
 	"rules": {
-		"semi": "error"
+		"@typescript-eslint/no-unnecessary-type-assertion": "off",
+		"@typescript-eslint/consistent-type-definitions": "off",
+		"@typescript-eslint/no-empty-interface": "off",
+		"@typescript-eslint/no-empty-arrow-function": "off",
+		"@typescript-eslint/no-empty-function": "off",
+		"@typescript-eslint/strict-boolean-expressions": "off",
+		"@typescript-eslint/ban-ts-comment": "off",
+		"unused-imports/no-unused-imports": "warn",
+		"max-len": ["warn", {
+			"code": 140
+		}]
 	}
 }

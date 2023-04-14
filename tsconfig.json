@@ -1,0 +1,50 @@
+{
+	"compilerOptions": {
+		"downlevelIteration": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/components/*": [
+				"components/*"
+			],
+			"@/services/*": [
+				"services/*"
+			],
+			"@/types/*": [
+				"types/*"
+			],
+			"@/styles/*": [
+				"styles/*"
+			],
+			"@/config/*": [
+				"config/*"
+			]
+		},
+		"target": "es5",
+		"lib": [
+			"dom",
+			"dom.iterable",
+			"esnext"
+		],
+		"allowJs": false,
+		"skipLibCheck": false,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": false,
+		"incremental": true,
+		"esModuleInterop": true,
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"outDir": "dist",
+		"declaration": true
+	},
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}
