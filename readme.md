@@ -2,14 +2,7 @@
 
 ## Usage
 
-### Browser
-Include the ./dist/index.min.js file in your HTML
-
-```html
-<script src="./dist/index.min.js"></script>
-```
-
-### Node.js
+### Node.js and Packaging Systems Like Webpack
 Install via NPM / Yarn:
 
 ```bash
@@ -26,19 +19,19 @@ Include in your application:
 var Emitter = require('@irrelon/emitter');
 ```
 
-## Add Emitter Functionality to Existing Class
-Given an example class:
+## Extend The Emitter Class
 
 ```js
-var MyClass = function () {
-	this.emit('myEvent', myData, myOtherData);
+import {Emitter} from "@irrelon/emitter";
+class MyClass extends Emitter {
+	async someAsyncFunc () {
+		await this.emit('myEvent', myData, myOtherData);
+	}
+	
+	someFunc () {
+		this.emit('myEvent', myData, myOtherData);
+	}
 };
-```
-
-Add emitter functionality:
-
-```js
-Emitter(MyClass);
 ```
 
 Your class now inherits the emitter methods:
@@ -53,3 +46,10 @@ Your class now inherits the emitter methods:
 * cancelStatic
 * deferEmit
 * willEmit
+
+### Browser
+Include the Emitter.js file in your HTML (the path depends on where you've put the file)
+
+```html
+<script src="./src/Emitter.js" type="module"></script>
+```

@@ -59,6 +59,7 @@ describe("Emitter", () => {
                     }
                     return super.on(eventName, rest[0], rest[1]);
                 }
+                // @ts-ignore
                 emit(eventName, ...rest) {
                     return super.emitId(eventName, "^^noId", ...rest);
                 }

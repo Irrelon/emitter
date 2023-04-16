@@ -2,7 +2,7 @@
 	"author": "Rob Evans - Irrelon Software Limited",
 	"name": "@irrelon/emitter",
 	"description": "Simple JavaScript event emitter.",
-	"version": "5.0.2",
+	"version": "5.0.3",
 	"type": "module",
 	"keywords": [
 		"javascript",
