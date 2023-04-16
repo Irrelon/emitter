@@ -19,7 +19,7 @@
 				"config/*"
 			]
 		},
-		"target": "es5",
+		"target": "es6",
 		"lib": [
 			"dom",
 			"dom.iterable",
@@ -32,16 +32,16 @@
 		"noEmit": false,
 		"incremental": true,
 		"esModuleInterop": true,
-		"module": "commonjs",
+		"module": "es2022",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"jsx": "preserve",
-		"outDir": "dist",
 		"declaration": true
 	},
 	"include": [
 		"src/**/*.ts",
+		"tests/*.ts",
+		"tests/**/*.ts",
 		"src/**/*.tsx"
 	],
 	"exclude": [

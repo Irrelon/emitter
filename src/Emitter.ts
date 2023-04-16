@@ -2,7 +2,7 @@
  The MIT License (MIT)
 
  Copyright (c) 2014 Irrelon Software Limited
- http://www.irrelon.com
+ https://www.irrelon.com
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,13 @@
  Source: https://github.com/irrelon/emitter
 
  Changelog:
+ 	Version 5.0.2:
+ 		Removed some unnecessary code, updated to be in step with version
+ 		that is being used in the new version of Isogenic Game Engine.
+ 	Version 5.0.1:
+ 		Further TypeScript updates.
  	Version 5.0.0:
- 		Added typescript and prettier, removed babel etc
+ 		Added TypeScript and prettier, removed babel etc
  	Version 4.0.1:
  		Updated library to use new ES6 functionality making Overload()
  		less useful so it can be removed as a dependency.
@@ -79,36 +84,54 @@
 	Version 1.0.0:
 		First commit
  */
+export enum EventReturnFlag {
+	none,
+	cancel
+}
 
-const EventMainMethods = {
+export type EventListenerCallback = (...args: any[]) => any | Promise<any>;
+export interface EventStaticEmitterObject {
+	id: string;
+	args: any[];
+}
+
+/**
+ * Creates a new class with the capability to emit events.
+ */
+export class Emitter {
+	_eventsEmitting: boolean = false;
+	_eventRemovalQueue: any[] = [];
+	_eventListeners?: Record<string, Record<string, EventListenerCallback[]>>;
+	_eventStaticEmitters: Record<string, EventStaticEmitterObject[]> = {};
+	_eventsAllowDefer: boolean = false;
+	_eventsDeferTimeouts: Record<any, number> = {};
+
 	/**
 	 * Attach an event listener to the passed event only if the passed
-	 * id matches the document id for the event being fired.
-	 * @memberOf Emitter
-	 * @method on
-	 * @param {string} event The name of the event to listen for.
-	 * @param {string} id The document id to match against.
-	 * @param {Function} listener The method to call when the event is fired.
+	 * id matches the id for the event being fired.
+	 * @param {string} eventName The name of the event to listen for.
+	 * @param {string} id The id to match against.
+	 * @param {function} listener The method to call when the event is fired.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	"_on"(event: string, id: string | number, listener: (...args: any[]) => any): Emitter {
-		const generateTimeout = (emitter) => {
+	_on (eventName: string, id: string, listener: EventListenerCallback) {
+		const generateTimeout = (emitter: EventStaticEmitterObject) => {
 			setTimeout(() => {
-				listener.apply(this, emitter.args);
+				listener(...emitter.args);
 			}, 1);
 		};
 
-		this._listeners = this._listeners || {};
-		this._listeners[event] = this._listeners[event] || {};
-		this._listeners[event][id] = this._listeners[event][id] || [];
-		this._listeners[event][id].push(listener);
+		this._eventListeners = this._eventListeners || {};
+		this._eventListeners[eventName] = this._eventListeners[eventName] || {};
+		this._eventListeners[eventName][id] = this._eventListeners[eventName][id] || [];
+		this._eventListeners[eventName][id].push(listener);
 
 		// Check for any static emitters, and fire the event if any exist
-		if (!this._emitters || !this._emitters[event] || !this._emitters[event].length) return this;
+		if (!this._eventStaticEmitters || !this._eventStaticEmitters[eventName] || !this._eventStaticEmitters[eventName].length) return this;
 
 		// Emit events for each emitter
-		for (let i = 0; i < this._emitters[event].length; i++) {
-			const emitter = this._emitters[event];
+		for (let i = 0; i < this._eventStaticEmitters[eventName].length; i++) {
+			const emitter = this._eventStaticEmitters[eventName][i];
 
 			if (id === "*" || emitter.id === id) {
 				// Call the listener out of process so that any code that expects a listener
@@ -119,213 +142,253 @@ const EventMainMethods = {
 		}
 
 		return this;
-	},
+	}
 
 	/**
 	 * Attach an event listener to the passed event only if the passed
 	 * id matches the document id for the event being fired.
-	 * @memberOf Emitter
-	 * @method once
-	 * @param {String} event The name of the event to listen for.
-	 * @param {*} id The document id to match against.
+	 * @param {String} eventName The name of the event to listen for.
+	 * @param {*} id The id to match against.
 	 * @param {Function} listener The method to call when the event is fired.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	"_once"(event, id, listener) {
+	_once (eventName: string, id: string, listener: EventListenerCallback) {
 		let fired = false;
 
-		const internalCallback = () => {
+		const internalCallback = (...args: any[]) => {
 			if (fired) return;
 
 			fired = true;
-			this.off(event, id, internalCallback);
-			listener.apply(this, arguments);
+			this.off(eventName, id, internalCallback);
+			listener(...args);
 		};
 
-		return this.on(event, id, internalCallback);
-	},
+		return this.on(eventName, id, internalCallback);
+	}
 
 	/**
 	 * Cancels an event listener based on an event name, id and listener function.
-	 * @memberOf Emitter
-	 * @method off
-	 * @param {String} event The event to cancel listener for.
+	 * @param {String} eventName The event to cancel listener for.
 	 * @param {String} id The ID of the event to cancel listening for.
 	 * @param {Function} listener The event listener function used in the on()
 	 * or once() call to cancel.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	"_off"(event, id, listener) {
-		if (this._emitting) {
+	_off (eventName: string, id: string, listener?: EventListenerCallback): this {
+		// If the event name doesn't have any listeners, exit early
+		if (!this._eventListeners || !this._eventListeners[eventName] || !this._eventListeners[eventName][id]) return this;
+
+		// If we are emitting events at the moment, don't remove this listener
+		// until the process has completed, so we queue for removal instead
+		if (this._eventsEmitting) {
 			this._eventRemovalQueue = this._eventRemovalQueue || [];
 			this._eventRemovalQueue.push(() => {
-				this.off(event, id, listener);
+				this.off(eventName, id, listener);
 			});
 
 			return this;
 		}
 
-		if (!this._listeners || !this._listeners[event] || !this._listeners[event][id]) return this;
-
-		if (id && !listener) {
+		// Check if we have no specific listener... in this case
+		// we want to remove all listeners for an id
+		if (!listener) {
 			if (id === "*") {
-				delete this._listeners[event];
+				// The id is "all" and no listener was provided so delete all
+				// event listeners for this event name
+				delete this._eventListeners[eventName];
 				return this;
 			}
 
-			// No listener provided, delete all listeners
-			delete this._listeners[event][id];
+			// No listener provided, delete all listeners for this id
+			delete this._eventListeners[eventName][id];
 			return this;
 		}
 
-		const arr = this._listeners[event][id] || [],
-			index = arr.indexOf(listener);
+		const arr = this._eventListeners[eventName][id] || [];
+		const index = arr.indexOf(listener);
 
 		if (index > -1) {
 			arr.splice(index, 1);
 		}
-	}
-};
 
-/**
- * @class Emitter
- * @constructor
- */
-export class Emitter {
-	/**
-	 * Attach an event listener to the passed event only if the passed
-	 * id matches the document id for the event being fired.
-	 * @memberOf Emitter
-	 * @method on
-	 * @param {String} event The name of the event to listen for.
-	 * @param {*} id The document id to match against.
-	 * @param {Function} listener The method to call when the event is fired.
-	 * @returns {Emitter} The emitter instance.
-	 */
-	on(event, ...rest) {
-		const restTypes = rest.map((arg) => typeof arg);
-
-		if (restTypes[0] === "function") {
-			return EventMainMethods._on.call(this, event, "*", rest[0]);
-		}
-
-		return EventMainMethods._on.call(this, event, rest[0], rest[1]);
+		return this;
 	}
 
 	/**
 	 * Attach an event listener to the passed event only if the passed
 	 * id matches the document id for the event being fired.
-	 * @memberOf Emitter
-	 * @method once
-	 * @param {String} event The name of the event to listen for.
-	 * @param {*} id The document id to match against.
+	 * @param {String} eventName The name of the event to listen for.
+	 * @param {*} id The id to match against.
 	 * @param {Function} listener The method to call when the event is fired.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	once(event, ...rest) {
+	on (eventName: string, id: string, listener: EventListenerCallback): this;
+	on (eventName: string, listener: EventListenerCallback): this;
+	on (eventName: string, ...rest: any[]): this {
 		const restTypes = rest.map((arg) => typeof arg);
 
 		if (restTypes[0] === "function") {
-			return EventMainMethods._once.call(this, event, "*", rest[0]);
+			return this._on(eventName, "*", rest[0]);
 		}
 
-		return EventMainMethods._once.call(this, event, rest[0], rest[1]);
+		return this._on(eventName, rest[0], rest[1]);
 	}
 
 	/**
 	 * Attach an event listener to the passed event only if the passed
 	 * id matches the document id for the event being fired.
-	 * @memberOf Emitter
-	 * @method once
-	 * @param {String} event The name of the event to listen for.
-	 * @param {*} id The document id to match against.
-	 * @param {Function} listener The method to call when the event is fired.
+	 * @param {String} eventName The name of the event to listen for.
+	 * @param id The id to match against.
+	 * @param listener
 	 * @returns {Emitter} The emitter instance.
 	 */
-	one(event, ...rest) {
+	once (eventName: string, id: string, listener: EventListenerCallback): this;
+	once (eventName: string, listener: EventListenerCallback): this;
+	once (eventName: string, ...rest: any[]): this {
 		const restTypes = rest.map((arg) => typeof arg);
 
 		if (restTypes[0] === "function") {
-			this.off(event);
-			return EventMainMethods._on.call(this, event, "*", rest[0]);
+			return this._once(eventName, "*", rest[0]);
 		}
 
-		this.off(event, rest[0]);
-		return EventMainMethods._on.call(this, event, rest[0], rest[1]);
+		return this._once(eventName, rest[0], rest[1]);
+	}
+
+	/**
+	 * Overwrites any previous event listeners so that if the event fires, only
+	 * the listener you pass will be called. If you pass an id along with the
+	 * listener, only listeners for the id will be overwritten. This is similar
+	 * to calling `.off(eventName)` then `on(eventName, listener)` since
+	 * `off(eventName)` will cancel any previous event listeners for the passed
+	 * event name.
+	 * @param {String} eventName The name of the event to listen for.
+	 * @param {*} id The id to match against.
+	 * @param {Function} listener The method to call when the event is fired.
+	 * @returns {Emitter} The emitter instance.
+	 */
+	overwrite (eventName: string, id: string, listener: EventListenerCallback): this;
+	overwrite (eventName: string, listener: EventListenerCallback): this;
+	overwrite (eventName: string, ...rest: any[]) {
+		const restTypes = rest.map((arg) => typeof arg);
+
+		if (restTypes[0] === "function") {
+			this.off(eventName);
+			return this._on(eventName, "*", rest[0]);
+		}
+
+		this.off(eventName, rest[0]);
+		return this._on(eventName, rest[0], rest[1]);
 	}
 
 	/**
 	 * Cancels an event listener based on an event name, id and listener function.
-	 * @memberOf Emitter
-	 * @method off
-	 * @param {String} event The event to cancel listener for.
+	 * @param {String} eventName The event to cancel listener for.
 	 * @param {String} id The ID of the event to cancel listening for.
 	 * @param {Function} listener The event listener function used in the on()
 	 * or once() call to cancel.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	off(event, ...rest) {
+	off (eventName: string, id: string, listener?: EventListenerCallback): this;
+	off (eventName: string, listener?: EventListenerCallback): this;
+	off (eventName: string): this;
+	off (eventName: string, ...rest: any[]) {
 		if (rest.length === 0) {
-			// Only event was provided
-			return EventMainMethods._off.call(this, event, "*");
+			// Only event was provided, use * as the id to mean "any without"
+			// a specific id
+			return this._off(eventName, "*");
 		}
 
 		const restTypes = rest.map((arg) => typeof arg);
 
 		if (restTypes[0] === "function") {
-			return EventMainMethods._off.call(this, event, "*", rest[0]);
+			// The first arg after the event name was a function (listener)
+			// so remove listening for events for this specific listener
+			return this._off(eventName, "*", rest[0]);
 		}
 
-		return EventMainMethods._off.call(this, event, rest[0], rest[1]);
+		// Both id and listener were provided, remove for the specific id
+		return this._off(eventName, rest[0], rest[1]);
 	}
 
 	/**
-	 * Handles emitting events, is an internal method not called directly.
-	 * @param {String} event The name of the event to emit.
-	 * @param {*} data The data to emit with the event.
-	 * @returns {Emitter} The emitter instance.
-	 * @private
+	 * Emit an event by name.
+	 * @param {Object} eventName The name of the event to emit.
+	 * @param {...any} data The arguments to send to any listening methods.
+	 * If you are sending multiple arguments, separate them with a comma so
+	 * that they are received by the function as separate arguments.
+	 * @return {number}
+	 * @example #Emit an Event
+	 *     // Emit the event named "hello"
+	 *     myEntity.emit('hello');
+	 * @example #Emit an Event With Data Object
+	 *     // Emit the event named "hello"
+	 *     myEntity.emit('hello', {moo: true});
+	 * @example #Emit an Event With Multiple Data Values
+	 *     // Emit the event named "hello"
+	 *     myEntity.emit('hello', {moo: true}, 'someString');
+	 * @example #Listen for Event Data
+	 *     // Set a listener to listen for the data (multiple values emitted
+	 *     // from an event are passed as function arguments)
+	 *     myEntity.on('hello', function (arg1, arg2) {
+	 *         console.log(arg1, arg2);
+	 *     }
+	 *
+	 *     // Emit the event named "hello"
+	 *     myEntity.emit('hello', 'data1', 'data2');
+	 *
+	 *     // The console output is:
+	 *     //    data1, data2
 	 */
-	emit(event, ...data) {
+	async emit (eventName: string, ...data: any[]): Promise<EventReturnFlag> {
+		if (!this._eventListeners) {
+			return EventReturnFlag.none;
+		}
+
 		const id = "*";
-		this._listeners = this._listeners || {};
-		this._emitting = true;
 
-		if (this._listeners[event] && this._listeners[event][id]) {
+		let returnFlag: EventReturnFlag = EventReturnFlag.none;
+		this._eventsEmitting = true;
+
+		if (this._eventListeners[eventName] && this._eventListeners[eventName][id]) {
 			// Handle global emit
-			const arr = this._listeners[event][id];
-			const arrCount = arr.length;
+			const arr = this._eventListeners[eventName][id];
 
-			for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-				// Check we have a function to execute
-				const tmpFunc = arr[arrIndex];
+			const promiseArr = arr.map((tmpFunc) => {
+				if (typeof tmpFunc !== "function") return;
+				return tmpFunc(...data);
+			});
 
-				if (typeof tmpFunc === "function") {
-					tmpFunc.call(this, ...data);
-				}
+			const result = (await Promise.all(promiseArr)).find((tmpResult) => tmpResult !== EventReturnFlag.none);
+
+			if (result) {
+				returnFlag = EventReturnFlag.cancel;
 			}
 		}
 
-		this._emitting = false;
+		this._eventsEmitting = false;
 		this._processRemovalQueue();
 
-		return this;
+		return returnFlag;
 	}
 
-	emitId(event, id, ...data) {
-		this._listeners = this._listeners || {};
-		this._emitting = true;
+	emitId (eventName: string, id: string, ...data: any[]): EventReturnFlag {
+		if (!this._eventListeners) {
+			return EventReturnFlag.none;
+		}
 
-		if (!this._listeners[event]) {
-			this._emitting = false;
+		this._eventListeners = this._eventListeners || {};
+		this._eventsEmitting = true;
+
+		if (!this._eventListeners[eventName]) {
+			this._eventsEmitting = false;
 			this._processRemovalQueue();
 
-			return this;
+			return EventReturnFlag.none;
 		}
 
 		// Handle id emit
-		if (this._listeners[event][id]) {
-			const arr = this._listeners[event][id];
+		if (this._eventListeners[eventName][id]) {
+			const arr = this._eventListeners[eventName][id];
 			const arrCount = arr.length;
 
 			for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
@@ -339,8 +402,8 @@ export class Emitter {
 		}
 
 		// Handle global emit
-		if (this._listeners[event]["*"]) {
-			const arr = this._listeners[event]["*"];
+		if (this._eventListeners[eventName]["*"]) {
+			const arr = this._eventListeners[eventName]["*"];
 			const arrCount = arr.length;
 
 			for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
@@ -353,27 +416,29 @@ export class Emitter {
 			}
 		}
 
-		this._emitting = false;
+		this._eventsEmitting = false;
 		this._processRemovalQueue();
 
-		return this;
+		return EventReturnFlag.none;
 	}
 
 	/**
-	 * Handles emitting events, is an internal method not called directly.
-	 * @param {String} event The name of the event to emit.
-	 * @param {*} data The data to emit with the event.
+	 * Creates a persistent emitter record that will fire a listener if
+	 * one is added for this event after the emitStatic() call has been
+	 * made.
+	 * @param {String} eventName The name of the event to emit.
+	 * @param {...any} data Optional arguments to emit with the event.
 	 * @returns {Emitter} The emitter instance.
 	 * @private
 	 */
-	emitStatic(event, ...data) {
+	emitStatic (eventName: string, ...data: any[]) {
 		const id = "*";
-		this._listeners = this._listeners || {};
-		this._emitting = true;
+		this._eventListeners = this._eventListeners || {};
+		this._eventsEmitting = true;
 
-		if (this._listeners[event] && this._listeners[event][id]) {
+		if (this._eventListeners[eventName] && this._eventListeners[eventName][id]) {
 			// Handle global emit
-			const arr = this._listeners[event][id];
+			const arr = this._eventListeners[eventName][id];
 			const arrCount = arr.length;
 
 			for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
@@ -386,11 +451,11 @@ export class Emitter {
 			}
 		}
 
-		this._emitting = false;
+		this._eventsEmitting = false;
 
-		this._emitters = this._emitters || {};
-		this._emitters[event] = this._emitters[event] || [];
-		this._emitters[event].push({
+		this._eventStaticEmitters = this._eventStaticEmitters || {};
+		this._eventStaticEmitters[eventName] = this._eventStaticEmitters[eventName] || [];
+		this._eventStaticEmitters[eventName].push({
 			"id": "*",
 			"args": data
 		});
@@ -401,23 +466,25 @@ export class Emitter {
 	}
 
 	/**
-	 * Handles emitting events, is an internal method not called directly.
-	 * @param {String} event The name of the event to emit.
+	 * Creates a persistent emitter record that will fire a listener if
+	 * one is added for this event after the emitStatic() call has been
+	 * made.
+	 * @param {String} eventName The name of the event to emit.
 	 * @param {String} id The id of the event to emit.
-	 * @param {*} data The data to emit with the event.
+	 * @param {...any} data Optional arguments to emit with the event.
 	 * @returns {Emitter} The emitter instance.
 	 * @private
 	 */
-	emitStaticId(event, id, ...data) {
+	emitStaticId (eventName: string, id: string, ...data: any[]) {
 		if (!id) throw new Error("Missing id from emitId call!");
 
-		this._listeners = this._listeners || {};
-		this._emitting = true;
+		this._eventListeners = this._eventListeners || {};
+		this._eventsEmitting = true;
 
-		if (this._listeners[event]) {
+		if (this._eventListeners[eventName]) {
 			// Handle id emit
-			if (this._listeners[event][id]) {
-				const arr = this._listeners[event][id];
+			if (this._eventListeners[eventName][id]) {
+				const arr = this._eventListeners[eventName][id];
 				const arrCount = arr.length;
 
 				for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
@@ -431,8 +498,8 @@ export class Emitter {
 			}
 
 			// Handle global emit
-			if (this._listeners[event]["*"]) {
-				const arr = this._listeners[event]["*"];
+			if (this._eventListeners[eventName]["*"]) {
+				const arr = this._eventListeners[eventName]["*"];
 				const arrCount = arr.length;
 
 				for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
@@ -446,11 +513,11 @@ export class Emitter {
 			}
 		}
 
-		this._emitting = false;
+		this._eventsEmitting = false;
 
-		this._emitters = this._emitters || {};
-		this._emitters[event] = this._emitters[event] || [];
-		this._emitters[event].push({
+		this._eventStaticEmitters = this._eventStaticEmitters || {};
+		this._eventStaticEmitters[eventName] = this._eventStaticEmitters[eventName] || [];
+		this._eventStaticEmitters[eventName].push({
 			id,
 			"args": data
 		});
@@ -462,33 +529,31 @@ export class Emitter {
 
 	/**
 	 * Handles removing emitters, is an internal method not called directly.
-	 * @param {String} event The event to remove static emitter for.
+	 * @param {String} eventName The event to remove static emitter for.
 	 * @returns {Emitter} The emitter instance.
 	 * @private
 	 */
-	cancelStatic(event) {
-		this._emitters = this._emitters || {};
-		this._emitters[event] = [];
+	cancelStatic (eventName: string) {
+		this._eventStaticEmitters = this._eventStaticEmitters || {};
+		this._eventStaticEmitters[eventName] = [];
 
 		return this;
 	}
 
 	/**
 	 * Checks if an event has any event listeners or not.
-	 * @memberOf Emitter
-	 * @method willEmit
-	 * @param {String} event The name of the event to check for.
+	 * @param {String} eventName The name of the event to check for.
 	 * @returns {boolean} True if one or more event listeners are registered for
 	 * the event. False if none are found.
 	 */
-	willEmit(event) {
+	willEmit (eventName: string) {
 		const id = "*";
 
-		if (!this._listeners || !this._listeners[event]) {
+		if (!this._eventListeners || !this._eventListeners[eventName]) {
 			return false;
 		}
 
-		const arr = this._listeners[event][id];
+		const arr = this._eventListeners[eventName][id];
 		const arrCount = arr.length;
 
 		for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
@@ -505,21 +570,19 @@ export class Emitter {
 
 	/**
 	 * Checks if an event has any event listeners or not based on the passed id.
-	 * @memberOf Emitter
-	 * @method willEmitId
-	 * @param {String} event The name of the event to check for.
+	 * @param {String} eventName The name of the event to check for.
 	 * @param {String} id The event ID to check for.
 	 * @returns {boolean} True if one or more event listeners are registered for
 	 * the event. False if none are found.
 	 */
-	willEmitId(event, id) {
-		if (!this._listeners || !this._listeners[event]) {
+	willEmitId (eventName: string, id: string) {
+		if (!this._eventListeners || !this._eventListeners[eventName]) {
 			return false;
 		}
 
 		// Handle id emit
-		if (this._listeners[event][id]) {
-			const arr = this._listeners[event][id];
+		if (this._eventListeners[eventName][id]) {
+			const arr = this._eventListeners[eventName][id];
 			const arrCount = arr.length;
 
 			for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
@@ -533,8 +596,8 @@ export class Emitter {
 		}
 
 		// Handle global emit
-		if (this._listeners[event]["*"]) {
-			const arr = this._listeners[event]["*"];
+		if (this._eventListeners[eventName]["*"]) {
+			const arr = this._eventListeners[eventName]["*"];
 			const arrCount = arr.length;
 
 			for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
@@ -556,25 +619,23 @@ export class Emitter {
 	 * one will all be wrapped into a single emit rather than emitting tons of
 	 * events for lots of chained inserts etc. Only the data from the last
 	 * de-bounced event will be emitted.
-	 * @memberOf Emitter
-	 * @method deferEmit
 	 * @param {String} eventName The name of the event to emit.
-	 * @param {*=} data Optional data to emit with the event.
+	 * @param {...any} data Optional arguments to emit with the event.
 	 * @returns {Emitter} The emitter instance.
 	 */
-	deferEmit(eventName, ...data) {
-		if (!this._noEmitDefer && (!this._db || (this._db && !this._db._noEmitDefer))) {
+	deferEmit (eventName: string, ...data: any[]) {
+		if (!this._eventsAllowDefer) {
 			// Check for an existing timeout
-			this._deferTimeout = this._deferTimeout || {};
+			this._eventsDeferTimeouts = this._eventsDeferTimeouts || {};
 
-			if (this._deferTimeout[eventName]) {
-				clearTimeout(this._deferTimeout[eventName]);
+			if (this._eventsDeferTimeouts[eventName]) {
+				clearTimeout(this._eventsDeferTimeouts[eventName]);
 			}
 
 			// Set a timeout
-			this._deferTimeout[eventName] = setTimeout(() => {
+			this._eventsDeferTimeouts[eventName] = setTimeout(() => {
 				this.emit.call(this, eventName, ...data);
-			}, 1);
+			}, 1) as unknown as number;
 		} else {
 			this.emit.call(this, eventName, ...data);
 		}
@@ -591,7 +652,7 @@ export class Emitter {
 	 * event emitter is finished processing.
 	 * @private
 	 */
-	_processRemovalQueue() {
+	_processRemovalQueue () {
 		if (!this._eventRemovalQueue || !this._eventRemovalQueue.length) {
 			return;
 		}
@@ -606,11 +667,10 @@ export class Emitter {
 	}
 }
 
-
-export function makeEmitter(obj: boolean): Emitter;
 export function makeEmitter(obj: new (...args: any[]) => any, prototypeMode: boolean): Emitter;
+export function makeEmitter(obj: boolean): Emitter;
 export function makeEmitter(obj: Record<string, unknown>, prototypeMode: boolean): Emitter;
-export function makeEmitter(obj: any, prototypeMode?: any) {
+export function makeEmitter (obj: any, prototypeMode?: any) {
 	let operateOnObject;
 
 	if (obj === undefined && prototypeMode === undefined) {
@@ -644,7 +704,6 @@ export function makeEmitter(obj: any, prototypeMode?: any) {
 	// Convert the object prototype to have eventing capability
 	operateOnObject.on = Emitter.prototype.on;
 	operateOnObject.off = Emitter.prototype.off;
-	operateOnObject.one = Emitter.prototype.one;
 	operateOnObject.once = Emitter.prototype.once;
 	operateOnObject.emit = Emitter.prototype.emit;
 	operateOnObject.emitId = Emitter.prototype.emitId;
