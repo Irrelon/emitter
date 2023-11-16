@@ -2,7 +2,7 @@
 	"author": "Rob Evans - Irrelon Software Limited",
 	"name": "@irrelon/emitter",
 	"description": "Simple JavaScript event emitter.",
-	"version": "5.0.5",
+	"version": "5.0.6",
 	"keywords": [
 		"javascript",
 		"browser",
@@ -55,8 +55,8 @@
 		"type": "git",
 		"url": "git://github.com/irrelon/emitter.git"
 	},
-	"main": "dist/cjs/Emitter.js",
-	"module": "dist/mjs/Emitter.js",
+	"main": "dist/cjs/src/Emitter.js",
+	"module": "dist/mjs/src/Emitter.js",
 	"exports": {
 		".": {
 			"import": "./dist/mjs/src/Emitter.js",
