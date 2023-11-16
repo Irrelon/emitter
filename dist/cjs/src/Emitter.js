@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -7,104 +8,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-/*
- The MIT License (MIT)
-
- Copyright (c) 2014 Irrelon Software Limited
- https://www.irrelon.com
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice, url and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
-
- Source: https://github.com/irrelon/emitter
-
- Changelog:
-    Version 5.0.2:
-        Removed some unnecessary code, updated to be in step with version
-        that is being used in the new version of Isogenic Game Engine.
-    Version 5.0.1:
-        Further TypeScript updates.
-    Version 5.0.0:
-        Added TypeScript and prettier, removed babel etc
-    Version 4.0.1:
-        Updated library to use new ES6 functionality making Overload()
-        less useful so it can be removed as a dependency.
-    Version 4.0.0:
-        Breaking change. Library now has named exports `Emitter` and
-        `makeEmitter`. `Emitter` is an ES6 class that can be extended
-        and `makeEmitter` is a function that takes an object or class
-        and does what `Emitter(someObject)` used to do. This change is
-        to support being able to extend `Emitter` as a base class.
-    Version 3.1.0:
-        Changed order of execution so that listeners that are listening
-        against a specific ID get called before the general catch-all
-        listeners. Renamed package to @irrelon/emitter.
-    Version 2.0.11:
-        Added cancelStatic method to allow cancelling a static event
-    Version 2.0.7:
-        Fixed UMD module support
-    Version 2.0.6:
-        Added UMD module support
-    Version 2.0.5:
-        Added bower version number
-    Version 2.0.4:
-        Allow instantiation as independent instance, updated unit tests
-    Version 2.0.3:
-        Documentation updates, published to bower
-    Version 2.0.2:
-        Documentation updates
-    Version 2.0.1:
-        Bug fix in this._emitters usage
-    Version 2.0.0:
-        Big update to bring in line with latest developments in other projects. Event emitter can
-        now use deferEmit(), emitId(), emitStatic(), emitStaticId(), willEmit(), willEmitId().
-    Version 1.1.9:
-        Updated changelog correctly
-    Version 1.1.8:
-        Removed tons of dependencies wrongly included in main dependencies, have moved to devDependencies section of package.json
-    Version 1.1.0:
-        Added support for overloaded methods
-        Added support for events with ids
-    Version 1.0.2:
-        Removed AMD support, added browserify support
-        Added package.json
-        Added once() method
-        Added hasListener() method
-        Published to NPM as irrelon-emitter
-    Version 1.0.1:
-        Added ability to extend any object with eventing capability
-        Added AMD / Require.js support
-         Added Node.js support
-    Version 1.0.0:
-        First commit
- */
-export var EventReturnFlag;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.makeEmitter = exports.Emitter = exports.EventReturnFlag = void 0;
+var EventReturnFlag;
 (function (EventReturnFlag) {
     EventReturnFlag[EventReturnFlag["none"] = 0] = "none";
     EventReturnFlag[EventReturnFlag["cancel"] = 1] = "cancel";
-})(EventReturnFlag || (EventReturnFlag = {}));
+})(EventReturnFlag = exports.EventReturnFlag || (exports.EventReturnFlag = {}));
 /**
  * Creates a new class with the capability to emit events.
  */
-export class Emitter {
+class Emitter {
     constructor() {
         this._eventsEmitting = false;
         this._eventRemovalQueue = [];
+        this._eventListeners = {};
         this._eventStaticEmitters = {};
         this._eventsAllowDefer = false;
         this._eventsDeferTimeouts = {};
@@ -112,10 +30,10 @@ export class Emitter {
     /**
      * Attach an event listener to the passed event only if the passed
      * id matches the id for the event being fired.
-     * @param {string} eventName The name of the event to listen for.
-     * @param {string} id The id to match against.
-     * @param {function} listener The method to call when the event is fired.
-     * @returns {Emitter} The emitter instance.
+     * @param eventName The name of the event to listen for.
+     * @param id The id to match against.
+     * @param listener The method to call when the event is fired.
+     * @returns The emitter instance.
      */
     _on(eventName, id, listener) {
         const generateTimeout = (emitter) => {
@@ -124,9 +42,9 @@ export class Emitter {
             }, 1);
         };
         this._eventListeners = this._eventListeners || {};
-        this._eventListeners[eventName] = this._eventListeners[eventName] || {};
-        this._eventListeners[eventName][id] = this._eventListeners[eventName][id] || [];
-        this._eventListeners[eventName][id].push(listener);
+        const nonNullableEventListeners = this._eventListeners[eventName] = this._eventListeners[eventName] || {};
+        nonNullableEventListeners[id] = nonNullableEventListeners[id] || [];
+        nonNullableEventListeners[id].push(listener);
         // Check for any static emitters, and fire the event if any exist
         if (!this._eventStaticEmitters || !this._eventStaticEmitters[eventName] || !this._eventStaticEmitters[eventName].length)
             return this;
@@ -145,29 +63,31 @@ export class Emitter {
     /**
      * Attach an event listener to the passed event only if the passed
      * id matches the document id for the event being fired.
-     * @param {String} eventName The name of the event to listen for.
-     * @param {*} id The id to match against.
-     * @param {Function} listener The method to call when the event is fired.
-     * @returns {Emitter} The emitter instance.
+     * @param eventName The name of the event to listen for.
+     * @param id The id to match against.
+     * @param listener The method to call when the event is fired.
+     * @returns The emitter instance.
      */
     _once(eventName, id, listener) {
         let fired = false;
+        let originalReturnData;
         const internalCallback = (...args) => {
             if (fired)
-                return;
+                return originalReturnData;
             fired = true;
             this.off(eventName, id, internalCallback);
-            listener(...args);
+            originalReturnData = listener(...args);
+            return originalReturnData;
         };
         return this.on(eventName, id, internalCallback);
     }
     /**
      * Cancels an event listener based on an event name, id and listener function.
-     * @param {String} eventName The event to cancel listener for.
-     * @param {String} id The ID of the event to cancel listening for.
-     * @param {Function} listener The event listener function used in the on()
+     * @param eventName The event to cancel listener for.
+     * @param id The ID of the event to cancel listening for.
+     * @param listener The event listener function used in the on()
      * or once() call to cancel.
-     * @returns {Emitter} The emitter instance.
+     * @returns The emitter instance.
      */
     _off(eventName, id, listener) {
         // If the event name doesn't have any listeners, exit early
@@ -202,12 +122,11 @@ export class Emitter {
         }
         return this;
     }
-    on(eventName, ...rest) {
-        const restTypes = rest.map((arg) => typeof arg);
-        if (restTypes[0] === "function") {
-            return this._on(eventName, "*", rest[0]);
+    on(eventName, idOrListener, listener) {
+        if (typeof idOrListener === "string") {
+            return this._on(eventName, idOrListener, listener);
         }
-        return this._on(eventName, rest[0], rest[1]);
+        return this._on(eventName, "*", idOrListener);
     }
     once(eventName, ...rest) {
         const restTypes = rest.map((arg) => typeof arg);
@@ -242,7 +161,7 @@ export class Emitter {
     }
     /**
      * Emit an event by name.
-     * @param {Object} eventName The name of the event to emit.
+     * @param eventName The name of the event to emit.
      * @param {...any} data The arguments to send to any listening methods.
      * If you are sending multiple arguments, separate them with a comma so
      * that they are received by the function as separate arguments.
@@ -338,9 +257,9 @@ export class Emitter {
      * Creates a persistent emitter record that will fire a listener if
      * one is added for this event after the emitStatic() call has been
      * made.
-     * @param {String} eventName The name of the event to emit.
+     * @param eventName The name of the event to emit.
      * @param {...any} data Optional arguments to emit with the event.
-     * @returns {Emitter} The emitter instance.
+     * @returns The emitter instance.
      * @private
      */
     emitStatic(eventName, ...data) {
@@ -373,10 +292,10 @@ export class Emitter {
      * Creates a persistent emitter record that will fire a listener if
      * one is added for this event after the emitStatic() call has been
      * made.
-     * @param {String} eventName The name of the event to emit.
-     * @param {String} id The id of the event to emit.
+     * @param eventName The name of the event to emit.
+     * @param id The id of the event to emit.
      * @param {...any} data Optional arguments to emit with the event.
-     * @returns {Emitter} The emitter instance.
+     * @returns The emitter instance.
      * @private
      */
     emitStaticId(eventName, id, ...data) {
@@ -422,8 +341,8 @@ export class Emitter {
     }
     /**
      * Handles removing emitters, is an internal method not called directly.
-     * @param {String} eventName The event to remove static emitter for.
-     * @returns {Emitter} The emitter instance.
+     * @param eventName The event to remove static emitter for.
+     * @returns The emitter instance.
      * @private
      */
     cancelStatic(eventName) {
@@ -433,8 +352,8 @@ export class Emitter {
     }
     /**
      * Checks if an event has any event listeners or not.
-     * @param {String} eventName The name of the event to check for.
-     * @returns {boolean} True if one or more event listeners are registered for
+     * @param eventName The name of the event to check for.
+     * @returns True if one or more event listeners are registered for
      * the event. False if none are found.
      */
     willEmit(eventName) {
@@ -455,9 +374,9 @@ export class Emitter {
     }
     /**
      * Checks if an event has any event listeners or not based on the passed id.
-     * @param {String} eventName The name of the event to check for.
-     * @param {String} id The event ID to check for.
-     * @returns {boolean} True if one or more event listeners are registered for
+     * @param eventName The name of the event to check for.
+     * @param id The event ID to check for.
+     * @returns True if one or more event listeners are registered for
      * the event. False if none are found.
      */
     willEmitId(eventName, id) {
@@ -496,9 +415,9 @@ export class Emitter {
      * one will all be wrapped into a single emit rather than emitting tons of
      * events for lots of chained inserts etc. Only the data from the last
      * de-bounced event will be emitted.
-     * @param {String} eventName The name of the event to emit.
+     * @param eventName The name of the event to emit.
      * @param {...any} data Optional arguments to emit with the event.
-     * @returns {Emitter} The emitter instance.
+     * @returns The emitter instance.
      */
     deferEmit(eventName, ...data) {
         if (!this._eventsAllowDefer) {
@@ -509,11 +428,11 @@ export class Emitter {
             }
             // Set a timeout
             this._eventsDeferTimeouts[eventName] = setTimeout(() => {
-                this.emit.call(this, eventName, ...data);
+                void this.emit.call(this, eventName, ...data);
             }, 1);
         }
         else {
-            this.emit.call(this, eventName, ...data);
+            void this.emit.call(this, eventName, ...data);
         }
         return this;
     }
@@ -538,7 +457,8 @@ export class Emitter {
         this._eventRemovalQueue = [];
     }
 }
-export function makeEmitter(obj, prototypeMode) {
+exports.Emitter = Emitter;
+function makeEmitter(obj, prototypeMode) {
     let operateOnObject;
     if (obj === undefined && prototypeMode === undefined) {
         obj = {};
@@ -578,3 +498,4 @@ export function makeEmitter(obj, prototypeMode) {
     operateOnObject._processRemovalQueue = Emitter.prototype._processRemovalQueue;
     return obj;
 }
+exports.makeEmitter = makeEmitter;

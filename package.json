@@ -2,8 +2,7 @@
 	"author": "Rob Evans - Irrelon Software Limited",
 	"name": "@irrelon/emitter",
 	"description": "Simple JavaScript event emitter.",
-	"version": "5.0.3",
-	"type": "module",
+	"version": "5.0.4",
 	"keywords": [
 		"javascript",
 		"browser",
@@ -46,7 +45,7 @@
 		"node": "*"
 	},
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && sh ./fixup.sh",
 		"build-watch": "tsc --watch",
 		"fixPaths": "node fixPaths.cjs",
 		"test": "NODE_OPTIONS=--experimental-vm-modules npx jest --testMatch \"**/*.test.js\"",
@@ -56,7 +55,14 @@
 		"type": "git",
 		"url": "git://github.com/irrelon/emitter.git"
 	},
-	"main": "src/Emitter.js",
+	"main": "dist/cjs/Emitter.js",
+	"module": "dist/mjs/Emitter.js",
+	"exports": {
+		".": {
+			"import": "./dist/mjs/Emitter.js",
+			"require": "./dist/cjs/Emitter.js"
+		}
+	},
 	"bugs": {
 		"url": "https://github.com/irrelon/emitter/issues"
 	}
