@@ -30,7 +30,7 @@
  		listeners and emitting events.
 
  		Updated the build and package to split between delivery of CJS
- 		and MJS module types so that this package can be eiter imported
+ 		and ESM module types so that this package can be eiter imported
  		or required without having to jump through any hoops.
  	Version 5.0.2:
  		Removed some unnecessary code, updated to be in step with version

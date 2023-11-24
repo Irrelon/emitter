@@ -111,7 +111,7 @@ describe("Emitter", () => {
 
 			myClass.off("moo", "testId");
 
-			assert.strictEqual(!myClass._eventListeners?.moo || !myClass._eventListeners?.moo["testId"] || myClass._eventListeners?.moo["testId"].length === 0, true, "Listeners all removed from event");
+			assert.strictEqual(!myClass._eventListeners?.moo || !myClass._eventListeners?.moo["testId"] || (myClass._eventListeners?.moo["testId"].length as number) === 0, true, "Listeners all removed from event");
 			assert.strictEqual(myClass._eventListeners?.moo && myClass._eventListeners?.moo["^^noId"] && myClass._eventListeners?.moo["^^noId"].length === 1, true, "Global listener still there");
 			assert.strictEqual(!myClass._eventListeners?.moo || !myClass._eventListeners?.moo["*"] || myClass._eventListeners?.moo["*"].length === 0, true, "Global listener still there");
 

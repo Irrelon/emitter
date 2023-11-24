@@ -1,10 +1,10 @@
-export declare type AnyFunction<ReturnType = any> = (...args: any[]) => ReturnType;
-export declare type AnyConstructor = new (...args: any[]) => any;
+export type AnyFunction<ReturnType = any> = (...args: any[]) => ReturnType;
+export type AnyConstructor = new (...args: any[]) => any;
 export declare enum EventReturnFlag {
     none = 0,
     cancel = 1
 }
-export declare type EventListenerCallback<EventCallbackFunctionSignature extends AnyFunction = AnyFunction> = (...args: Parameters<EventCallbackFunctionSignature>) => ReturnType<EventCallbackFunctionSignature>;
+export type EventListenerCallback<EventCallbackFunctionSignature extends AnyFunction = AnyFunction> = (...args: Parameters<EventCallbackFunctionSignature>) => ReturnType<EventCallbackFunctionSignature>;
 export interface EventStaticEmitterObject<EventCallbackFunctionSignature extends AnyFunction = AnyFunction> {
     id: string;
     args: Parameters<EventCallbackFunctionSignature>;
@@ -12,7 +12,7 @@ export interface EventStaticEmitterObject<EventCallbackFunctionSignature extends
 export interface EmitterEventsInterface {
     [key: string]: AnyFunction;
 }
-export declare type ConvertInterfaceToDict<T> = {
+export type ConvertInterfaceToDict<T> = {
     [K in keyof T]: T[K];
 };
 /**

@@ -14,7 +14,7 @@ var EventReturnFlag;
 (function (EventReturnFlag) {
     EventReturnFlag[EventReturnFlag["none"] = 0] = "none";
     EventReturnFlag[EventReturnFlag["cancel"] = 1] = "cancel";
-})(EventReturnFlag = exports.EventReturnFlag || (exports.EventReturnFlag = {}));
+})(EventReturnFlag || (exports.EventReturnFlag = EventReturnFlag = {}));
 /**
  * Creates a new class with the capability to emit events.
  */
