@@ -1,31 +1,31 @@
 export type AnyFunction<ReturnType = any> = (...args: any[]) => ReturnType;
 export type AnyConstructor = new (...args: any[]) => any;
-export declare enum EventReturnFlag {
-    none = 0,
-    cancel = 1
+export declare enum ListenerReturnFlag {
+    none = "!+_NONE",
+    cancel = "!+_CANCEL"
 }
 export type EventListenerCallback<EventCallbackFunctionSignature extends AnyFunction = AnyFunction> = (...args: Parameters<EventCallbackFunctionSignature>) => ReturnType<EventCallbackFunctionSignature>;
 export interface EventStaticEmitterObject<EventCallbackFunctionSignature extends AnyFunction = AnyFunction> {
     id: string;
     args: Parameters<EventCallbackFunctionSignature>;
 }
-export interface EmitterEventsInterface {
+export interface EmitterAnyEventsInterface {
     [key: string]: AnyFunction;
 }
-export type ConvertInterfaceToDict<T> = {
+export type EmitterEventsInterface<T> = {
     [K in keyof T]: T[K];
 };
 /**
  * Creates a new class with the capability to emit events.
  */
-export declare class Emitter<EventsInterface extends EmitterEventsInterface = EmitterEventsInterface> {
+export declare class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterface> = EmitterAnyEventsInterface> {
     _eventsEmitting: boolean;
     _eventRemovalQueue: any[];
     _eventListeners?: {
-        [EventName in (keyof EventsInterface)]?: Record<string, EventListenerCallback<EventsInterface[EventName]>[]>;
+        [EventName in keyof EventsInterface]?: Record<string, EventListenerCallback<EventsInterface[EventName]>[]>;
     };
     _eventStaticEmitters: {
-        [EventName in (keyof EventsInterface)]?: EventStaticEmitterObject<EventsInterface[EventName]>[];
+        [EventName in keyof EventsInterface]?: EventStaticEmitterObject<EventsInterface[EventName]>[];
     };
     _eventsAllowDefer: boolean;
     _eventsDeferTimeouts: Record<any, number>;
@@ -101,6 +101,7 @@ export declare class Emitter<EventsInterface extends EmitterEventsInterface = Em
     off<EventName extends keyof EventsInterface>(eventName: EventName, id: string, listener?: EventListenerCallback<EventsInterface[EventName]>): this;
     off<EventName extends keyof EventsInterface>(eventName: EventName, listener?: EventListenerCallback<EventsInterface[EventName]>): this;
     off<EventName extends keyof EventsInterface>(eventName: EventName): this;
+    _emitToArrayOfListeners<EventName extends keyof EventsInterface>(arr: EventListenerCallback<EventsInterface[EventName]>[], data: Parameters<EventsInterface[EventName]>): (ReturnType<EventsInterface[EventName]> | ListenerReturnFlag)[];
     /**
      * Emit an event by name.
      * @param eventName The name of the event to emit.
@@ -130,8 +131,8 @@ export declare class Emitter<EventsInterface extends EmitterEventsInterface = Em
      *     // The console output is:
      *     //    data1, data2
      */
-    emit<EventName extends keyof EventsInterface>(eventName: EventName, ...data: Parameters<EventsInterface[EventName]>): Promise<EventReturnFlag>;
-    emitId<EventName extends keyof EventsInterface>(eventName: EventName, id: string, ...data: Parameters<EventsInterface[EventName]>): EventReturnFlag;
+    emit<EventName extends keyof EventsInterface>(eventName: EventName, ...data: Parameters<EventsInterface[EventName]>): (ReturnType<EventsInterface[EventName]> | ListenerReturnFlag)[];
+    emitId<EventName extends keyof EventsInterface>(eventName: EventName, id: string, ...data: Parameters<EventsInterface[EventName]>): (ReturnType<EventsInterface[EventName]> | ListenerReturnFlag)[];
     /**
      * Creates a persistent emitter record that will fire a listener if
      * one is added for this event after the emitStatic() call has been
@@ -187,12 +188,18 @@ export declare class Emitter<EventsInterface extends EmitterEventsInterface = Em
      */
     deferEmit<EventName extends keyof EventsInterface>(eventName: EventName, ...data: Parameters<EventsInterface[EventName]>): this;
     /**
+     * Returns true if the result from an emit() call passed as the first
+     * argument contains a cancellation flag.
+     * @param resultArr
+     */
+    didCancel(resultArr: (unknown | ListenerReturnFlag)[]): boolean;
+    /**
      * If events are cleared with the off() method while the event emitter is
      * actively processing any events then the off() calls get added to a
      * queue to be executed after the event emitter is finished. This stops
-     * errors that might occur by potentially modifying the event queue while
-     * the emitter is running through them. This method is called after the
-     * event emitter is finished processing.
+     * errors that might occur by potentially mutating the event listener array
+     * while the emitter is running through them. This method is called after
+     * the event emitter is finished processing.
      * @private
      */
     _processRemovalQueue(): void;

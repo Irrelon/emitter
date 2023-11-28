@@ -1,8 +1,8 @@
-export var EventReturnFlag;
-(function (EventReturnFlag) {
-    EventReturnFlag[EventReturnFlag["none"] = 0] = "none";
-    EventReturnFlag[EventReturnFlag["cancel"] = 1] = "cancel";
-})(EventReturnFlag || (EventReturnFlag = {}));
+export var ListenerReturnFlag;
+(function (ListenerReturnFlag) {
+    ListenerReturnFlag["none"] = "!+_NONE";
+    ListenerReturnFlag["cancel"] = "!+_CANCEL";
+})(ListenerReturnFlag || (ListenerReturnFlag = {}));
 /**
  * Creates a new class with the capability to emit events.
  */
@@ -28,11 +28,13 @@ export class Emitter {
             }, 1);
         };
         this._eventListeners = this._eventListeners || {};
-        const nonNullableEventListeners = this._eventListeners[eventName] = this._eventListeners[eventName] || {};
+        const nonNullableEventListeners = (this._eventListeners[eventName] = this._eventListeners[eventName] || {});
         nonNullableEventListeners[id] = nonNullableEventListeners[id] || [];
         nonNullableEventListeners[id].push(listener);
         // Check for any static emitters, and fire the event if any exist
-        if (!this._eventStaticEmitters || !this._eventStaticEmitters[eventName] || !this._eventStaticEmitters[eventName].length)
+        if (!this._eventStaticEmitters ||
+            !this._eventStaticEmitters[eventName] ||
+            !this._eventStaticEmitters[eventName].length)
             return this;
         // Emit events for each emitter
         for (let i = 0; i < this._eventStaticEmitters[eventName].length; i++) {
@@ -145,6 +147,24 @@ export class Emitter {
         // Both id and listener were provided, remove for the specific id
         return this._off(eventName, rest[0], rest[1]);
     }
+    _emitToArrayOfListeners(arr, data) {
+        const arrCount = arr.length;
+        const resultArr = [];
+        for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
+            // Check we have a function to execute
+            const tmpFunc = arr[arrIndex];
+            if (typeof tmpFunc !== "function") {
+                continue;
+            }
+            const eventListenerResponse = tmpFunc(...data);
+            resultArr.push(eventListenerResponse);
+            if (eventListenerResponse === ListenerReturnFlag.cancel) {
+                // Cancel further event processing
+                break;
+            }
+        }
+        return resultArr;
+    }
     /**
      * Emit an event by name.
      * @param eventName The name of the event to emit.
@@ -174,68 +194,28 @@ export class Emitter {
      *     // The console output is:
      *     //    data1, data2
      */
-    async emit(eventName, ...data) {
-        if (!this._eventListeners) {
-            return EventReturnFlag.none;
-        }
-        const id = "*";
-        let returnFlag = EventReturnFlag.none;
-        this._eventsEmitting = true;
-        if (this._eventListeners[eventName] && this._eventListeners[eventName][id]) {
-            // Handle global emit
-            const arr = this._eventListeners[eventName][id];
-            const promiseArr = arr.map((tmpFunc) => {
-                if (typeof tmpFunc !== "function")
-                    return;
-                return tmpFunc(...data);
-            });
-            const result = (await Promise.all(promiseArr)).find((tmpResult) => tmpResult !== EventReturnFlag.none);
-            if (result) {
-                returnFlag = EventReturnFlag.cancel;
-            }
-        }
-        this._eventsEmitting = false;
-        this._processRemovalQueue();
-        return returnFlag;
+    emit(eventName, ...data) {
+        return this.emitId(eventName, "*", ...data);
     }
     emitId(eventName, id, ...data) {
-        if (!this._eventListeners) {
-            return EventReturnFlag.none;
+        if (!this._eventListeners || !this._eventListeners[eventName]) {
+            return [];
         }
-        this._eventListeners = this._eventListeners || {};
+        let emitterResult = [];
         this._eventsEmitting = true;
-        if (!this._eventListeners[eventName]) {
-            this._eventsEmitting = false;
-            this._processRemovalQueue();
-            return EventReturnFlag.none;
-        }
         // Handle id emit
         if (this._eventListeners[eventName][id]) {
             const arr = this._eventListeners[eventName][id];
-            const arrCount = arr.length;
-            for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-                // Check we have a function to execute
-                const tmpFunc = arr[arrIndex];
-                if (typeof tmpFunc === "function") {
-                    tmpFunc.call(this, ...data);
-                }
-            }
+            emitterResult = emitterResult.concat(this._emitToArrayOfListeners(arr, data));
         }
-        // Handle global emit
-        if (this._eventListeners[eventName]["*"]) {
+        // Handle global emit if the id passed wasn't already a global (*) id
+        if (id !== "*" && this._eventListeners[eventName]["*"]) {
             const arr = this._eventListeners[eventName]["*"];
-            const arrCount = arr.length;
-            for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
-                // Check we have a function to execute
-                const tmpFunc = arr[arrIndex];
-                if (typeof tmpFunc === "function") {
-                    tmpFunc.call(this, ...data);
-                }
-            }
+            emitterResult = emitterResult.concat(this._emitToArrayOfListeners(arr, data));
         }
         this._eventsEmitting = false;
         this._processRemovalQueue();
-        return EventReturnFlag.none;
+        return emitterResult;
     }
     /**
      * Creates a persistent emitter record that will fire a listener if
@@ -266,8 +246,8 @@ export class Emitter {
         this._eventStaticEmitters = this._eventStaticEmitters || {};
         this._eventStaticEmitters[eventName] = this._eventStaticEmitters[eventName] || [];
         this._eventStaticEmitters[eventName].push({
-            "id": "*",
-            "args": data
+            id: "*",
+            args: data
         });
         this._processRemovalQueue();
         return this;
@@ -318,7 +298,7 @@ export class Emitter {
         this._eventStaticEmitters[eventName] = this._eventStaticEmitters[eventName] || [];
         this._eventStaticEmitters[eventName].push({
             id,
-            "args": data
+            args: data
         });
         this._processRemovalQueue();
         return this;
@@ -421,12 +401,20 @@ export class Emitter {
         return this;
     }
     /**
+     * Returns true if the result from an emit() call passed as the first
+     * argument contains a cancellation flag.
+     * @param resultArr
+     */
+    didCancel(resultArr) {
+        return resultArr.findIndex((result) => result === ListenerReturnFlag.cancel) > -1;
+    }
+    /**
      * If events are cleared with the off() method while the event emitter is
      * actively processing any events then the off() calls get added to a
      * queue to be executed after the event emitter is finished. This stops
-     * errors that might occur by potentially modifying the event queue while
-     * the emitter is running through them. This method is called after the
-     * event emitter is finished processing.
+     * errors that might occur by potentially mutating the event listener array
+     * while the emitter is running through them. This method is called after
+     * the event emitter is finished processing.
      * @private
      */
     _processRemovalQueue() {

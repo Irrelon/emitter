@@ -39,11 +39,12 @@ describe("Emitter", () => {
         it("Creates emitter instance by instantiation", () => {
             var _a, _b;
             const myClass = new Emitter_1.Emitter();
-            myClass.on("moo", () => {
-            });
+            myClass.on("moo", () => { });
             assert_1.default.strictEqual((_a = myClass._eventListeners) === null || _a === void 0 ? void 0 : _a.moo["*"].length, 1, "Listener registered on event");
             myClass.off("moo");
-            assert_1.default.strictEqual(!((_b = myClass._eventListeners) === null || _b === void 0 ? void 0 : _b.moo) || !myClass._eventListeners.moo["*"] || myClass._eventListeners.moo["*"].length, true, "Listeners all removed from event");
+            assert_1.default.strictEqual(!((_b = myClass._eventListeners) === null || _b === void 0 ? void 0 : _b.moo) ||
+                !myClass._eventListeners.moo["*"] ||
+                myClass._eventListeners.moo["*"].length, true, "Listeners all removed from event");
         });
         it("Supports extending Emitter as a base class", () => {
             var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
@@ -93,45 +94,54 @@ describe("Emitter", () => {
             myClass.emitId("moo", "testId", "foo");
             assert_1.default.strictEqual(emitCount, 1, "Event fired correctly");
             myClass.off("moo", "testId");
-            assert_1.default.strictEqual(!((_b = myClass._eventListeners) === null || _b === void 0 ? void 0 : _b.moo) || !((_c = myClass._eventListeners) === null || _c === void 0 ? void 0 : _c.moo["testId"]) || ((_d = myClass._eventListeners) === null || _d === void 0 ? void 0 : _d.moo["testId"].length) === 0, true, "Listeners all removed from event");
-            assert_1.default.strictEqual(((_e = myClass._eventListeners) === null || _e === void 0 ? void 0 : _e.moo) && ((_f = myClass._eventListeners) === null || _f === void 0 ? void 0 : _f.moo["^^noId"]) && ((_g = myClass._eventListeners) === null || _g === void 0 ? void 0 : _g.moo["^^noId"].length) === 1, true, "Global listener still there");
-            assert_1.default.strictEqual(!((_h = myClass._eventListeners) === null || _h === void 0 ? void 0 : _h.moo) || !((_j = myClass._eventListeners) === null || _j === void 0 ? void 0 : _j.moo["*"]) || ((_k = myClass._eventListeners) === null || _k === void 0 ? void 0 : _k.moo["*"].length) === 0, true, "Global listener still there");
+            assert_1.default.strictEqual(!((_b = myClass._eventListeners) === null || _b === void 0 ? void 0 : _b.moo) ||
+                !((_c = myClass._eventListeners) === null || _c === void 0 ? void 0 : _c.moo["testId"]) ||
+                ((_d = myClass._eventListeners) === null || _d === void 0 ? void 0 : _d.moo["testId"].length) === 0, true, "Listeners all removed from event");
+            assert_1.default.strictEqual(((_e = myClass._eventListeners) === null || _e === void 0 ? void 0 : _e.moo) &&
+                ((_f = myClass._eventListeners) === null || _f === void 0 ? void 0 : _f.moo["^^noId"]) &&
+                ((_g = myClass._eventListeners) === null || _g === void 0 ? void 0 : _g.moo["^^noId"].length) === 1, true, "Global listener still there");
+            assert_1.default.strictEqual(!((_h = myClass._eventListeners) === null || _h === void 0 ? void 0 : _h.moo) ||
+                !((_j = myClass._eventListeners) === null || _j === void 0 ? void 0 : _j.moo["*"]) ||
+                ((_k = myClass._eventListeners) === null || _k === void 0 ? void 0 : _k.moo["*"].length) === 0, true, "Global listener still there");
             myClass.off("moo");
-            assert_1.default.strictEqual(!((_l = myClass._eventListeners) === null || _l === void 0 ? void 0 : _l.moo) || !((_m = myClass._eventListeners) === null || _m === void 0 ? void 0 : _m.moo["*"]) || ((_o = myClass._eventListeners) === null || _o === void 0 ? void 0 : _o.moo["*"].length) === 0, true, "Listeners all removed from event");
+            assert_1.default.strictEqual(!((_l = myClass._eventListeners) === null || _l === void 0 ? void 0 : _l.moo) ||
+                !((_m = myClass._eventListeners) === null || _m === void 0 ? void 0 : _m.moo["*"]) ||
+                ((_o = myClass._eventListeners) === null || _o === void 0 ? void 0 : _o.moo["*"].length) === 0, true, "Listeners all removed from event");
         });
     });
     describe("emit()", () => {
         it("Supports type safe usage", () => __awaiter(void 0, void 0, void 0, function* () {
             const emitter = new Emitter_1.Emitter();
             let listenerFiredCount = 0;
-            emitter.on("person", (name, age, enabled) => __awaiter(void 0, void 0, void 0, function* () {
+            emitter.on("person", (name) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        listenerFiredCount++;
+                        resolve(name);
+                    }, 1000);
+                });
+            });
+            emitter.on("post", () => {
                 return new Promise((resolve) => {
                     setTimeout(() => {
                         listenerFiredCount++;
                         resolve();
                     }, 1000);
                 });
-            }));
-            emitter.on("post", () => __awaiter(void 0, void 0, void 0, function* () {
+            });
+            emitter.on("post", () => {
                 return new Promise((resolve) => {
                     setTimeout(() => {
                         listenerFiredCount++;
                         resolve();
                     }, 1000);
                 });
-            }));
-            emitter.on("post", () => __awaiter(void 0, void 0, void 0, function* () {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        listenerFiredCount++;
-                        resolve();
-                    }, 1000);
-                });
-            }));
+            });
             const time = new Date().getTime();
-            yield emitter.emit("post");
+            yield Promise.all(emitter.emit("post"));
             const delta = new Date().getTime() - time;
             assert_1.default.ok(delta > 900, `Delta was not correct, await may not have paused? Delta was: ${delta}`);
+            assert_1.default.ok(listenerFiredCount === 2, `listenerFiredCount was not correct, await may not have paused? listenerFiredCount was: ${listenerFiredCount}`);
         }));
         it("Supports awaiting async listeners", () => __awaiter(void 0, void 0, void 0, function* () {
             const emitter = new Emitter_1.Emitter();
@@ -153,44 +163,86 @@ describe("Emitter", () => {
                 });
             }));
             const time = new Date().getTime();
-            yield emitter.emit("foo");
+            yield Promise.all(emitter.emit("foo"));
             const delta = new Date().getTime() - time;
             assert_1.default.ok(delta > 900, "Delta was not correct, await may not have paused?");
+        }));
+        it("Supports awaiting async and non-async listener return data", () => __awaiter(void 0, void 0, void 0, function* () {
+            const emitter = new Emitter_1.Emitter();
+            let listenerFiredCount = 0;
+            emitter.on("foo", () => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        listenerFiredCount++;
+                        resolve("Foo1 Return Value");
+                    }, 1000);
+                });
+            });
+            emitter.on("foo", () => {
+                return "Foo2 Return Value";
+            });
+            const time = new Date().getTime();
+            const results = yield Promise.all(emitter.emit("foo"));
+            const delta = new Date().getTime() - time;
+            assert_1.default.ok(delta > 900, "Delta was not correct, await may not have paused?");
+            assert_1.default.ok(listenerFiredCount === 1, "listenerFiredCount was not correct, await may not have been used?");
+            assert_1.default.strictEqual(results[0], "Foo1 Return Value", "Return data for foo1 was not correct");
+            assert_1.default.strictEqual(results[1], "Foo2 Return Value", "Return data for foo2 was not correct");
+        }));
+        it("Supports responding with a cancellation signal", () => __awaiter(void 0, void 0, void 0, function* () {
+            const emitter = new Emitter_1.Emitter();
+            let listenerFiredCount = 0;
+            emitter.on("foo", () => {
+                listenerFiredCount++;
+                return "Foo1 Return Value";
+            });
+            emitter.on("foo", () => {
+                listenerFiredCount++;
+                // This listener will respond with a cancellation, this should terminate further listener calls
+                return Emitter_1.ListenerReturnFlag.cancel;
+            });
+            emitter.on("foo", () => {
+                listenerFiredCount++;
+                return "Foo3 Return Value";
+            });
+            emitter.on("foo", () => {
+                listenerFiredCount++;
+                return "Foo4 Return Value";
+            });
+            const results = emitter.emit("foo");
+            assert_1.default.ok(listenerFiredCount === 2, "listenerFiredCount was not correct, await may not have been used?");
+            assert_1.default.strictEqual(results[0], "Foo1 Return Value", "Return data should be a cancel flag");
+            assert_1.default.strictEqual(results[1], Emitter_1.ListenerReturnFlag.cancel, "Return data should be a cancel flag");
+            assert_1.default.ok(emitter.didCancel(results), "didCancel should detect a cancel flag");
         }));
     });
     describe("off()", () => {
         it("Cancels all listeners (event)", () => {
             var _a, _b, _c, _d, _e, _f, _g;
             const myClass = new Emitter_1.Emitter();
-            const listener1 = () => {
-            };
-            const listener2 = () => {
-            };
-            myClass.on("moo", () => {
-            });
+            const listener1 = () => { };
+            const listener2 = () => { };
+            myClass.on("moo", () => { });
             assert_1.default.strictEqual((_a = myClass._eventListeners) === null || _a === void 0 ? void 0 : _a.moo["*"].length, 1, "Listeners registered on event");
-            myClass.on("moo", "testId", () => {
-            });
+            myClass.on("moo", "testId", () => { });
             assert_1.default.strictEqual((_b = myClass._eventListeners) === null || _b === void 0 ? void 0 : _b.moo["testId"].length, 1, "Listeners registered on event");
             myClass.on("moo", listener1);
             assert_1.default.strictEqual((_c = myClass._eventListeners) === null || _c === void 0 ? void 0 : _c.moo["*"].length, 2, "Listeners registered on event");
             myClass.on("moo", "testId", listener2);
             assert_1.default.strictEqual((_d = myClass._eventListeners) === null || _d === void 0 ? void 0 : _d.moo["testId"].length, 2, "Listeners registered on event");
             myClass.off("moo");
-            assert_1.default.strictEqual(!((_e = myClass._eventListeners) === null || _e === void 0 ? void 0 : _e.moo) || (((_f = myClass._eventListeners) === null || _f === void 0 ? void 0 : _f.moo["*"].length) === 0 && ((_g = myClass._eventListeners) === null || _g === void 0 ? void 0 : _g.moo["testId"].length) === 0), true, "Listeners all removed from event");
+            assert_1.default.strictEqual(!((_e = myClass._eventListeners) === null || _e === void 0 ? void 0 : _e.moo) ||
+                (((_f = myClass._eventListeners) === null || _f === void 0 ? void 0 : _f.moo["*"].length) === 0 &&
+                    ((_g = myClass._eventListeners) === null || _g === void 0 ? void 0 : _g.moo["testId"].length) === 0), true, "Listeners all removed from event");
         });
         it("Cancels id-based listeners (event, id)", () => {
             var _a, _b, _c, _d, _e, _f, _g;
             const myClass = new Emitter_1.Emitter();
-            const listener1 = () => {
-            };
-            const listener2 = () => {
-            };
-            myClass.on("moo", () => {
-            });
+            const listener1 = () => { };
+            const listener2 = () => { };
+            myClass.on("moo", () => { });
             assert_1.default.strictEqual((_a = myClass._eventListeners) === null || _a === void 0 ? void 0 : _a.moo["*"].length, 1, "Listeners registered on event");
-            myClass.on("moo", "testId", () => {
-            });
+            myClass.on("moo", "testId", () => { });
             assert_1.default.strictEqual((_b = myClass._eventListeners) === null || _b === void 0 ? void 0 : _b.moo["testId"].length, 1, "Listeners registered on event");
             myClass.on("moo", listener1);
             assert_1.default.strictEqual((_c = myClass._eventListeners) === null || _c === void 0 ? void 0 : _c.moo["*"].length, 2, "Listeners registered on event");
@@ -203,15 +255,11 @@ describe("Emitter", () => {
         it("Cancels listener-based listeners (event, listener)", () => {
             var _a, _b, _c, _d, _e, _f;
             const myClass = new Emitter_1.Emitter();
-            const listener1 = () => {
-            };
-            const listener2 = () => {
-            };
-            myClass.on("moo", () => {
-            });
+            const listener1 = () => { };
+            const listener2 = () => { };
+            myClass.on("moo", () => { });
             assert_1.default.strictEqual((_a = myClass._eventListeners) === null || _a === void 0 ? void 0 : _a.moo["*"].length, 1, "Listeners registered on event");
-            myClass.on("moo", "testId", () => {
-            });
+            myClass.on("moo", "testId", () => { });
             assert_1.default.strictEqual((_b = myClass._eventListeners) === null || _b === void 0 ? void 0 : _b.moo["testId"].length, 1, "Listeners registered on event");
             myClass.on("moo", listener1);
             assert_1.default.strictEqual((_c = myClass._eventListeners) === null || _c === void 0 ? void 0 : _c.moo["*"].length, 2, "Listeners registered on event");
@@ -224,15 +272,11 @@ describe("Emitter", () => {
         it("Cancels id-based + listener-based listeners (event, id, listener)", () => {
             var _a, _b, _c, _d, _e, _f;
             const myClass = new Emitter_1.Emitter();
-            const listener1 = () => {
-            };
-            const listener2 = () => {
-            };
-            myClass.on("moo", () => {
-            });
+            const listener1 = () => { };
+            const listener2 = () => { };
+            myClass.on("moo", () => { });
             assert_1.default.strictEqual((_a = myClass._eventListeners) === null || _a === void 0 ? void 0 : _a.moo["*"].length, 1, "Listeners registered on event");
-            myClass.on("moo", "testId", () => {
-            });
+            myClass.on("moo", "testId", () => { });
             assert_1.default.strictEqual((_b = myClass._eventListeners) === null || _b === void 0 ? void 0 : _b.moo["testId"].length, 1, "Listeners registered on event");
             myClass.on("moo", listener1);
             assert_1.default.strictEqual((_c = myClass._eventListeners) === null || _c === void 0 ? void 0 : _c.moo["*"].length, 2, "Listeners registered on event");
@@ -348,10 +392,16 @@ describe("Emitter", () => {
             myClass.emitId("moo", "testId", "foo");
             assert_1.default.strictEqual(emitCount, 2, "Event fired correctly");
             myClass.off("moo", "testId");
-            assert_1.default.strictEqual(!((_b = myClass._eventListeners) === null || _b === void 0 ? void 0 : _b.moo) || !((_c = myClass._eventListeners) === null || _c === void 0 ? void 0 : _c.moo["testId"]) || ((_d = myClass._eventListeners) === null || _d === void 0 ? void 0 : _d.moo["testId"].length), true, "Listeners all removed from event");
-            assert_1.default.strictEqual(((_e = myClass._eventListeners) === null || _e === void 0 ? void 0 : _e.moo) && ((_f = myClass._eventListeners) === null || _f === void 0 ? void 0 : _f.moo["*"]) && ((_g = myClass._eventListeners) === null || _g === void 0 ? void 0 : _g.moo["*"].length) === 1, true, "Global listener still there");
+            assert_1.default.strictEqual(!((_b = myClass._eventListeners) === null || _b === void 0 ? void 0 : _b.moo) ||
+                !((_c = myClass._eventListeners) === null || _c === void 0 ? void 0 : _c.moo["testId"]) ||
+                ((_d = myClass._eventListeners) === null || _d === void 0 ? void 0 : _d.moo["testId"].length), true, "Listeners all removed from event");
+            assert_1.default.strictEqual(((_e = myClass._eventListeners) === null || _e === void 0 ? void 0 : _e.moo) &&
+                ((_f = myClass._eventListeners) === null || _f === void 0 ? void 0 : _f.moo["*"]) &&
+                ((_g = myClass._eventListeners) === null || _g === void 0 ? void 0 : _g.moo["*"].length) === 1, true, "Global listener still there");
             myClass.off("moo");
-            assert_1.default.strictEqual(!((_h = myClass._eventListeners) === null || _h === void 0 ? void 0 : _h.moo) || !((_j = myClass._eventListeners) === null || _j === void 0 ? void 0 : _j.moo["*"]) || ((_k = myClass._eventListeners) === null || _k === void 0 ? void 0 : _k.moo["*"].length) === 0, true, "Listeners all removed from event");
+            assert_1.default.strictEqual(!((_h = myClass._eventListeners) === null || _h === void 0 ? void 0 : _h.moo) ||
+                !((_j = myClass._eventListeners) === null || _j === void 0 ? void 0 : _j.moo["*"]) ||
+                ((_k = myClass._eventListeners) === null || _k === void 0 ? void 0 : _k.moo["*"].length) === 0, true, "Listeners all removed from event");
         });
     });
 });
