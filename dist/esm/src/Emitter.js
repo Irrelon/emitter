@@ -147,6 +147,9 @@ export class Emitter {
         // Both id and listener were provided, remove for the specific id
         return this._off(eventName, rest[0], rest[1]);
     }
+    _emitToSingleListener(listener, data) {
+        return listener(...data);
+    }
     _emitToArrayOfListeners(arr, data) {
         const arrCount = arr.length;
         const resultArr = [];
@@ -164,6 +167,71 @@ export class Emitter {
             }
         }
         return resultArr;
+    }
+    /**
+     * Call an event listener by name. The `rpc()` function differs from `emit()` in
+     * that it will only call and return data from the first event listener for the
+     * event rather than all event listeners. If you have more than one event listener
+     * assigned to the event, all others except the first will be ignored and will
+     * not receive the event.
+     * @param eventName The name of the event to call the listener for.
+     * @param {...any} data The arguments to send to the listening method.
+     * If you are sending multiple arguments, separate them with a comma so
+     * that they are received by the function as separate arguments.
+     * @return {number}
+     * @example #Call the Event Listener
+     *     // Emit the event named "hello"
+     *     myEntity.emit('hello');
+     * @example #Call the Event Listener With Data Object
+     *     // Emit the event named "hello"
+     *     myEntity.emit('hello', {moo: true});
+     * @example #Call the Event Listener With Multiple Data Values
+     *     // Emit the event named "hello"
+     *     myEntity.emit('hello', {moo: true}, 'someString');
+     * @example #Register the Listener for Event Data
+     *     // Set a listener to listen for the data (multiple values emitted
+     *     // from an event are passed as function arguments)
+     *    myEntity.on('hello', function (arg1, arg2) {
+     *         console.log("Arguments:", arg1, arg2);
+     *         return "foo";
+     *     }
+     *
+     *     // Emit the event named "hello"
+     *     const result = myEntity.emit('hello', 'data1', 'data2');
+     *	   console.log("Result:", result);
+     *
+     *     // The console output is:
+     *     //   Arguments: data1 data2
+     *     //	Result: "foo"
+     */
+    rpc(eventName, ...data) {
+        return this.rpcId(eventName, "*", ...data);
+    }
+    rpcId(eventName, id, ...data) {
+        if (!this._eventListeners || !this._eventListeners[eventName]) {
+            throw new Error("Cannot make an rpc call without at least one event listener and none were found");
+        }
+        let emitterResult;
+        this._eventsEmitting = true;
+        if (this._eventListeners[eventName][id]) {
+            // Handle id emit
+            const arr = this._eventListeners[eventName][id];
+            emitterResult = this._emitToSingleListener(arr[0], data);
+        }
+        else if (id !== "*" && this._eventListeners[eventName]["*"]) {
+            // Handle global emit if the id passed wasn't already a global (*) id
+            const arr = this._eventListeners[eventName]["*"];
+            emitterResult = this._emitToSingleListener(arr[0], data);
+        }
+        else {
+            if (id === "*") {
+                throw new Error(`Cannot make an rpc call to event "${eventName}" without at least one event listener and none were found, register a listener via on("${eventName}", () => { ...some listener code })`);
+            }
+            throw new Error(`Cannot make an rpc call to event "${eventName}" and id "${id}" without at least one event listener and none were found, register a listener via on("${eventName}", "${id}", () => { ...some listener code })`);
+        }
+        this._eventsEmitting = false;
+        this._processRemovalQueue();
+        return emitterResult;
     }
     /**
      * Emit an event by name.
@@ -184,15 +252,20 @@ export class Emitter {
      * @example #Listen for Event Data
      *     // Set a listener to listen for the data (multiple values emitted
      *     // from an event are passed as function arguments)
-     *     myEntity.on('hello', function (arg1, arg2) {
-     *         console.log(arg1, arg2);
+     *   myEntity.on('hello', function (arg1, arg2) {
+     *         console.log("Arguments:", arg1, arg2);
+     *         return "foo";
      *     }
      *
      *     // Emit the event named "hello"
-     *     myEntity.emit('hello', 'data1', 'data2');
+     *     // The result is returned as an array of all return values
+     *     // from all the listeners for the event
+     *     const result = myEntity.emit('hello', 'data1', 'data2');
+     * 	   console.log("Result:", result);
      *
      *     // The console output is:
-     *     //    data1, data2
+     *     //   Arguments: data1 data2
+     *     //	Result: ["foo"]
      */
     emit(eventName, ...data) {
         return this.emitId(eventName, "*", ...data);

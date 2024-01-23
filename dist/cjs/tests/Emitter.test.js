@@ -189,6 +189,29 @@ describe("Emitter", () => {
             assert_1.default.strictEqual(results[0], "Foo1 Return Value", "Return data for foo1 was not correct");
             assert_1.default.strictEqual(results[1], "Foo2 Return Value", "Return data for foo2 was not correct");
         }));
+        it("Supports awaiting async and non-async rpc listener return data", () => __awaiter(void 0, void 0, void 0, function* () {
+            const emitter = new Emitter_1.Emitter();
+            let listenerFiredCount = 0;
+            emitter.on("foo1", () => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        listenerFiredCount++;
+                        resolve("Foo1 Return Value");
+                    }, 1000);
+                });
+            });
+            emitter.on("foo2", () => {
+                return "Foo2 Return Value";
+            });
+            const time = new Date().getTime();
+            const result1 = yield emitter.rpc("foo1");
+            const result2 = emitter.rpc("foo2");
+            const delta = new Date().getTime() - time;
+            assert_1.default.ok(delta > 900, "Delta was not correct, await may not have paused?");
+            assert_1.default.ok(listenerFiredCount === 1, "listenerFiredCount was not correct, await may not have been used?");
+            assert_1.default.strictEqual(result1, "Foo1 Return Value", "Return data for foo1 was not correct");
+            assert_1.default.strictEqual(result2, "Foo2 Return Value", "Return data for foo2 was not correct");
+        }));
         it("Supports responding with a cancellation signal", () => __awaiter(void 0, void 0, void 0, function* () {
             const emitter = new Emitter_1.Emitter();
             let listenerFiredCount = 0;

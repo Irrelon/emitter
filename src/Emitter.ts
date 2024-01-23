@@ -151,7 +151,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * @param listener The method to call when the event is fired.
 	 * @returns The emitter instance.
 	 */
-	_on<EventName extends keyof EventsInterface> (
+	_on<EventName extends keyof EventsInterface>(
 		eventName: EventName,
 		id: string,
 		listener: EventListenerCallback<EventsInterface[EventName]>
@@ -198,7 +198,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * @param listener The method to call when the event is fired.
 	 * @returns The emitter instance.
 	 */
-	_once<EventName extends keyof EventsInterface> (
+	_once<EventName extends keyof EventsInterface>(
 		eventName: EventName,
 		id: string,
 		listener: EventListenerCallback<EventsInterface[EventName]>
@@ -229,7 +229,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * or once() call to cancel.
 	 * @returns The emitter instance.
 	 */
-	_off<EventName extends keyof EventsInterface> (
+	_off<EventName extends keyof EventsInterface>(
 		eventName: EventName,
 		id: string,
 		listener?: EventListenerCallback<EventsInterface[EventName]>
@@ -291,7 +291,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 		eventName: EventName,
 		listener: EventListenerCallback<EventsInterface[EventName]>
 	): this;
-	on<EventName extends keyof EventsInterface> (
+	on<EventName extends keyof EventsInterface>(
 		eventName: EventName,
 		idOrListener: string | EventListenerCallback<EventsInterface[EventName]>,
 		listener?: EventListenerCallback<EventsInterface[EventName]>
@@ -320,7 +320,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 		eventName: EventName,
 		listener: EventListenerCallback<EventsInterface[EventName]>
 	): this;
-	once<EventName extends keyof EventsInterface> (eventName: EventName, ...rest: any[]): this {
+	once<EventName extends keyof EventsInterface>(eventName: EventName, ...rest: any[]): this {
 		const restTypes = rest.map((arg) => typeof arg);
 
 		if (restTypes[0] === "function") {
@@ -351,7 +351,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 		eventName: EventName,
 		listener: EventListenerCallback<EventsInterface[EventName]>
 	): this;
-	overwrite<EventName extends keyof EventsInterface> (eventName: EventName, ...rest: any[]) {
+	overwrite<EventName extends keyof EventsInterface>(eventName: EventName, ...rest: any[]) {
 		const restTypes = rest.map((arg) => typeof arg);
 
 		if (restTypes[0] === "function") {
@@ -381,7 +381,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 		listener?: EventListenerCallback<EventsInterface[EventName]>
 	): this;
 	off<EventName extends keyof EventsInterface>(eventName: EventName): this;
-	off<EventName extends keyof EventsInterface> (eventName: EventName, ...rest: any[]) {
+	off<EventName extends keyof EventsInterface>(eventName: EventName, ...rest: any[]) {
 		if (rest.length === 0) {
 			// Only event was provided, use * as the id to mean "any without"
 			// a specific id
@@ -400,7 +400,14 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 		return this._off(eventName, rest[0], rest[1]);
 	}
 
-	_emitToArrayOfListeners<EventName extends keyof EventsInterface> (
+	_emitToSingleListener<EventName extends keyof EventsInterface>(
+		listener: EventListenerCallback<EventsInterface[EventName]>,
+		data: Parameters<EventsInterface[EventName]>
+	): ReturnType<EventsInterface[EventName]> | ListenerReturnFlag {
+		return listener(...data);
+	}
+
+	_emitToArrayOfListeners<EventName extends keyof EventsInterface>(
 		arr: EventListenerCallback<EventsInterface[EventName]>[],
 		data: Parameters<EventsInterface[EventName]>
 	): (ReturnType<EventsInterface[EventName]> | ListenerReturnFlag)[] {
@@ -428,6 +435,95 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	}
 
 	/**
+	 * Call an event listener by name. The `rpc()` function differs from `emit()` in
+	 * that it will only call and return data from the first event listener for the
+	 * event rather than all event listeners. If you have more than one event listener
+	 * assigned to the event, all others except the first will be ignored and will
+	 * not receive the event.
+	 * @param eventName The name of the event to call the listener for.
+	 * @param {...any} data The arguments to send to the listening method.
+	 * If you are sending multiple arguments, separate them with a comma so
+	 * that they are received by the function as separate arguments.
+	 * @return {number}
+	 * @example #Call the Event Listener
+	 *     // Emit the event named "hello"
+	 *     myEntity.emit('hello');
+	 * @example #Call the Event Listener With Data Object
+	 *     // Emit the event named "hello"
+	 *     myEntity.emit('hello', {moo: true});
+	 * @example #Call the Event Listener With Multiple Data Values
+	 *     // Emit the event named "hello"
+	 *     myEntity.emit('hello', {moo: true}, 'someString');
+	 * @example #Register the Listener for Event Data
+	 *     // Set a listener to listen for the data (multiple values emitted
+	 *     // from an event are passed as function arguments)
+	 *    myEntity.on('hello', function (arg1, arg2) {
+	 *         console.log("Arguments:", arg1, arg2);
+	 *         return "foo";
+	 *     }
+	 *
+	 *     // Emit the event named "hello"
+	 *     const result = myEntity.emit('hello', 'data1', 'data2');
+	 *	   console.log("Result:", result);
+	 *
+	 *     // The console output is:
+	 *     //   Arguments: data1 data2
+	 *     //	Result: "foo"
+	 */
+	rpc<EventName extends keyof EventsInterface>(
+		eventName: EventName,
+		...data: Parameters<EventsInterface[EventName]>
+	): ReturnType<EventsInterface[EventName]> | ListenerReturnFlag {
+		return this.rpcId<EventName>(eventName, "*", ...data);
+	}
+
+	rpcId<EventName extends keyof EventsInterface>(
+		eventName: EventName,
+		id: string,
+		...data: Parameters<EventsInterface[EventName]>
+	): ReturnType<EventsInterface[EventName]> | ListenerReturnFlag {
+		if (!this._eventListeners || !this._eventListeners[eventName]) {
+			throw new Error("Cannot make an rpc call without at least one event listener and none were found");
+		}
+
+		let emitterResult: ReturnType<EventsInterface[EventName]> | ListenerReturnFlag;
+		this._eventsEmitting = true;
+
+		if (this._eventListeners[eventName]![id]) {
+			// Handle id emit
+			const arr = this._eventListeners[eventName]![id];
+			emitterResult = this._emitToSingleListener<EventName>(arr[0], data);
+		} else if (id !== "*" && this._eventListeners[eventName]!["*"]) {
+			// Handle global emit if the id passed wasn't already a global (*) id
+			const arr = this._eventListeners[eventName]!["*"];
+			emitterResult = this._emitToSingleListener<EventName>(arr[0], data);
+		} else {
+			if (id === "*") {
+				throw new Error(
+					`Cannot make an rpc call to event "${
+						eventName as string
+					}" without at least one event listener and none were found, register a listener via on("${
+						eventName as string
+					}", () => { ...some listener code })`
+				);
+			}
+
+			throw new Error(
+				`Cannot make an rpc call to event "${
+					eventName as string
+				}" and id "${id}" without at least one event listener and none were found, register a listener via on("${
+					eventName as string
+				}", "${id}", () => { ...some listener code })`
+			);
+		}
+
+		this._eventsEmitting = false;
+		this._processRemovalQueue();
+
+		return emitterResult;
+	}
+
+	/**
 	 * Emit an event by name.
 	 * @param eventName The name of the event to emit.
 	 * @param {...any} data The arguments to send to any listening methods.
@@ -446,24 +542,29 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * @example #Listen for Event Data
 	 *     // Set a listener to listen for the data (multiple values emitted
 	 *     // from an event are passed as function arguments)
-	 *     myEntity.on('hello', function (arg1, arg2) {
-	 *         console.log(arg1, arg2);
+	 *   myEntity.on('hello', function (arg1, arg2) {
+	 *         console.log("Arguments:", arg1, arg2);
+	 *         return "foo";
 	 *     }
 	 *
 	 *     // Emit the event named "hello"
-	 *     myEntity.emit('hello', 'data1', 'data2');
+	 *     // The result is returned as an array of all return values
+	 *     // from all the listeners for the event
+	 *     const result = myEntity.emit('hello', 'data1', 'data2');
+	 * 	   console.log("Result:", result);
 	 *
 	 *     // The console output is:
-	 *     //    data1, data2
+	 *     //   Arguments: data1 data2
+	 *     //	Result: ["foo"]
 	 */
-	emit<EventName extends keyof EventsInterface> (
+	emit<EventName extends keyof EventsInterface>(
 		eventName: EventName,
 		...data: Parameters<EventsInterface[EventName]>
 	): (ReturnType<EventsInterface[EventName]> | ListenerReturnFlag)[] {
 		return this.emitId<EventName>(eventName, "*", ...data);
 	}
 
-	emitId<EventName extends keyof EventsInterface> (
+	emitId<EventName extends keyof EventsInterface>(
 		eventName: EventName,
 		id: string,
 		...data: Parameters<EventsInterface[EventName]>
@@ -502,7 +603,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * @returns The emitter instance.
 	 * @private
 	 */
-	emitStatic<EventName extends keyof EventsInterface> (
+	emitStatic<EventName extends keyof EventsInterface>(
 		eventName: EventName,
 		...data: Parameters<EventsInterface[EventName]>
 	) {
@@ -549,7 +650,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * @returns The emitter instance.
 	 * @private
 	 */
-	emitStaticId<EventName extends keyof EventsInterface> (
+	emitStaticId<EventName extends keyof EventsInterface>(
 		eventName: EventName,
 		id: string,
 		...data: Parameters<EventsInterface[EventName]>
@@ -611,7 +712,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * @returns The emitter instance.
 	 * @private
 	 */
-	cancelStatic<EventName extends keyof EventsInterface> (eventName: EventName) {
+	cancelStatic<EventName extends keyof EventsInterface>(eventName: EventName) {
 		this._eventStaticEmitters = this._eventStaticEmitters || {};
 		this._eventStaticEmitters[eventName] = [];
 
@@ -624,7 +725,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * @returns True if one or more event listeners are registered for
 	 * the event. False if none are found.
 	 */
-	willEmit<EventName extends keyof EventsInterface> (eventName: EventName) {
+	willEmit<EventName extends keyof EventsInterface>(eventName: EventName) {
 		const id = "*";
 
 		if (!this._eventListeners || !this._eventListeners[eventName]) {
@@ -653,7 +754,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * @returns True if one or more event listeners are registered for
 	 * the event. False if none are found.
 	 */
-	willEmitId<EventName extends keyof EventsInterface> (eventName: EventName, id: string) {
+	willEmitId<EventName extends keyof EventsInterface>(eventName: EventName, id: string) {
 		if (!this._eventListeners || !this._eventListeners[eventName]) {
 			return false;
 		}
@@ -701,7 +802,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * @param {...any} data Optional arguments to emit with the event.
 	 * @returns The emitter instance.
 	 */
-	deferEmit<EventName extends keyof EventsInterface> (
+	deferEmit<EventName extends keyof EventsInterface>(
 		eventName: EventName,
 		...data: Parameters<EventsInterface[EventName]>
 	) {
@@ -729,7 +830,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * argument contains a cancellation flag.
 	 * @param resultArr
 	 */
-	didCancel (resultArr: (unknown | ListenerReturnFlag)[]) {
+	didCancel(resultArr: (unknown | ListenerReturnFlag)[]) {
 		return resultArr.findIndex((result) => result === ListenerReturnFlag.cancel) > -1;
 	}
 
@@ -742,7 +843,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 	 * the event emitter is finished processing.
 	 * @private
 	 */
-	_processRemovalQueue () {
+	_processRemovalQueue() {
 		if (!this._eventRemovalQueue || !this._eventRemovalQueue.length) {
 			return;
 		}
@@ -760,7 +861,7 @@ export class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterf
 export function makeEmitter(obj: AnyConstructor, prototypeMode: boolean): Emitter;
 export function makeEmitter(obj: boolean): Emitter;
 export function makeEmitter(obj: Record<string, unknown>, prototypeMode: boolean): Emitter;
-export function makeEmitter (obj: any, prototypeMode?: any) {
+export function makeEmitter(obj: any, prototypeMode?: any) {
 	let operateOnObject;
 
 	if (obj === undefined && prototypeMode === undefined) {

@@ -101,7 +101,46 @@ export declare class Emitter<EventsInterface extends EmitterEventsInterface<Even
     off<EventName extends keyof EventsInterface>(eventName: EventName, id: string, listener?: EventListenerCallback<EventsInterface[EventName]>): this;
     off<EventName extends keyof EventsInterface>(eventName: EventName, listener?: EventListenerCallback<EventsInterface[EventName]>): this;
     off<EventName extends keyof EventsInterface>(eventName: EventName): this;
+    _emitToSingleListener<EventName extends keyof EventsInterface>(listener: EventListenerCallback<EventsInterface[EventName]>, data: Parameters<EventsInterface[EventName]>): ReturnType<EventsInterface[EventName]> | ListenerReturnFlag;
     _emitToArrayOfListeners<EventName extends keyof EventsInterface>(arr: EventListenerCallback<EventsInterface[EventName]>[], data: Parameters<EventsInterface[EventName]>): (ReturnType<EventsInterface[EventName]> | ListenerReturnFlag)[];
+    /**
+     * Call an event listener by name. The `rpc()` function differs from `emit()` in
+     * that it will only call and return data from the first event listener for the
+     * event rather than all event listeners. If you have more than one event listener
+     * assigned to the event, all others except the first will be ignored and will
+     * not receive the event.
+     * @param eventName The name of the event to call the listener for.
+     * @param {...any} data The arguments to send to the listening method.
+     * If you are sending multiple arguments, separate them with a comma so
+     * that they are received by the function as separate arguments.
+     * @return {number}
+     * @example #Call the Event Listener
+     *     // Emit the event named "hello"
+     *     myEntity.emit('hello');
+     * @example #Call the Event Listener With Data Object
+     *     // Emit the event named "hello"
+     *     myEntity.emit('hello', {moo: true});
+     * @example #Call the Event Listener With Multiple Data Values
+     *     // Emit the event named "hello"
+     *     myEntity.emit('hello', {moo: true}, 'someString');
+     * @example #Register the Listener for Event Data
+     *     // Set a listener to listen for the data (multiple values emitted
+     *     // from an event are passed as function arguments)
+     *    myEntity.on('hello', function (arg1, arg2) {
+     *         console.log("Arguments:", arg1, arg2);
+     *         return "foo";
+     *     }
+     *
+     *     // Emit the event named "hello"
+     *     const result = myEntity.emit('hello', 'data1', 'data2');
+     *	   console.log("Result:", result);
+     *
+     *     // The console output is:
+     *     //   Arguments: data1 data2
+     *     //	Result: "foo"
+     */
+    rpc<EventName extends keyof EventsInterface>(eventName: EventName, ...data: Parameters<EventsInterface[EventName]>): ReturnType<EventsInterface[EventName]> | ListenerReturnFlag;
+    rpcId<EventName extends keyof EventsInterface>(eventName: EventName, id: string, ...data: Parameters<EventsInterface[EventName]>): ReturnType<EventsInterface[EventName]> | ListenerReturnFlag;
     /**
      * Emit an event by name.
      * @param eventName The name of the event to emit.
@@ -121,15 +160,20 @@ export declare class Emitter<EventsInterface extends EmitterEventsInterface<Even
      * @example #Listen for Event Data
      *     // Set a listener to listen for the data (multiple values emitted
      *     // from an event are passed as function arguments)
-     *     myEntity.on('hello', function (arg1, arg2) {
-     *         console.log(arg1, arg2);
+     *   myEntity.on('hello', function (arg1, arg2) {
+     *         console.log("Arguments:", arg1, arg2);
+     *         return "foo";
      *     }
      *
      *     // Emit the event named "hello"
-     *     myEntity.emit('hello', 'data1', 'data2');
+     *     // The result is returned as an array of all return values
+     *     // from all the listeners for the event
+     *     const result = myEntity.emit('hello', 'data1', 'data2');
+     * 	   console.log("Result:", result);
      *
      *     // The console output is:
-     *     //    data1, data2
+     *     //   Arguments: data1 data2
+     *     //	Result: ["foo"]
      */
     emit<EventName extends keyof EventsInterface>(eventName: EventName, ...data: Parameters<EventsInterface[EventName]>): (ReturnType<EventsInterface[EventName]> | ListenerReturnFlag)[];
     emitId<EventName extends keyof EventsInterface>(eventName: EventName, id: string, ...data: Parameters<EventsInterface[EventName]>): (ReturnType<EventsInterface[EventName]> | ListenerReturnFlag)[];

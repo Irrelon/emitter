@@ -4,20 +4,20 @@ import { Emitter, EmitterEventsInterface, EventListenerCallback, ListenerReturnF
 let expectedAssertions = 0;
 let actualAssertions = 0;
 
-function expect (val: number) {
+function expect(val: number) {
 	expectedAssertions = val;
 }
 
-function reset () {
+function reset() {
 	expectedAssertions = 0;
 	actualAssertions = 0;
 }
 
-function countAssertion () {
+function countAssertion() {
 	actualAssertions++;
 }
 
-function check () {
+function check() {
 	if (expectedAssertions === undefined || expectedAssertions === actualAssertions) {
 		return;
 	}
@@ -53,13 +53,13 @@ describe("Emitter", () => {
 
 			// Test extending Emitter and modifying base functionality
 			class MyClass extends Emitter {
-				testFunc () {
+				testFunc() {
 					testFuncCount++;
 				}
 
 				on(eventName: string, id: string, listener: EventListenerCallback): this;
 				on(eventName: string, listener: EventListenerCallback): this;
-				on (eventName: string, ...rest: any[]): this {
+				on(eventName: string, ...rest: any[]): this {
 					const restTypes = rest.map((arg) => typeof arg);
 
 					if (restTypes[0] === "function") {
@@ -73,14 +73,14 @@ describe("Emitter", () => {
 				}
 
 				// @ts-ignore
-				emit (eventName: string, ...rest: any[]) {
+				emit(eventName: string, ...rest: any[]) {
 					return super.emitId(eventName, "^^noId", ...rest);
 				}
 
 				off(eventName: string, id: string, listener?: EventListenerCallback): this;
 				off(eventName: string, listener?: EventListenerCallback): this;
 				off(eventName: string): this;
-				off (eventName: string, ...rest: any[]) {
+				off(eventName: string, ...rest: any[]) {
 					let id = rest[0];
 					let func = rest[1];
 
@@ -261,6 +261,39 @@ describe("Emitter", () => {
 			assert.ok(listenerFiredCount === 1, "listenerFiredCount was not correct, await may not have been used?");
 			assert.strictEqual(results[0], "Foo1 Return Value", "Return data for foo1 was not correct");
 			assert.strictEqual(results[1], "Foo2 Return Value", "Return data for foo2 was not correct");
+		});
+
+		it("Supports awaiting async and non-async rpc listener return data", async () => {
+			interface MyTestEvents {
+				foo1: () => string | Promise<string>;
+				foo2: () => string;
+			}
+
+			const emitter = new Emitter<EmitterEventsInterface<MyTestEvents>>();
+			let listenerFiredCount = 0;
+
+			emitter.on("foo1", () => {
+				return new Promise<string>((resolve) => {
+					setTimeout(() => {
+						listenerFiredCount++;
+						resolve("Foo1 Return Value");
+					}, 1000);
+				});
+			});
+
+			emitter.on("foo2", () => {
+				return "Foo2 Return Value";
+			});
+
+			const time = new Date().getTime();
+			const result1 = await emitter.rpc("foo1");
+			const result2 = emitter.rpc("foo2");
+			const delta = new Date().getTime() - time;
+
+			assert.ok(delta > 900, "Delta was not correct, await may not have paused?");
+			assert.ok(listenerFiredCount === 1, "listenerFiredCount was not correct, await may not have been used?");
+			assert.strictEqual(result1, "Foo1 Return Value", "Return data for foo1 was not correct");
+			assert.strictEqual(result2, "Foo2 Return Value", "Return data for foo2 was not correct");
 		});
 
 		it("Supports responding with a cancellation signal", async () => {
