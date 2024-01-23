@@ -11,12 +11,22 @@ const emitter = new Emitter();
 // example this listener will be called with
 // `isEnabled = true` and `id = "1234"`. You can pass
 // any number of arguments when calling emit() and
-// they will be recieved in order by your listeners
+// they will be recieved in the same order by your
+// event listeners
 emitter.on("someEvent", (isEnabled, id) => {
-    return;
+    return "someReturnValue1";
 });
 
-emitter.emit("someEvent", true, "1234");
+// Lets register another listener on the same event
+// that returns a slightly different value
+emitter.on("someEvent", (isEnabled, id) => {
+	return "someReturnValue2";
+});
+
+// The `results` will contain the return values from
+// all the event listeners registered for the event
+// so in this case ["someReturnValue1", "someReturnValue2"]
+const results = emitter.emit("someEvent", true, "1234");
 ```
 
 ### TypeScript Compatibility
@@ -54,6 +64,11 @@ emitter.emit("event1");
 // This will not error as you are passing the
 // expected string argument
 emitter.emit("event1", "John Smith");
+
+// This will correctly infer the type of `result`
+// as a number since the return type was defined
+// in the MyEvents.event1 interface
+const result = emitter.emit("event1", "John Smith");
 ```
 
 ### Extending The Emitter Class
@@ -84,6 +99,8 @@ Your class now inherits the emitter methods:
 * cancelStatic
 * deferEmit
 * willEmit
+* rpc
+* rpcId
 
 ### EcmaScript Modules and CommonJS Modules
 > The package includes both ESM and CJS modules for ease of use.
