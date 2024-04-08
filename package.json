@@ -2,7 +2,7 @@
 	"author": "Rob Evans - Irrelon Software Limited",
 	"name": "@irrelon/emitter",
 	"description": "Simple JavaScript event emitter with some powerful features.",
-	"version": "6.0.1",
+	"version": "6.0.2",
 	"keywords": [
 		"javascript",
 		"browser",
@@ -48,7 +48,7 @@
 	"scripts": {
 		"build": "tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json && sh ./fixup.sh",
 		"build-watch": "tsc --watch",
-		"fixPaths": "npx @irrelon/fixPaths --write",
+		"fixPaths": "npx @irrelon/fix-paths --write",
 		"test": "NODE_OPTIONS=--experimental-vm-modules npx jest --testMatch \"**/*.test.js\"",
 		"test-watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --testMatch \"**/*.test.js\" --watchAll"
 	},
