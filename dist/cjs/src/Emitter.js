@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeEmitter = exports.Emitter = exports.ListenerReturnFlag = void 0;
+exports.Emitter = exports.ListenerReturnFlag = void 0;
+exports.makeEmitter = makeEmitter;
 var ListenerReturnFlag;
 (function (ListenerReturnFlag) {
     ListenerReturnFlag["none"] = "!+_NONE";
@@ -115,6 +116,13 @@ class Emitter {
         }
         return this;
     }
+    /**
+     * Creates an event listener that listens for any and all events
+     * emitted.
+     */
+    onAny(listener) {
+        this.on("*", listener);
+    }
     on(eventName, idOrListener, listener) {
         if (typeof idOrListener === "string") {
             return this._on(eventName, idOrListener, listener);
@@ -136,6 +144,13 @@ class Emitter {
         }
         this.off(eventName, rest[0]);
         return this._on(eventName, rest[0], rest[1]);
+    }
+    /**
+     * Removes an event listener that listens for any and all events
+     * emitted.
+     */
+    offAny(listener) {
+        this.off("*", listener);
     }
     off(eventName, ...rest) {
         if (rest.length === 0) {
@@ -203,7 +218,7 @@ class Emitter {
      *
      *     // Emit the event named "hello"
      *     const result = myEntity.emit('hello', 'data1', 'data2');
-     *	   console.log("Result:", result);
+     *       console.log("Result:", result);
      *
      *     // The console output is:
      *     //   Arguments: data1 data2
@@ -224,7 +239,7 @@ class Emitter {
             emitterResult = this._emitToSingleListener(arr[0], data);
         }
         else if (id !== "*" && this._eventListeners[eventName]["*"]) {
-            // Handle global emit if the id passed wasn't already a global (*) id
+            // Handle wildcard emit if the id passed wasn't already a wildcard (*) id
             const arr = this._eventListeners[eventName]["*"];
             emitterResult = this._emitToSingleListener(arr[0], data);
         }
@@ -266,7 +281,7 @@ class Emitter {
      *     // The result is returned as an array of all return values
      *     // from all the listeners for the event
      *     const result = myEntity.emit('hello', 'data1', 'data2');
-     * 	   console.log("Result:", result);
+     *       console.log("Result:", result);
      *
      *     // The console output is:
      *     //   Arguments: data1 data2
@@ -276,20 +291,26 @@ class Emitter {
         return this.emitId(eventName, "*", ...data);
     }
     emitId(eventName, id, ...data) {
-        if (!this._eventListeners || !this._eventListeners[eventName]) {
+        if (!this._eventListeners || (!this._eventListeners[eventName] && !this._eventListeners["*"])) {
             return [];
         }
         let emitterResult = [];
         this._eventsEmitting = true;
-        // Handle id emit
-        if (this._eventListeners[eventName][id]) {
-            const arr = this._eventListeners[eventName][id];
-            emitterResult = emitterResult.concat(this._emitToArrayOfListeners(arr, data));
+        if (this._eventListeners[eventName]) {
+            // Handle id emit
+            if (this._eventListeners[eventName][id]) {
+                const arr = this._eventListeners[eventName][id];
+                emitterResult = emitterResult.concat(this._emitToArrayOfListeners(arr, data));
+            }
+            // Handle id wildcard emit if the id passed wasn't already a wildcard (*) id
+            if (id !== "*" && this._eventListeners[eventName]["*"]) {
+                const arr = this._eventListeners[eventName]["*"];
+                emitterResult = emitterResult.concat(this._emitToArrayOfListeners(arr, data));
+            }
         }
-        // Handle global emit if the id passed wasn't already a global (*) id
-        if (id !== "*" && this._eventListeners[eventName]["*"]) {
-            const arr = this._eventListeners[eventName]["*"];
-            emitterResult = emitterResult.concat(this._emitToArrayOfListeners(arr, data));
+        if (this._eventListeners["*"]) {
+            const arr = this._eventListeners["*"]["*"];
+            emitterResult = emitterResult.concat(this._emitToArrayOfListeners(arr, [eventName, ...data]));
         }
         this._eventsEmitting = false;
         this._processRemovalQueue();
@@ -309,7 +330,7 @@ class Emitter {
         this._eventListeners = this._eventListeners || {};
         this._eventsEmitting = true;
         if (this._eventListeners[eventName] && this._eventListeners[eventName][id]) {
-            // Handle global emit
+            // Handle id wildcard emit
             const arr = this._eventListeners[eventName][id];
             const arrCount = arr.length;
             for (let arrIndex = 0; arrIndex < arrCount; arrIndex++) {
@@ -358,7 +379,7 @@ class Emitter {
                     }
                 }
             }
-            // Handle global emit
+            // Handle wildcard emit
             if (this._eventListeners[eventName]["*"]) {
                 const arr = this._eventListeners[eventName]["*"];
                 const arrCount = arr.length;
@@ -437,7 +458,7 @@ class Emitter {
                 }
             }
         }
-        // Handle global emit
+        // Handle wildcard emit
         if (this._eventListeners[eventName]["*"]) {
             const arr = this._eventListeners[eventName]["*"];
             const arrCount = arr.length;
@@ -535,7 +556,9 @@ function makeEmitter(obj, prototypeMode) {
     }
     // Convert the object prototype to have eventing capability
     operateOnObject.on = Emitter.prototype.on;
+    operateOnObject.onAny = Emitter.prototype.onAny;
     operateOnObject.off = Emitter.prototype.off;
+    operateOnObject.offAny = Emitter.prototype.offAny;
     operateOnObject.once = Emitter.prototype.once;
     operateOnObject.emit = Emitter.prototype.emit;
     operateOnObject.emitId = Emitter.prototype.emitId;
@@ -548,4 +571,3 @@ function makeEmitter(obj, prototypeMode) {
     operateOnObject._processRemovalQueue = Emitter.prototype._processRemovalQueue;
     return obj;
 }
-exports.makeEmitter = makeEmitter;

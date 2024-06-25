@@ -15,10 +15,14 @@ export interface EmitterAnyEventsInterface {
 export type EmitterEventsInterface<T> = {
     [K in keyof T]: T[K];
 };
+interface WithStar {
+    "*"?: (eventName: string, ...args: any[]) => void;
+}
+export type EmitterEventsWithStar<T> = EmitterEventsInterface<T> & WithStar;
 /**
  * Creates a new class with the capability to emit events.
  */
-export declare class Emitter<EventsInterface extends EmitterEventsInterface<EventsInterface> = EmitterAnyEventsInterface> {
+export declare class Emitter<EventsInterface extends EmitterEventsWithStar<EventsInterface> = EmitterAnyEventsInterface> {
     _eventsEmitting: boolean;
     _eventRemovalQueue: any[];
     _eventListeners?: {
@@ -57,6 +61,11 @@ export declare class Emitter<EventsInterface extends EmitterEventsInterface<Even
      */
     _off<EventName extends keyof EventsInterface>(eventName: EventName, id: string, listener?: EventListenerCallback<EventsInterface[EventName]>): this;
     /**
+     * Creates an event listener that listens for any and all events
+     * emitted.
+     */
+    onAny(listener: EventListenerCallback): void;
+    /**
      * Attach an event listener to the passed event only if the passed
      * id matches the document id for the event being fired.
      * @param eventName The name of the event to listen for.
@@ -90,6 +99,11 @@ export declare class Emitter<EventsInterface extends EmitterEventsInterface<Even
      */
     overwrite<EventName extends keyof EventsInterface>(eventName: EventName, id: string, listener: EventListenerCallback<EventsInterface[EventName]>): this;
     overwrite<EventName extends keyof EventsInterface>(eventName: EventName, listener: EventListenerCallback<EventsInterface[EventName]>): this;
+    /**
+     * Removes an event listener that listens for any and all events
+     * emitted.
+     */
+    offAny(listener: EventListenerCallback): void;
     /**
      * Cancels an event listener based on an event name, id and listener function.
      * @param eventName The event to cancel listener for.
@@ -133,7 +147,7 @@ export declare class Emitter<EventsInterface extends EmitterEventsInterface<Even
      *
      *     // Emit the event named "hello"
      *     const result = myEntity.emit('hello', 'data1', 'data2');
-     *	   console.log("Result:", result);
+     *       console.log("Result:", result);
      *
      *     // The console output is:
      *     //   Arguments: data1 data2
@@ -169,7 +183,7 @@ export declare class Emitter<EventsInterface extends EmitterEventsInterface<Even
      *     // The result is returned as an array of all return values
      *     // from all the listeners for the event
      *     const result = myEntity.emit('hello', 'data1', 'data2');
-     * 	   console.log("Result:", result);
+     *       console.log("Result:", result);
      *
      *     // The console output is:
      *     //   Arguments: data1 data2
@@ -251,3 +265,4 @@ export declare class Emitter<EventsInterface extends EmitterEventsInterface<Even
 export declare function makeEmitter(obj: AnyConstructor, prototypeMode: boolean): Emitter;
 export declare function makeEmitter(obj: boolean): Emitter;
 export declare function makeEmitter(obj: Record<string, unknown>, prototypeMode: boolean): Emitter;
+export {};

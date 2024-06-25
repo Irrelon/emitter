@@ -1,25 +1,26 @@
+import { jest } from "@jest/globals";
 import assert from "assert";
 import { Emitter, ListenerReturnFlag } from "../src/Emitter";
 let expectedAssertions = 0;
 let actualAssertions = 0;
-function expect(val) {
+function expectAssertionCount(val) {
     expectedAssertions = val;
 }
-function reset() {
+function resetAssertionCount() {
     expectedAssertions = 0;
     actualAssertions = 0;
 }
 function countAssertion() {
     actualAssertions++;
 }
-function check() {
+function checkAssertionCount() {
     if (expectedAssertions === undefined || expectedAssertions === actualAssertions) {
         return;
     }
     throw new Error("expected " + expectedAssertions + " assertions, got " + actualAssertions);
 }
-beforeEach(reset);
-afterEach(check);
+beforeEach(resetAssertionCount);
+afterEach(checkAssertionCount);
 describe("Emitter", () => {
     describe("new Emitter()", () => {
         it("Creates emitter instance by instantiation", () => {
@@ -32,12 +33,8 @@ describe("Emitter", () => {
                 myClass._eventListeners.moo["*"].length, true, "Listeners all removed from event");
         });
         it("Supports extending Emitter as a base class", () => {
-            let testFuncCount = 0;
             // Test extending Emitter and modifying base functionality
             class MyClass extends Emitter {
-                testFunc() {
-                    testFuncCount++;
-                }
                 on(eventName, ...rest) {
                     const restTypes = rest.map((arg) => typeof arg);
                     if (restTypes[0] === "function") {
@@ -150,6 +147,7 @@ describe("Emitter", () => {
             await Promise.all(emitter.emit("foo"));
             const delta = new Date().getTime() - time;
             assert.ok(delta > 900, "Delta was not correct, await may not have paused?");
+            assert.strictEqual(listenerFiredCount, 2, "Listener fire count was incorect");
         });
         it("Supports awaiting async and non-async listener return data", async () => {
             const emitter = new Emitter();
@@ -294,7 +292,7 @@ describe("Emitter", () => {
         it("Static emitter will emit when a new listener is added", (resolve) => {
             class MyClass extends Emitter {
             }
-            expect(1);
+            expectAssertionCount(1);
             const myClass = new MyClass();
             myClass.emitStatic("moo");
             myClass.on("moo", () => {
@@ -308,7 +306,7 @@ describe("Emitter", () => {
         it("Removes static emitter", (resolve) => {
             class MyClass extends Emitter {
             }
-            expect(1);
+            expectAssertionCount(1);
             const myClass = new MyClass();
             myClass.emitStatic("moo");
             myClass.on("moo", () => {
@@ -329,7 +327,7 @@ describe("Emitter", () => {
         it("Only fires the last listener added, cancelling all other listeners before it", (resolve) => {
             class MyClass extends Emitter {
             }
-            expect(1);
+            expectAssertionCount(1);
             const myClass = new MyClass();
             myClass.on("moo", () => {
                 countAssertion();
@@ -351,7 +349,7 @@ describe("Emitter", () => {
         it("Only fires the last listener added (with id), cancelling all other listeners before it", (resolve) => {
             class MyClass extends Emitter {
             }
-            expect(2);
+            expectAssertionCount(2);
             const myClass = new MyClass();
             // Define a listener without an id, this should not be overwritten
             myClass.on("moo", () => {
@@ -404,6 +402,38 @@ describe("Emitter", () => {
             assert.strictEqual(!myClass._eventListeners?.moo ||
                 !myClass._eventListeners?.moo["*"] ||
                 myClass._eventListeners?.moo["*"].length === 0, true, "Listeners all removed from event");
+        });
+    });
+    describe("Global listener functionality", () => {
+        it("Listens for any event emitted and fires the listener with the onAny() function", () => {
+            const emitter = new Emitter();
+            const spy = jest.fn();
+            emitter.onAny(spy);
+            emitter.emit("someEvent", "someArg1", true, false);
+            expect(spy).toHaveBeenCalledWith("someEvent", "someArg1", true, false);
+        });
+        it(`Listens for any event emitted and fires the listener with the on("*") function`, () => {
+            const emitter = new Emitter();
+            const spy = jest.fn();
+            emitter.on("*", spy);
+            emitter.emit("someEvent", "someArg1", true, false);
+            expect(spy).toHaveBeenCalledWith("someEvent", "someArg1", true, false);
+        });
+        it(`Cancels an event listener for any event emitted with the offAny() function`, () => {
+            const emitter = new Emitter();
+            const spy = jest.fn();
+            emitter.on("*", spy);
+            emitter.offAny(spy);
+            emitter.emit("someEvent", "someArg1", true, false);
+            expect(spy).toHaveBeenCalledTimes(0);
+        });
+        it(`Cancels an event listener for any event emitted with the off("*") function`, () => {
+            const emitter = new Emitter();
+            const spy = jest.fn();
+            emitter.on("*", spy);
+            emitter.off("*", spy);
+            emitter.emit("someEvent", "someArg1", true, false);
+            expect(spy).toHaveBeenCalledTimes(0);
         });
     });
 });
