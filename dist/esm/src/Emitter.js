@@ -4,7 +4,7 @@ export var ListenerReturnFlag;
     ListenerReturnFlag["cancel"] = "!+_CANCEL";
 })(ListenerReturnFlag || (ListenerReturnFlag = {}));
 /**
- * Creates a new class with the capability to emit events.
+ * Creates a new class with the ability to emit events.
  */
 export class Emitter {
     _eventsEmitting = false;
@@ -13,6 +13,15 @@ export class Emitter {
     _eventStaticEmitters = {};
     _eventsAllowDefer = false;
     _eventsDeferTimeouts = {};
+    _dispatchWindowEventsEnabled = false;
+    _dispatchPrefix;
+    constructor(dispatchPrefix, shouldDispatchWindowEvents = false) {
+        this._dispatchPrefix = dispatchPrefix;
+        this._dispatchWindowEventsEnabled = shouldDispatchWindowEvents;
+    }
+    dispatchWindowEventsEnabled(shouldDispatchWindowEvents) {
+        this._dispatchWindowEventsEnabled = shouldDispatchWindowEvents;
+    }
     /**
      * Attach an event listener to the passed event only if the passed
      * id matches the id for the event being fired.
@@ -32,9 +41,7 @@ export class Emitter {
         nonNullableEventListeners[id] = nonNullableEventListeners[id] || [];
         nonNullableEventListeners[id].push(listener);
         // Check for any static emitters, and fire the event if any exist
-        if (!this._eventStaticEmitters ||
-            !this._eventStaticEmitters[eventName] ||
-            !this._eventStaticEmitters[eventName].length)
+        if (!this._eventStaticEmitters || !this._eventStaticEmitters[eventName] || !this._eventStaticEmitters[eventName].length)
             return this;
         // Emit events for each emitter
         for (let i = 0; i < this._eventStaticEmitters[eventName].length; i++) {
@@ -183,6 +190,22 @@ export class Emitter {
         return resultArr;
     }
     /**
+     * Dispatches an event originating in our emitter to the browser's
+     * window object.
+     * @param eventName The name of the event to emit. This gets prefixed with the
+     * dispatch prefix if one is set.
+     * @param data
+     */
+    _emitToWindowDispatch(eventName, data) {
+        if (typeof window === "undefined")
+            return;
+        if (!this._dispatchWindowEventsEnabled) {
+            return;
+        }
+        const finalEventName = (this._dispatchPrefix ? `${this._dispatchPrefix}.${eventName}` : eventName);
+        window.dispatchEvent(new CustomEvent(finalEventName, { detail: data }));
+    }
+    /**
      * Call an event listener by name. The `rpc()` function differs from `emit()` in
      * that it will only call and return data from the first event listener for the
      * event rather than all event listeners. If you have more than one event listener
@@ -215,7 +238,7 @@ export class Emitter {
      *       console.log("Result:", result);
      *
      *     // The console output is:
-     *     //   Arguments: data1 data2
+     *     //	Arguments: data1 data2
      *     //	Result: "foo"
      */
     rpc(eventName, ...data) {
@@ -253,7 +276,7 @@ export class Emitter {
      * @param {...any} data The arguments to send to any listening methods.
      * If you are sending multiple arguments, separate them with a comma so
      * that they are received by the function as separate arguments.
-     * @return {number}
+     * @return {any[]} An array of all return values from all the listeners for the event.
      * @example #Emit an Event
      *     // Emit the event named "hello"
      *     myEntity.emit('hello');
@@ -266,7 +289,7 @@ export class Emitter {
      * @example #Listen for Event Data
      *     // Set a listener to listen for the data (multiple values emitted
      *     // from an event are passed as function arguments)
-     *   myEntity.on('hello', function (arg1, arg2) {
+     *	   myEntity.on('hello', function (arg1, arg2) {
      *         console.log("Arguments:", arg1, arg2);
      *         return "foo";
      *     }
@@ -278,12 +301,22 @@ export class Emitter {
      *       console.log("Result:", result);
      *
      *     // The console output is:
-     *     //   Arguments: data1 data2
+     *     //	Arguments: data1 data2
      *     //	Result: ["foo"]
      */
     emit(eventName, ...data) {
+        this._emitToWindowDispatch(eventName, data);
         return this.emitId(eventName, "*", ...data);
     }
+    /**
+     * Emits an event by name and id.
+     * @param eventName The name of the event to emit.
+     * @param id The id of the event to emit.
+     * @param {...any} data The arguments to send to any listening methods.
+     * If you are sending multiple arguments, separate them with a comma so
+     * that they are received by the function as separate arguments.
+     * @return {any[]} An array of all return values from all the listeners for the event.
+     */
     emitId(eventName, id, ...data) {
         if (!this._eventListeners || (!this._eventListeners[eventName] && !this._eventListeners["*"])) {
             return [];
@@ -311,9 +344,11 @@ export class Emitter {
         return emitterResult;
     }
     /**
-     * Creates a persistent emitter record that will fire a listener if
-     * one is added for this event after the emitStatic() call has been
-     * made.
+     * Creates a persistent event. Once emitStatic() has been called, a
+     * persistent event is registered. Any existing event listeners will
+     * be called just like when you call emit(), however, any new
+     * listeners that are registered for this event via on() will also be
+     * called as soon as they are added.
      * @param eventName The name of the event to emit.
      * @param {...any} data Optional arguments to emit with the event.
      * @returns The emitter instance.

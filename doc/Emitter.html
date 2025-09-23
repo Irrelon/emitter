@@ -28,9 +28,9 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Emitter<span class="signature">(obj, prototypeMode)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Emitter<span class="signature">()</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Emitter</div>
+            <div class="class-description">Creates a new class with the ability to emit events.</div>
         
     
 </header>
@@ -45,12 +45,128 @@
     
 
     
-    <h4 class="name" id="Emitter"><span class="type-signature"></span>new Emitter<span class="signature">(obj, prototypeMode)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Emitter"><span class="type-signature"></span>new Emitter<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line9">line 9</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="Emitter.html">Emitter</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="_emitToWindowDispatch"><span class="type-signature"></span>_emitToWindowDispatch<span class="signature">(eventName, data)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Dispatches an event originating in our emitter to the browser's
+window object.
+</div>
 
 
 
@@ -85,7 +201,26 @@
 
         <tr>
             
-                <td class="name"><code>obj</code></td>
+                <td class="name"><code>eventName</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the event to emit. This gets prefixed with the
+dispatch prefix if one is set.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
             
 
             <td class="type">
@@ -97,32 +232,6 @@
             
 
             <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>prototypeMode</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Defaults to true. Set to true to add emitter
-methods to the the passed object's prototype property e.g. obj.prototype.on
-= emitter.on. Set to false to add emitter methods the object directly e.g.
-obj.on = emitter.on.</td>
         </tr>
 
     
@@ -163,7 +272,7 @@ obj.on = emitter.on.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line801">line 801</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line199">line 199</a>
     </li></ul></dd>
     
 
@@ -191,25 +300,7 @@ obj.on = emitter.on.</td>
 
 
 
-    
-    </div>
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
 
         
             
@@ -217,7 +308,544 @@ obj.on = emitter.on.</td>
     
 
     
-    <h4 class="name" id=".deferEmit"><span class="type-signature">(static) </span>deferEmit<span class="signature">(eventName, data<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="_off"><span class="type-signature"></span>_off<span class="signature">(eventName, id, listener)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Cancels an event listener based on an event name, id and listener function.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eventName</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The event to cancel listener for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The ID of the event to cancel listening for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>listener</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The event listener function used in the on()
+or once() call to cancel.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line87">line 87</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The emitter instance.
+</div>
+
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="_on"><span class="type-signature"></span>_on<span class="signature">(eventName, id, listener)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Attach an event listener to the passed event only if the passed
+id matches the id for the event being fired.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eventName</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the event to listen for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id to match against.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>listener</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The method to call when the event is fired.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line33">line 33</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The emitter instance.
+</div>
+
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="_once"><span class="type-signature"></span>_once<span class="signature">(eventName, id, listener)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Attach an event listener to the passed event only if the passed
+id matches the document id for the event being fired.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eventName</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the event to listen for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id to match against.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>listener</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The method to call when the event is fired.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line66">line 66</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The emitter instance.
+</div>
+
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="deferEmit"><span class="type-signature"></span>deferEmit<span class="signature">(eventName, &hellip;data)</span><span class="type-signature"></span></h4>
     
 
     
@@ -272,11 +900,6 @@ de-bounced event will be emitted.
 
             <td class="type">
             
-                
-<span class="param-type">String</span>
-
-
-            
             </td>
 
             
@@ -304,7 +927,7 @@ de-bounced event will be emitted.
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">any</span>
 
 
             
@@ -313,18 +936,18 @@ de-bounced event will be emitted.
             
                 <td class="attributes">
                 
-                    &lt;optional><br>
-                
 
                 
 
+                
+                    &lt;repeatable><br>
                 
                 </td>
             
 
             
 
-            <td class="description last">Optional data to emit with the event.</td>
+            <td class="description last">Optional arguments to emit with the event.</td>
         </tr>
 
     
@@ -365,7 +988,7 @@ de-bounced event will be emitted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line756">line 756</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line514">line 514</a>
     </li></ul></dd>
     
 
@@ -377,139 +1000,6 @@ de-bounced event will be emitted.
 </dl>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".emit"><span class="type-signature">(static) </span>emit<span class="signature">(event)</span><span class="type-signature"> &rarr; {*}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Emit an event.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event to emit.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line304">line 304</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
 
 
 
@@ -526,19 +1016,11 @@ de-bounced event will be emitted.
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    The emitter instance.
+</div>
 
 
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">*</span>
-
-
-    </dd>
-</dl>
 
     
 
@@ -552,7 +1034,7 @@ de-bounced event will be emitted.
     
 
     
-    <h4 class="name" id=".emit"><span class="type-signature">(static) </span>emit<span class="signature">(event, data)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    <h4 class="name" id="didCancel"><span class="type-signature"></span>didCancel<span class="signature">(resultArr)</span><span class="type-signature"></span></h4>
     
 
     
@@ -560,7 +1042,8 @@ de-bounced event will be emitted.
 
 
 <div class="description">
-    Emit an event with data.
+    Returns true if the result from an emit() call passed as the first
+argument contains a cancellation flag.
 </div>
 
 
@@ -596,667 +1079,7 @@ de-bounced event will be emitted.
 
         <tr>
             
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event to emit.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Data to emit with the event.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line316">line 316</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">*</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".emitStatic"><span class="type-signature">(static) </span>emitStatic<span class="signature">(event)</span><span class="type-signature"> &rarr; {*}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Emit an event that will fire on listeners even when the listener
-is registered AFTER the event has been emitted.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event to emit.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line437">line 437</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">*</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".emitStatic"><span class="type-signature">(static) </span>emitStatic<span class="signature">(event, data)</span><span class="type-signature"> &rarr; {*}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Emit an event with data that will fire on listeners even when the listener
-is registered AFTER the event has been emitted.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event to emit.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Data to emit with the event.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line450">line 450</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">*</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".emitStatic"><span class="type-signature">(static) </span>emitStatic<span class="signature">(event)</span><span class="type-signature"> &rarr; {*}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Remove a static event emitter.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event to remove static emitter for.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line621">line 621</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">*</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".emitStaticId"><span class="type-signature">(static) </span>emitStaticId<span class="signature">(event)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Require an id to emit.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
+                <td class="name"><code>resultArr</code></td>
             
 
             <td class="type">
@@ -1308,7 +1131,7 @@ is registered AFTER the event has been emitted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line516">line 516</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line536">line 536</a>
     </li></ul></dd>
     
 
@@ -1336,13 +1159,15 @@ is registered AFTER the event has been emitted.
 
 
 
+
+
         
             
 
     
 
     
-    <h4 class="name" id=".emitStaticId"><span class="type-signature">(static) </span>emitStaticId<span class="signature">(event, id)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    <h4 class="name" id="emit"><span class="type-signature"></span>emit<span class="signature">(eventName, &hellip;data)</span><span class="type-signature"> &rarr; {Array.&lt;any>}</span></h4>
     
 
     
@@ -1350,185 +1175,7 @@ is registered AFTER the event has been emitted.
 
 
 <div class="description">
-    Emit an event that will fire on listeners even when the listener
-is registered AFTER the event has been emitted.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event to emit.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The id of the event to emit.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line526">line 526</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">*</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".emitStaticId"><span class="type-signature">(static) </span>emitStaticId<span class="signature">(event, id, data<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {*}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Emit an event that will fire on listeners even when the listener
-is registered AFTER the event has been emitted.
+    Emit an event by name.
 </div>
 
 
@@ -1566,15 +1213,10 @@ is registered AFTER the event has been emitted.
 
         <tr>
             
-                <td class="name"><code>event</code></td>
+                <td class="name"><code>eventName</code></td>
             
 
             <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
             
             </td>
 
@@ -1590,7 +1232,239 @@ is registered AFTER the event has been emitted.
 
             
 
-            <td class="description last">The event to emit.</td>
+            <td class="description last">The name of the event to emit.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The arguments to send to any listening methods.
+If you are sending multiple arguments, separate them with a comma so
+that they are received by the function as separate arguments.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line307">line 307</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    An array of all return values from all the listeners for the event.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;any></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>#Emit an Event
+    // Emit the event named "hello"
+    myEntity.emit('hello');</code></pre>
+
+    <pre class="prettyprint"><code>#Emit an Event With Data Object
+    // Emit the event named "hello"
+    myEntity.emit('hello', {moo: true});</code></pre>
+
+    <pre class="prettyprint"><code>#Emit an Event With Multiple Data Values
+    // Emit the event named "hello"
+    myEntity.emit('hello', {moo: true}, 'someString');</code></pre>
+
+    <pre class="prettyprint"><code>#Listen for Event Data
+    // Set a listener to listen for the data (multiple values emitted
+    // from an event are passed as function arguments)
+	   myEntity.on('hello', function (arg1, arg2) {
+        console.log("Arguments:", arg1, arg2);
+        return "foo";
+    }
+
+    // Emit the event named "hello"
+    // The result is returned as an array of all return values
+    // from all the listeners for the event
+    const result = myEntity.emit('hello', 'data1', 'data2');
+      console.log("Result:", result);
+
+    // The console output is:
+    //	Arguments: data1 data2
+    //	Result: ["foo"]</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="emitId"><span class="type-signature"></span>emitId<span class="signature">(eventName, id, &hellip;data)</span><span class="type-signature"> &rarr; {Array.&lt;any>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Emits an event by name and id.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eventName</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The name of the event to emit.</td>
         </tr>
 
     
@@ -1601,11 +1475,6 @@ is registered AFTER the event has been emitted.
             
 
             <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
             
             </td>
 
@@ -1634,7 +1503,7 @@ is registered AFTER the event has been emitted.
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">any</span>
 
 
             
@@ -1643,7 +1512,355 @@ is registered AFTER the event has been emitted.
             
                 <td class="attributes">
                 
-                    &lt;optional><br>
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The arguments to send to any listening methods.
+If you are sending multiple arguments, separate them with a comma so
+that they are received by the function as separate arguments.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line320">line 320</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    An array of all return values from all the listeners for the event.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;any></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="offAny"><span class="type-signature"></span>offAny<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Removes an event listener that listens for any and all events
+emitted.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line153">line 153</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="onAny"><span class="type-signature"></span>onAny<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Creates an event listener that listens for any and all events
+emitted.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line124">line 124</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="rpc"><span class="type-signature"></span>rpc<span class="signature">(eventName, &hellip;data)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Call an event listener by name. The `rpc()` function differs from `emit()` in
+that it will only call and return data from the first event listener for the
+event rather than all event listeners. If you have more than one event listener
+assigned to the event, all others except the first will be ignored and will
+not receive the event.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eventName</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+                <td class="attributes">
                 
 
                 
@@ -1654,7 +1871,42 @@ is registered AFTER the event has been emitted.
 
             
 
-            <td class="description last">The data to emit with the event.</td>
+            <td class="description last">The name of the event to call the listener for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The arguments to send to the listening method.
+If you are sending multiple arguments, separate them with a comma so
+that they are received by the function as separate arguments.</td>
         </tr>
 
     
@@ -1695,7 +1947,7 @@ is registered AFTER the event has been emitted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line539">line 539</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line244">line 244</a>
     </li></ul></dd>
     
 
@@ -1705,6 +1957,8 @@ is registered AFTER the event has been emitted.
 
     
 </dl>
+
+
 
 
 
@@ -1729,7 +1983,7 @@ is registered AFTER the event has been emitted.
     </dt>
     <dd>
         
-<span class="param-type">*</span>
+<span class="param-type">number</span>
 
 
     </dd>
@@ -1740,162 +1994,35 @@ is registered AFTER the event has been emitted.
 
 
 
-
-        
-            
-
+    <h5>Examples</h5>
     
-
-    
-    <h4 class="name" id=".off"><span class="type-signature">(static) </span>off<span class="signature">(event, id)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Cancels all listeners for an event based on the passed event name and id.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event name to cancel listeners for.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The ID to cancel all listeners for.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line279">line 279</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <pre class="prettyprint"><code>#Call the Event Listener
+    // Emit the event named "hello"
+    myEntity.emit('hello');</code></pre>
+
+    <pre class="prettyprint"><code>#Call the Event Listener With Data Object
+    // Emit the event named "hello"
+    myEntity.emit('hello', {moo: true});</code></pre>
+
+    <pre class="prettyprint"><code>#Call the Event Listener With Multiple Data Values
+    // Emit the event named "hello"
+    myEntity.emit('hello', {moo: true}, 'someString');</code></pre>
+
+    <pre class="prettyprint"><code>#Register the Listener for Event Data
+    // Set a listener to listen for the data (multiple values emitted
+    // from an event are passed as function arguments)
+   myEntity.on('hello', function (arg1, arg2) {
+        console.log("Arguments:", arg1, arg2);
+        return "foo";
+    }
+
+    // Emit the event named "hello"
+    const result = myEntity.emit('hello', 'data1', 'data2');
+      console.log("Result:", result);
+
+    // The console output is:
+    //	Arguments: data1 data2
+    //	Result: "foo"</code></pre>
 
 
 
@@ -1905,1199 +2032,7 @@ is registered AFTER the event has been emitted.
     
 
     
-    <h4 class="name" id=".off"><span class="type-signature">(static) </span>off<span class="signature">(event, id, listener)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Cancels an event listener based on an event name, id and listener function.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event to cancel listener for.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The ID of the event to cancel listening for.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>listener</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event listener function used in the on()
-or once() call to cancel.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line250">line 250</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".off"><span class="type-signature">(static) </span>off<span class="signature">(event, listener)</span><span class="type-signature"> &rarr; {*}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Cancels the event listener for the passed event and listener function.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event to cancel listener for.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>listener</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The event listener function used in the on()
-or once() call to cancel.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line211">line 211</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">*</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".off"><span class="type-signature">(static) </span>off<span class="signature">(event)</span><span class="type-signature"> &rarr; {*}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Cancels all event listeners for the passed event.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The name of the event.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line187">line 187</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">*</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".on"><span class="type-signature">(static) </span>on<span class="signature">(event, id, listener)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Attach an event listener to the passed event only if the passed
-id matches the document id for the event being fired.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The name of the event to listen for.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The document id to match against.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>listener</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The method to call when the event is fired.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line84">line 84</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".on"><span class="type-signature">(static) </span>on<span class="signature">(event, listener)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Attach an event listener to the passed event.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The name of the event to listen for.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>listener</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The method to call when the event is fired.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line73">line 73</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".once"><span class="type-signature">(static) </span>once<span class="signature">(event, id, listener)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Attach an event listener to the passed event only if the passed
-id matches the document id for the event being fired.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The name of the event to listen for.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The document id to match against.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>listener</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The method to call when the event is fired.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line162">line 162</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".once"><span class="type-signature">(static) </span>once<span class="signature">(event, listener)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Attach an event listener to the passed event which will only fire once.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>event</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The name of the event to listen for.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>listener</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The method to call when the event is fired.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line141">line 141</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".willEmit"><span class="type-signature">(static) </span>willEmit<span class="signature">(event)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="willEmit"><span class="type-signature"></span>willEmit<span class="signature">(eventName)</span><span class="type-signature"></span></h4>
     
 
     
@@ -3141,15 +2076,10 @@ id matches the document id for the event being fired.
 
         <tr>
             
-                <td class="name"><code>event</code></td>
+                <td class="name"><code>eventName</code></td>
             
 
             <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
             
             </td>
 
@@ -3198,7 +2128,7 @@ id matches the document id for the event being fired.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line647">line 647</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line451">line 451</a>
     </li></ul></dd>
     
 
@@ -3208,6 +2138,8 @@ id matches the document id for the event being fired.
 
     
 </dl>
+
+
 
 
 
@@ -3231,18 +2163,6 @@ the event. False if none are found.
 
 
 
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
     
 
 
@@ -3255,7 +2175,7 @@ the event. False if none are found.
     
 
     
-    <h4 class="name" id=".willEmitId"><span class="type-signature">(static) </span>willEmitId<span class="signature">(event, id)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="willEmitId"><span class="type-signature"></span>willEmitId<span class="signature">(eventName, id)</span><span class="type-signature"></span></h4>
     
 
     
@@ -3299,15 +2219,10 @@ the event. False if none are found.
 
         <tr>
             
-                <td class="name"><code>event</code></td>
+                <td class="name"><code>eventName</code></td>
             
 
             <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
             
             </td>
 
@@ -3326,11 +2241,6 @@ the event. False if none are found.
             
 
             <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
             
             </td>
 
@@ -3379,7 +2289,7 @@ the event. False if none are found.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line683">line 683</a>
+        <a href="Emitter.js.html">Emitter.js</a>, <a href="Emitter.js.html#line474">line 474</a>
     </li></ul></dd>
     
 
@@ -3402,6 +2312,8 @@ the event. False if none are found.
 
 
 
+
+
 <h5>Returns:</h5>
 
         
@@ -3411,18 +2323,6 @@ the event. False if none are found.
 </div>
 
 
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
 
     
 
@@ -3452,7 +2352,7 @@ the event. False if none are found.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jan 22 2019 14:10:25 GMT+0000 (GMT)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Sep 23 2025 16:47:15 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

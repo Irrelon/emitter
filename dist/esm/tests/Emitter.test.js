@@ -25,7 +25,8 @@ describe("Emitter", () => {
     describe("new Emitter()", () => {
         it("Creates emitter instance by instantiation", () => {
             const myClass = new Emitter();
-            myClass.on("moo", () => { });
+            myClass.on("moo", () => {
+            });
             assert.strictEqual(myClass._eventListeners?.moo["*"].length, 1, "Listener registered on event");
             myClass.off("moo");
             assert.strictEqual(!myClass._eventListeners?.moo ||
@@ -224,11 +225,15 @@ describe("Emitter", () => {
     describe("off()", () => {
         it("Cancels all listeners (event)", () => {
             const myClass = new Emitter();
-            const listener1 = () => { };
-            const listener2 = () => { };
-            myClass.on("moo", () => { });
+            const listener1 = () => {
+            };
+            const listener2 = () => {
+            };
+            myClass.on("moo", () => {
+            });
             assert.strictEqual(myClass._eventListeners?.moo["*"].length, 1, "Listeners registered on event");
-            myClass.on("moo", "testId", () => { });
+            myClass.on("moo", "testId", () => {
+            });
             assert.strictEqual(myClass._eventListeners?.moo["testId"].length, 1, "Listeners registered on event");
             myClass.on("moo", listener1);
             assert.strictEqual(myClass._eventListeners?.moo["*"].length, 2, "Listeners registered on event");
@@ -241,11 +246,15 @@ describe("Emitter", () => {
         });
         it("Cancels id-based listeners (event, id)", () => {
             const myClass = new Emitter();
-            const listener1 = () => { };
-            const listener2 = () => { };
-            myClass.on("moo", () => { });
+            const listener1 = () => {
+            };
+            const listener2 = () => {
+            };
+            myClass.on("moo", () => {
+            });
             assert.strictEqual(myClass._eventListeners?.moo["*"].length, 1, "Listeners registered on event");
-            myClass.on("moo", "testId", () => { });
+            myClass.on("moo", "testId", () => {
+            });
             assert.strictEqual(myClass._eventListeners?.moo["testId"].length, 1, "Listeners registered on event");
             myClass.on("moo", listener1);
             assert.strictEqual(myClass._eventListeners?.moo["*"].length, 2, "Listeners registered on event");
@@ -257,11 +266,15 @@ describe("Emitter", () => {
         });
         it("Cancels listener-based listeners (event, listener)", () => {
             const myClass = new Emitter();
-            const listener1 = () => { };
-            const listener2 = () => { };
-            myClass.on("moo", () => { });
+            const listener1 = () => {
+            };
+            const listener2 = () => {
+            };
+            myClass.on("moo", () => {
+            });
             assert.strictEqual(myClass._eventListeners?.moo["*"].length, 1, "Listeners registered on event");
-            myClass.on("moo", "testId", () => { });
+            myClass.on("moo", "testId", () => {
+            });
             assert.strictEqual(myClass._eventListeners?.moo["testId"].length, 1, "Listeners registered on event");
             myClass.on("moo", listener1);
             assert.strictEqual(myClass._eventListeners?.moo["*"].length, 2, "Listeners registered on event");
@@ -273,11 +286,15 @@ describe("Emitter", () => {
         });
         it("Cancels id-based + listener-based listeners (event, id, listener)", () => {
             const myClass = new Emitter();
-            const listener1 = () => { };
-            const listener2 = () => { };
-            myClass.on("moo", () => { });
+            const listener1 = () => {
+            };
+            const listener2 = () => {
+            };
+            myClass.on("moo", () => {
+            });
             assert.strictEqual(myClass._eventListeners?.moo["*"].length, 1, "Listeners registered on event");
-            myClass.on("moo", "testId", () => { });
+            myClass.on("moo", "testId", () => {
+            });
             assert.strictEqual(myClass._eventListeners?.moo["testId"].length, 1, "Listeners registered on event");
             myClass.on("moo", listener1);
             assert.strictEqual(myClass._eventListeners?.moo["*"].length, 2, "Listeners registered on event");

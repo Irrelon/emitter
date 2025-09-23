@@ -15,12 +15,12 @@ export interface EmitterAnyEventsInterface {
 export type EmitterEventsInterface<T> = {
     [K in keyof T]: T[K];
 };
-interface WithStar {
+export interface WithStar {
     "*"?: (eventName: string, ...args: any[]) => void;
 }
 export type EmitterEventsWithStar<T> = EmitterEventsInterface<T> & WithStar;
 /**
- * Creates a new class with the capability to emit events.
+ * Creates a new class with the ability to emit events.
  */
 export declare class Emitter<EventsInterface extends EmitterEventsWithStar<EventsInterface> = EmitterAnyEventsInterface> {
     _eventsEmitting: boolean;
@@ -33,6 +33,10 @@ export declare class Emitter<EventsInterface extends EmitterEventsWithStar<Event
     };
     _eventsAllowDefer: boolean;
     _eventsDeferTimeouts: Record<any, number>;
+    _dispatchWindowEventsEnabled: boolean;
+    _dispatchPrefix?: string;
+    constructor(dispatchPrefix?: string, shouldDispatchWindowEvents?: boolean);
+    dispatchWindowEventsEnabled(shouldDispatchWindowEvents: boolean): void;
     /**
      * Attach an event listener to the passed event only if the passed
      * id matches the id for the event being fired.
@@ -118,6 +122,14 @@ export declare class Emitter<EventsInterface extends EmitterEventsWithStar<Event
     _emitToSingleListener<EventName extends keyof EventsInterface>(listener: EventListenerCallback<EventsInterface[EventName]>, data: Parameters<EventsInterface[EventName]>): ReturnType<EventsInterface[EventName]> | ListenerReturnFlag;
     _emitToArrayOfListeners<EventName extends keyof EventsInterface>(arr: EventListenerCallback<EventsInterface[EventName]>[], data: Parameters<EventsInterface[EventName]>): (ReturnType<EventsInterface[EventName]> | ListenerReturnFlag)[];
     /**
+     * Dispatches an event originating in our emitter to the browser's
+     * window object.
+     * @param eventName The name of the event to emit. This gets prefixed with the
+     * dispatch prefix if one is set.
+     * @param data
+     */
+    _emitToWindowDispatch<EventName extends keyof EventsInterface>(eventName: EventName, data: any): void;
+    /**
      * Call an event listener by name. The `rpc()` function differs from `emit()` in
      * that it will only call and return data from the first event listener for the
      * event rather than all event listeners. If you have more than one event listener
@@ -150,7 +162,7 @@ export declare class Emitter<EventsInterface extends EmitterEventsWithStar<Event
      *       console.log("Result:", result);
      *
      *     // The console output is:
-     *     //   Arguments: data1 data2
+     *     //	Arguments: data1 data2
      *     //	Result: "foo"
      */
     rpc<EventName extends keyof EventsInterface>(eventName: EventName, ...data: Parameters<EventsInterface[EventName]>): ReturnType<EventsInterface[EventName]> | ListenerReturnFlag;
@@ -161,7 +173,7 @@ export declare class Emitter<EventsInterface extends EmitterEventsWithStar<Event
      * @param {...any} data The arguments to send to any listening methods.
      * If you are sending multiple arguments, separate them with a comma so
      * that they are received by the function as separate arguments.
-     * @return {number}
+     * @return {any[]} An array of all return values from all the listeners for the event.
      * @example #Emit an Event
      *     // Emit the event named "hello"
      *     myEntity.emit('hello');
@@ -174,7 +186,7 @@ export declare class Emitter<EventsInterface extends EmitterEventsWithStar<Event
      * @example #Listen for Event Data
      *     // Set a listener to listen for the data (multiple values emitted
      *     // from an event are passed as function arguments)
-     *   myEntity.on('hello', function (arg1, arg2) {
+     *	   myEntity.on('hello', function (arg1, arg2) {
      *         console.log("Arguments:", arg1, arg2);
      *         return "foo";
      *     }
@@ -186,15 +198,26 @@ export declare class Emitter<EventsInterface extends EmitterEventsWithStar<Event
      *       console.log("Result:", result);
      *
      *     // The console output is:
-     *     //   Arguments: data1 data2
+     *     //	Arguments: data1 data2
      *     //	Result: ["foo"]
      */
     emit<EventName extends keyof EventsInterface>(eventName: EventName, ...data: Parameters<EventsInterface[EventName]>): (ReturnType<EventsInterface[EventName]> | ListenerReturnFlag)[];
+    /**
+     * Emits an event by name and id.
+     * @param eventName The name of the event to emit.
+     * @param id The id of the event to emit.
+     * @param {...any} data The arguments to send to any listening methods.
+     * If you are sending multiple arguments, separate them with a comma so
+     * that they are received by the function as separate arguments.
+     * @return {any[]} An array of all return values from all the listeners for the event.
+     */
     emitId<EventName extends keyof EventsInterface>(eventName: EventName, id: string, ...data: Parameters<EventsInterface[EventName]>): (ReturnType<EventsInterface[EventName]> | ListenerReturnFlag)[];
     /**
-     * Creates a persistent emitter record that will fire a listener if
-     * one is added for this event after the emitStatic() call has been
-     * made.
+     * Creates a persistent event. Once emitStatic() has been called, a
+     * persistent event is registered. Any existing event listeners will
+     * be called just like when you call emit(), however, any new
+     * listeners that are registered for this event via on() will also be
+     * called as soon as they are added.
      * @param eventName The name of the event to emit.
      * @param {...any} data Optional arguments to emit with the event.
      * @returns The emitter instance.
@@ -262,7 +285,6 @@ export declare class Emitter<EventsInterface extends EmitterEventsWithStar<Event
      */
     _processRemovalQueue(): void;
 }
-export declare function makeEmitter(obj: AnyConstructor, prototypeMode: boolean): Emitter;
-export declare function makeEmitter(obj: boolean): Emitter;
-export declare function makeEmitter(obj: Record<string, unknown>, prototypeMode: boolean): Emitter;
-export {};
+export declare function makeEmitter<EventsInterface extends EmitterEventsWithStar<EventsInterface> = EmitterAnyEventsInterface>(obj: boolean): Emitter<EventsInterface>;
+export declare function makeEmitter<EventsInterface extends EmitterEventsWithStar<EventsInterface> = EmitterAnyEventsInterface>(obj: Record<string, unknown>, prototypeMode: boolean): Emitter<EventsInterface>;
+export declare function makeEmitter<EventsInterface extends EmitterEventsWithStar<EventsInterface> = EmitterAnyEventsInterface>(obj: AnyConstructor): Emitter<EventsInterface>;

@@ -1,5 +1,14 @@
 # Irrelon Emitter
 
+### What Is It?
+It's an event emitter that supports some very powerful and useful features.
+
+### Why Not Just Use window.dispatchEvent()?
+This library is more flexible and operates in both Node.js and the browser with the same interface.
+This is useful because it allows you to maintain the same code patterns on both the backend and frontend of your application.
+
+This event emitter also supports many more features than the basic event system built into browsers.
+
 ## Usage
 
 ### JavaScript
@@ -43,7 +52,7 @@ interface MyEvents {
 // Pass your interface to the Emitter instantiation
 const emitter = new Emitter<MyEvents>();
 
-// This will show a typescript error because the 
+// This will show a typescript error because the
 // first argument of the event1 listener should be
 // a string, and the listener should return a number
 // instead of void.

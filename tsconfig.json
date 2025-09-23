@@ -4,7 +4,8 @@
 		"baseUrl": ".",
 		"target": "es6",
 		"lib": [
-			"esnext"
+			"ESNext",
+			"DOM"
 		],
 		"allowJs": false,
 		"skipLibCheck": false,
@@ -12,6 +13,8 @@
 		"pretty": true,
 		"allowSyntheticDefaultImports": true,
 		"forceConsistentCasingInFileNames": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
 		"noEmit": false,
 		"incremental": true,
 		"esModuleInterop": true,
@@ -21,7 +24,10 @@
 		"isolatedModules": true,
 		"declaration": true,
 		"inlineSourceMap": false,
-		"types": ["node", "jest"]
+		"types": [
+			"node",
+			"jest"
+		]
 	},
 	"include": [
 		"src/**/*.ts",

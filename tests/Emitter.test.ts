@@ -1,6 +1,12 @@
 import { jest } from "@jest/globals";
 import assert from "assert";
-import { Emitter, EmitterEventsInterface, EventListenerCallback, ListenerReturnFlag } from "../src/Emitter";
+import {
+	Emitter,
+	EmitterEventsInterface,
+	EmitterEventsWithStar,
+	EventListenerCallback,
+	ListenerReturnFlag
+} from "../src/Emitter";
 
 let expectedAssertions = 0;
 let actualAssertions = 0;
@@ -34,7 +40,8 @@ describe("Emitter", () => {
 		it("Creates emitter instance by instantiation", () => {
 			const myClass = new Emitter();
 
-			myClass.on("moo", () => {});
+			myClass.on("moo", () => {
+			});
 
 			assert.strictEqual(myClass._eventListeners?.moo!["*"].length, 1, "Listener registered on event");
 
@@ -42,8 +49,8 @@ describe("Emitter", () => {
 
 			assert.strictEqual(
 				!myClass._eventListeners?.moo ||
-                    !myClass._eventListeners.moo["*"] ||
-                    myClass._eventListeners.moo["*"].length,
+				!myClass._eventListeners.moo["*"] ||
+				myClass._eventListeners.moo["*"].length,
 				true,
 				"Listeners all removed from event"
 			);
@@ -52,8 +59,8 @@ describe("Emitter", () => {
 		it("Supports extending Emitter as a base class", () => {
 			// Test extending Emitter and modifying base functionality
 			class MyClass extends Emitter {
-				on(eventName: string, id: string, listener: EventListenerCallback): this;
-				on(eventName: string, listener: EventListenerCallback): this;
+				on (eventName: string, id: string, listener: EventListenerCallback): this;
+				on (eventName: string, listener: EventListenerCallback): this;
 				on (eventName: string, ...rest: any[]): this {
 					const restTypes = rest.map((arg) => typeof arg);
 
@@ -72,9 +79,9 @@ describe("Emitter", () => {
 					return super.emitId(eventName, "^^noId", ...rest);
 				}
 
-				off(eventName: string, id: string, listener?: EventListenerCallback): this;
-				off(eventName: string, listener?: EventListenerCallback): this;
-				off(eventName: string): this;
+				off (eventName: string, id: string, listener?: EventListenerCallback): this;
+				off (eventName: string, listener?: EventListenerCallback): this;
+				off (eventName: string): this;
 				off (eventName: string, ...rest: any[]) {
 					let id = rest[0];
 					let func = rest[1];
@@ -113,22 +120,22 @@ describe("Emitter", () => {
 
 			assert.strictEqual(
 				!myClass._eventListeners?.moo ||
-                    !myClass._eventListeners?.moo["testId"] ||
-                    (myClass._eventListeners?.moo["testId"].length as number) === 0,
+				!myClass._eventListeners?.moo["testId"] ||
+				(myClass._eventListeners?.moo["testId"].length as number) === 0,
 				true,
 				"Listeners all removed from event"
 			);
 			assert.strictEqual(
 				myClass._eventListeners?.moo &&
-                    myClass._eventListeners?.moo["^^noId"] &&
-                    myClass._eventListeners?.moo["^^noId"].length === 1,
+				myClass._eventListeners?.moo["^^noId"] &&
+				myClass._eventListeners?.moo["^^noId"].length === 1,
 				true,
 				"Global listener still there"
 			);
 			assert.strictEqual(
 				!myClass._eventListeners?.moo ||
-                    !myClass._eventListeners?.moo["*"] ||
-                    myClass._eventListeners?.moo["*"].length === 0,
+				!myClass._eventListeners?.moo["*"] ||
+				myClass._eventListeners?.moo["*"].length === 0,
 				true,
 				"Global listener still there"
 			);
@@ -137,8 +144,8 @@ describe("Emitter", () => {
 
 			assert.strictEqual(
 				!myClass._eventListeners?.moo ||
-                    !myClass._eventListeners?.moo["*"] ||
-                    myClass._eventListeners?.moo["*"].length === 0,
+				!myClass._eventListeners?.moo["*"] ||
+				myClass._eventListeners?.moo["*"].length === 0,
 				true,
 				"Listeners all removed from event"
 			);
@@ -147,199 +154,203 @@ describe("Emitter", () => {
 
 	describe("emit()", () => {
 		it("Supports type safe usage", async () => {
-            interface MyEventsResponses {
-                post: () => Promise<void>;
-                person: (name: string, age: number, enabled: boolean) => Promise<string>;
-                house: (no: number, street: string, postcode: string, enabled: boolean) => void;
-            }
+			interface MyEventsResponses {
+				post: () => Promise<void>;
+				person: (name: string, age: number, enabled: boolean) => Promise<string>;
+				house: (no: number, street: string, postcode: string, enabled: boolean) => void;
+			}
 
-            const emitter = new Emitter<MyEventsResponses>();
-            let listenerFiredCount = 0;
+			const emitter = new Emitter<MyEventsResponses>();
+			let listenerFiredCount = 0;
 
-            emitter.on("person", (name) => {
-            	return new Promise<string>((resolve) => {
-            		setTimeout(() => {
-            			listenerFiredCount++;
-            			resolve(name);
-            		}, 1000);
-            	});
-            });
+			emitter.on("person", (name) => {
+				return new Promise<string>((resolve) => {
+					setTimeout(() => {
+						listenerFiredCount++;
+						resolve(name);
+					}, 1000);
+				});
+			});
 
-            emitter.on("post", () => {
-            	return new Promise<void>((resolve) => {
-            		setTimeout(() => {
-            			listenerFiredCount++;
-            			resolve();
-            		}, 1000);
-            	});
-            });
+			emitter.on("post", () => {
+				return new Promise<void>((resolve) => {
+					setTimeout(() => {
+						listenerFiredCount++;
+						resolve();
+					}, 1000);
+				});
+			});
 
-            emitter.on("post", () => {
-            	return new Promise<void>((resolve) => {
-            		setTimeout(() => {
-            			listenerFiredCount++;
-            			resolve();
-            		}, 1000);
-            	});
-            });
+			emitter.on("post", () => {
+				return new Promise<void>((resolve) => {
+					setTimeout(() => {
+						listenerFiredCount++;
+						resolve();
+					}, 1000);
+				});
+			});
 
-            const time = new Date().getTime();
-            await Promise.all(emitter.emit("post"));
-            const delta = new Date().getTime() - time;
+			const time = new Date().getTime();
+			await Promise.all(emitter.emit("post"));
+			const delta = new Date().getTime() - time;
 
-            assert.ok(delta > 900, `Delta was not correct, await may not have paused? Delta was: ${delta}`);
-            assert.ok(
-            	listenerFiredCount === 2,
-            	`listenerFiredCount was not correct, await may not have paused? listenerFiredCount was: ${listenerFiredCount}`
-            );
+			assert.ok(delta > 900, `Delta was not correct, await may not have paused? Delta was: ${delta}`);
+			assert.ok(
+				listenerFiredCount === 2,
+				`listenerFiredCount was not correct, await may not have paused? listenerFiredCount was: ${listenerFiredCount}`
+			);
 		});
 
 		it("Supports awaiting async listeners", async () => {
-            interface TestEvents {
-                foo: () => Promise<void>;
-            }
+			interface TestEvents {
+				foo: () => Promise<void>;
+			}
 
-            const emitter = new Emitter<EmitterEventsInterface<TestEvents>>();
-            let listenerFiredCount = 0;
+			const emitter = new Emitter<EmitterEventsInterface<TestEvents>>();
+			let listenerFiredCount = 0;
 
-            emitter.on("foo", async () => {
-            	return new Promise<void>((resolve) => {
-            		setTimeout(() => {
-            			listenerFiredCount++;
-            			resolve();
-            		}, 1000);
-            	});
-            });
+			emitter.on("foo", async () => {
+				return new Promise<void>((resolve) => {
+					setTimeout(() => {
+						listenerFiredCount++;
+						resolve();
+					}, 1000);
+				});
+			});
 
-            emitter.on("foo", async () => {
-            	return new Promise<void>((resolve) => {
-            		setTimeout(() => {
-            			listenerFiredCount++;
-            			resolve();
-            		}, 1000);
-            	});
-            });
+			emitter.on("foo", async () => {
+				return new Promise<void>((resolve) => {
+					setTimeout(() => {
+						listenerFiredCount++;
+						resolve();
+					}, 1000);
+				});
+			});
 
-            const time = new Date().getTime();
-            await Promise.all(emitter.emit("foo"));
-            const delta = new Date().getTime() - time;
+			const time = new Date().getTime();
+			await Promise.all(emitter.emit("foo"));
+			const delta = new Date().getTime() - time;
 
-            assert.ok(delta > 900, "Delta was not correct, await may not have paused?");
-            assert.strictEqual(listenerFiredCount, 2, "Listener fire count was incorect");
+			assert.ok(delta > 900, "Delta was not correct, await may not have paused?");
+			assert.strictEqual(listenerFiredCount, 2, "Listener fire count was incorect");
 		});
 
 		it("Supports awaiting async and non-async listener return data", async () => {
-            interface MyTestEvents {
-                foo: () => string | Promise<string>;
-            }
+			interface MyTestEvents {
+				foo: () => string | Promise<string>;
+			}
 
-            const emitter = new Emitter<EmitterEventsInterface<MyTestEvents>>();
-            let listenerFiredCount = 0;
+			const emitter = new Emitter<EmitterEventsInterface<MyTestEvents>>();
+			let listenerFiredCount = 0;
 
-            emitter.on("foo", () => {
-            	return new Promise<string>((resolve) => {
-            		setTimeout(() => {
-            			listenerFiredCount++;
-            			resolve("Foo1 Return Value");
-            		}, 1000);
-            	});
-            });
+			emitter.on("foo", () => {
+				return new Promise<string>((resolve) => {
+					setTimeout(() => {
+						listenerFiredCount++;
+						resolve("Foo1 Return Value");
+					}, 1000);
+				});
+			});
 
-            emitter.on("foo", () => {
-            	return "Foo2 Return Value";
-            });
+			emitter.on("foo", () => {
+				return "Foo2 Return Value";
+			});
 
-            const time = new Date().getTime();
-            const results: string[] = await Promise.all(emitter.emit("foo"));
-            const delta = new Date().getTime() - time;
+			const time = new Date().getTime();
+			const results: string[] = await Promise.all(emitter.emit("foo"));
+			const delta = new Date().getTime() - time;
 
-            assert.ok(delta > 900, "Delta was not correct, await may not have paused?");
-            assert.ok(listenerFiredCount === 1, "listenerFiredCount was not correct, await may not have been used?");
-            assert.strictEqual(results[0], "Foo1 Return Value", "Return data for foo1 was not correct");
-            assert.strictEqual(results[1], "Foo2 Return Value", "Return data for foo2 was not correct");
+			assert.ok(delta > 900, "Delta was not correct, await may not have paused?");
+			assert.ok(listenerFiredCount === 1, "listenerFiredCount was not correct, await may not have been used?");
+			assert.strictEqual(results[0], "Foo1 Return Value", "Return data for foo1 was not correct");
+			assert.strictEqual(results[1], "Foo2 Return Value", "Return data for foo2 was not correct");
 		});
 
 		it("Supports awaiting async and non-async rpc listener return data", async () => {
-            interface MyTestEvents {
-                foo1: () => string | Promise<string>;
-                foo2: () => string;
-            }
+			interface MyTestEvents {
+				foo1: () => string | Promise<string>;
+				foo2: () => string;
+			}
 
-            const emitter = new Emitter<EmitterEventsInterface<MyTestEvents>>();
-            let listenerFiredCount = 0;
+			const emitter = new Emitter<EmitterEventsInterface<MyTestEvents>>();
+			let listenerFiredCount = 0;
 
-            emitter.on("foo1", () => {
-            	return new Promise<string>((resolve) => {
-            		setTimeout(() => {
-            			listenerFiredCount++;
-            			resolve("Foo1 Return Value");
-            		}, 1000);
-            	});
-            });
+			emitter.on("foo1", () => {
+				return new Promise<string>((resolve) => {
+					setTimeout(() => {
+						listenerFiredCount++;
+						resolve("Foo1 Return Value");
+					}, 1000);
+				});
+			});
 
-            emitter.on("foo2", () => {
-            	return "Foo2 Return Value";
-            });
+			emitter.on("foo2", () => {
+				return "Foo2 Return Value";
+			});
 
-            const time = new Date().getTime();
-            const result1 = await emitter.rpc("foo1");
-            const result2 = emitter.rpc("foo2");
-            const delta = new Date().getTime() - time;
+			const time = new Date().getTime();
+			const result1 = await emitter.rpc("foo1");
+			const result2 = emitter.rpc("foo2");
+			const delta = new Date().getTime() - time;
 
-            assert.ok(delta > 900, "Delta was not correct, await may not have paused?");
-            assert.ok(listenerFiredCount === 1, "listenerFiredCount was not correct, await may not have been used?");
-            assert.strictEqual(result1, "Foo1 Return Value", "Return data for foo1 was not correct");
-            assert.strictEqual(result2, "Foo2 Return Value", "Return data for foo2 was not correct");
+			assert.ok(delta > 900, "Delta was not correct, await may not have paused?");
+			assert.ok(listenerFiredCount === 1, "listenerFiredCount was not correct, await may not have been used?");
+			assert.strictEqual(result1, "Foo1 Return Value", "Return data for foo1 was not correct");
+			assert.strictEqual(result2, "Foo2 Return Value", "Return data for foo2 was not correct");
 		});
 
 		it("Supports responding with a cancellation signal", async () => {
-            interface MyTestEvents {
-                foo: () => string | ListenerReturnFlag;
-            }
+			interface MyTestEvents {
+				foo: () => string | ListenerReturnFlag;
+			}
 
-            const emitter = new Emitter<EmitterEventsInterface<MyTestEvents>>();
-            let listenerFiredCount = 0;
+			const emitter = new Emitter<EmitterEventsInterface<MyTestEvents>>();
+			let listenerFiredCount = 0;
 
-            emitter.on("foo", () => {
-            	listenerFiredCount++;
-            	return "Foo1 Return Value";
-            });
+			emitter.on("foo", () => {
+				listenerFiredCount++;
+				return "Foo1 Return Value";
+			});
 
-            emitter.on("foo", () => {
-            	listenerFiredCount++;
+			emitter.on("foo", () => {
+				listenerFiredCount++;
 
-            	// This listener will respond with a cancellation, this should terminate further listener calls
-            	return ListenerReturnFlag.cancel;
-            });
+				// This listener will respond with a cancellation, this should terminate further listener calls
+				return ListenerReturnFlag.cancel;
+			});
 
-            emitter.on("foo", () => {
-            	listenerFiredCount++;
-            	return "Foo3 Return Value";
-            });
+			emitter.on("foo", () => {
+				listenerFiredCount++;
+				return "Foo3 Return Value";
+			});
 
-            emitter.on("foo", () => {
-            	listenerFiredCount++;
-            	return "Foo4 Return Value";
-            });
+			emitter.on("foo", () => {
+				listenerFiredCount++;
+				return "Foo4 Return Value";
+			});
 
-            const results = emitter.emit("foo");
+			const results = emitter.emit("foo");
 
-            assert.ok(listenerFiredCount === 2, "listenerFiredCount was not correct, await may not have been used?");
-            assert.strictEqual(results[0], "Foo1 Return Value", "Return data should be a cancel flag");
-            assert.strictEqual(results[1], ListenerReturnFlag.cancel, "Return data should be a cancel flag");
-            assert.ok(emitter.didCancel(results), "didCancel should detect a cancel flag");
+			assert.ok(listenerFiredCount === 2, "listenerFiredCount was not correct, await may not have been used?");
+			assert.strictEqual(results[0], "Foo1 Return Value", "Return data should be a cancel flag");
+			assert.strictEqual(results[1], ListenerReturnFlag.cancel, "Return data should be a cancel flag");
+			assert.ok(emitter.didCancel(results), "didCancel should detect a cancel flag");
 		});
 	});
 
 	describe("off()", () => {
 		it("Cancels all listeners (event)", () => {
 			const myClass = new Emitter();
-			const listener1 = () => {};
-			const listener2 = () => {};
+			const listener1 = () => {
+			};
+			const listener2 = () => {
+			};
 
-			myClass.on("moo", () => {});
+			myClass.on("moo", () => {
+			});
 			assert.strictEqual(myClass._eventListeners?.moo!["*"].length, 1, "Listeners registered on event");
-			myClass.on("moo", "testId", () => {});
+			myClass.on("moo", "testId", () => {
+			});
 			assert.strictEqual(myClass._eventListeners?.moo["testId"].length, 1, "Listeners registered on event");
 			myClass.on("moo", listener1);
 			assert.strictEqual(myClass._eventListeners?.moo["*"].length, 2, "Listeners registered on event");
@@ -350,8 +361,8 @@ describe("Emitter", () => {
 
 			assert.strictEqual(
 				!myClass._eventListeners?.moo ||
-                    (myClass._eventListeners?.moo["*"].length === 0 &&
-                        myClass._eventListeners?.moo["testId"].length === 0),
+				(myClass._eventListeners?.moo["*"].length === 0 &&
+					myClass._eventListeners?.moo["testId"].length === 0),
 				true,
 				"Listeners all removed from event"
 			);
@@ -359,12 +370,16 @@ describe("Emitter", () => {
 
 		it("Cancels id-based listeners (event, id)", () => {
 			const myClass = new Emitter();
-			const listener1 = () => {};
-			const listener2 = () => {};
+			const listener1 = () => {
+			};
+			const listener2 = () => {
+			};
 
-			myClass.on("moo", () => {});
+			myClass.on("moo", () => {
+			});
 			assert.strictEqual(myClass._eventListeners?.moo!["*"].length, 1, "Listeners registered on event");
-			myClass.on("moo", "testId", () => {});
+			myClass.on("moo", "testId", () => {
+			});
 			assert.strictEqual(myClass._eventListeners?.moo["testId"].length, 1, "Listeners registered on event");
 			myClass.on("moo", listener1);
 			assert.strictEqual(myClass._eventListeners?.moo["*"].length, 2, "Listeners registered on event");
@@ -387,12 +402,16 @@ describe("Emitter", () => {
 
 		it("Cancels listener-based listeners (event, listener)", () => {
 			const myClass = new Emitter();
-			const listener1 = () => {};
-			const listener2 = () => {};
+			const listener1 = () => {
+			};
+			const listener2 = () => {
+			};
 
-			myClass.on("moo", () => {});
+			myClass.on("moo", () => {
+			});
 			assert.strictEqual(myClass._eventListeners?.moo!["*"].length, 1, "Listeners registered on event");
-			myClass.on("moo", "testId", () => {});
+			myClass.on("moo", "testId", () => {
+			});
 			assert.strictEqual(myClass._eventListeners?.moo["testId"].length, 1, "Listeners registered on event");
 			myClass.on("moo", listener1);
 			assert.strictEqual(myClass._eventListeners?.moo["*"].length, 2, "Listeners registered on event");
@@ -415,12 +434,16 @@ describe("Emitter", () => {
 
 		it("Cancels id-based + listener-based listeners (event, id, listener)", () => {
 			const myClass = new Emitter();
-			const listener1 = () => {};
-			const listener2 = () => {};
+			const listener1 = () => {
+			};
+			const listener2 = () => {
+			};
 
-			myClass.on("moo", () => {});
+			myClass.on("moo", () => {
+			});
 			assert.strictEqual(myClass._eventListeners?.moo!["*"].length, 1, "Listeners registered on event");
-			myClass.on("moo", "testId", () => {});
+			myClass.on("moo", "testId", () => {
+			});
 			assert.strictEqual(myClass._eventListeners?.moo["testId"].length, 1, "Listeners registered on event");
 			myClass.on("moo", listener1);
 			assert.strictEqual(myClass._eventListeners?.moo["*"].length, 2, "Listeners registered on event");
@@ -444,7 +467,8 @@ describe("Emitter", () => {
 
 	describe("emitStatic()", () => {
 		it("Static emitter will emit when a new listener is added", (resolve) => {
-			class MyClass extends Emitter {}
+			class MyClass extends Emitter {
+			}
 
 			expectAssertionCount(1);
 
@@ -460,7 +484,8 @@ describe("Emitter", () => {
 
 	describe("cancelStatic()", () => {
 		it("Removes static emitter", (resolve) => {
-			class MyClass extends Emitter {}
+			class MyClass extends Emitter {
+			}
 
 			expectAssertionCount(1);
 
@@ -485,7 +510,8 @@ describe("Emitter", () => {
 
 	describe("overwrite()", () => {
 		it("Only fires the last listener added, cancelling all other listeners before it", (resolve) => {
-			class MyClass extends Emitter {}
+			class MyClass extends Emitter {
+			}
 
 			expectAssertionCount(1);
 
@@ -510,7 +536,8 @@ describe("Emitter", () => {
 		});
 
 		it("Only fires the last listener added (with id), cancelling all other listeners before it", (resolve) => {
-			class MyClass extends Emitter {}
+			class MyClass extends Emitter {
+			}
 
 			expectAssertionCount(2);
 
@@ -571,15 +598,15 @@ describe("Emitter", () => {
 
 			assert.strictEqual(
 				!myClass._eventListeners?.moo ||
-                    !myClass._eventListeners?.moo["testId"] ||
-                    myClass._eventListeners?.moo["testId"].length,
+				!myClass._eventListeners?.moo["testId"] ||
+				myClass._eventListeners?.moo["testId"].length,
 				true,
 				"Listeners all removed from event"
 			);
 			assert.strictEqual(
 				myClass._eventListeners?.moo &&
-                    myClass._eventListeners?.moo["*"] &&
-                    myClass._eventListeners?.moo["*"].length === 1,
+				myClass._eventListeners?.moo["*"] &&
+				myClass._eventListeners?.moo["*"].length === 1,
 				true,
 				"Global listener still there"
 			);
@@ -588,8 +615,8 @@ describe("Emitter", () => {
 
 			assert.strictEqual(
 				!myClass._eventListeners?.moo ||
-                    !myClass._eventListeners?.moo["*"] ||
-                    myClass._eventListeners?.moo["*"].length === 0,
+				!myClass._eventListeners?.moo["*"] ||
+				myClass._eventListeners?.moo["*"].length === 0,
 				true,
 				"Listeners all removed from event"
 			);
@@ -597,8 +624,12 @@ describe("Emitter", () => {
 	});
 
 	describe("Global listener functionality", () => {
+		interface MyEvents {
+			someEvent: (arg1: string, arg2: boolean, arg3: boolean) => void;
+		}
+
 		it("Listens for any event emitted and fires the listener with the onAny() function", () => {
-			const emitter = new Emitter();
+			const emitter = new Emitter<MyEvents>();
 
 			const spy = jest.fn();
 
@@ -610,7 +641,7 @@ describe("Emitter", () => {
 		});
 
 		it(`Listens for any event emitted and fires the listener with the on("*") function`, () => {
-			const emitter = new Emitter();
+			const emitter = new Emitter<EmitterEventsWithStar<MyEvents>>();
 
 			const spy = jest.fn();
 
@@ -622,7 +653,7 @@ describe("Emitter", () => {
 		});
 
 		it(`Cancels an event listener for any event emitted with the offAny() function`, () => {
-			const emitter = new Emitter();
+			const emitter = new Emitter<EmitterEventsWithStar<MyEvents>>();
 
 			const spy = jest.fn();
 
@@ -635,7 +666,7 @@ describe("Emitter", () => {
 		});
 
 		it(`Cancels an event listener for any event emitted with the off("*") function`, () => {
-			const emitter = new Emitter();
+			const emitter = new Emitter<EmitterEventsWithStar<MyEvents>>();
 
 			const spy = jest.fn();
 
